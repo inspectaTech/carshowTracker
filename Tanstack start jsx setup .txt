@@ -1,0 +1,262 @@
+﻿While TanStack Start is designed with a "TypeScript-first" philosophy, it does not strictly require TypeScript; you can use standard JavaScript with .jsx files. However, doing so significantly reduces the value of the framework, as its core features are built around end-to-end type safety. [1, 2, 3, 4, 5]
+Key Considerations for Using .jsx
+* Optional but Recommended: The framework's creator has stated that TypeScript is optional. Official documentation "highly recommends" it to enable the full power of TanStack Router and Start's data fetching.
+* Loss of Type Inference: The primary "magic" of TanStack Start is its ability to automatically infer types from your server functions to your client components. If you use .jsx, you lose the autocompletion for route parameters, loader data, and search params.
+* Configuring Without TS: If you build from scratch with JavaScript, you would skip the TSConfig setup and use the standard @vitejs/plugin-react in your vite.config.js instead of the .ts version.
+* Infrastructure: Because it is built on Vite, it can bundle and serve standard JavaScript and JSX just as easily as TypeScript. [1, 2, 3, 4, 5, 6]
+Why Most Developers Choose TypeScript
+The framework uses module augmentation to provide global type safety for hooks like useNavigate and components like <Link>. In a .jsx environment, these features will still function, but you will not receive any warnings if you link to a route that doesn't exist or pass the wrong data type to a loader. [1, 2, 3]
+TanStack Start Overview | TanStack Start React Docs
+
+TanStack
+
+TanStack Start
+
+TanStack
+
+Playing around with the Tanstack Start Alpha : r/reactjs - Reddit
+
+Reddit
+Show all
+if you skip the tsconfig setup does the jsx version of tanstack start still do ssr
+6:14 PM
+
+14 sites
+Yes, the JSX version still performs full SSR (Server-Side Rendering) even if you skip the tsconfig.json setup. [1, 2, 3]
+SSR in TanStack Start is handled by its underlying architecture—powered by Vite and Nitro—which executes your code on the server regardless of whether it’s written in .jsx or .tsx. [1, 2, 3]
+How SSR Works Without TypeScript
+* Server-Side Execution: On the initial request, TanStack Start still runs your loader and beforeLoad functions on the server and renders the initial HTML for SEO and faster perceived performance.
+* Infrastructure, Not Language: SSR is a feature of the framework's build and runtime process (handled by Vinxi or Nitro). It does not depend on the TypeScript compiler for the actual rendering logic.
+* Configuration: You would simply use a vite.config.js (instead of .ts) and point the TanStack Start Vite plugin toward your .jsx or .js entry points. [1, 2, 3, 4, 5, 6]
+What You Must Still Do
+Even without a tsconfig.json, you still need to follow the standard project structure for SSR to function:
+1. Entry Points: Maintain your server and client entry files (e.g., src/ssr.jsx and lsrc/client.jsx).
+2. Vite Plugin: Ensure the @tanstack/react-start/plugin is registered in your vite.config.js to enable the server-side bundling.
+3. Hydration: Your client-side entry must still call the hydrate function so that the static HTML sent by the server becomes interactive in the browser. [1, 2, 3, 4, 5]
+Warning: While SSR will work, you will lose the "End-to-End Type Safety" that is a primary selling point of the framework. You'll need to manually ensure that the data returned from your server loaders matches what your components expect. [1]
+Would you like a minimal boilerplate for a .jsx version of the vite.config.js file?
+Build a Project from Scratch | TanStack Start React Docs
+
+TanStack
+
+SSR with TanStack Start - Nitro
+
+nitro.build
+Building React Apps with TanStack Start
+
+YouTube·Certified Fresh Events
+
+57:38
+Show all
+yes
+6:16 PM
+
+5 sites
+To set up TanStack Start with .jsx, you will use a vite.config.js file. The critical part is ensuring the TanStack Start plugin is registered before the standard React plugin.
+Minimal vite.config.js for .jsx [1]
+javascript
+// vite.config.js
+import { defineConfig } from 'vite'
+import { tanstackStart } from '@tanstack/react-start/plugin/vite'
+import viteReact from '@vitejs/plugin-react'
+
+
+export default defineConfig({
+  plugins: [
+    // 1. Start plugin must come first to handle server-side logic
+    tanstackStart(), 
+    // 2. Standard React plugin for JSX transpilation
+    viteReact(),
+  ],
+  server: {
+    port: 3000,
+  },
+})
+
+
+Use code with caution.
+Necessary Adjustments for a JS-Only Project [1]
+Since you are bypassing the TypeScript setup, keep these structural requirements in mind to ensure SSR continues to work:
+* File Extensions: Use .jsx for any file containing components (like your routes) and .js for logic-only files.
+* Package.json: Ensure "type": "module" is set in your package.json so Vite can process the configuration as an ES module.
+* Entry Points: You will still need your entry files in src/, typically renamed to src/client.jsx and src/ssr.jsx. Your vite.config.js will automatically look for these if they follow standard naming conventions.
+* Dependencies: You only need to install react, react-dom, @tanstack/react-start, @tanstack/react-router, and vite + @vitejs/plugin-react as dev dependencies. [1, 2, 3, 4, 5]
+Would you like to see how to structure the src/ssr.jsx file to handle the server-side request entry point in JavaScript?
+Build a Project from Scratch | TanStack Start React Docs
+
+TanStack
+
+SSR with TanStack Start - Nitro
+
+nitro.build
+Start BETA - Tracking · TanStack router · Discussion #2863 · GitHub
+
+GitHub
+
+Show all
+yes
+6:18 PM
+
+8 sites
+The src/ssr.jsx file serves as the entry point for handling requests on the server. In a JavaScript-only setup, its primary role is to initialize the router and provide a handler for the server to process the request and stream back the HTML. [1]
+Sample src/ssr.jsx
+You can use the built-in createStartHandler and defaultStreamHandler for a standard setup. [1, 2, 3, 4]
+javascript
+// src/ssr.jsx
+import { createStartHandler, defaultStreamHandler } from '@tanstack/react-start/server'
+import { getRouterManifest } from '@tanstack/react-start/router-manifest'
+import { createRouter } from './router'
+
+
+// This handler receives the incoming request and generates the response
+export default createStartHandler({
+  createRouter,
+  getRouterManifest,
+})(defaultStreamHandler)
+
+
+Use code with caution.
+Supporting Files
+For this entry point to work, you need two additional standard files in your src/ directory: [1]
+src/router.jsx: This file exports a function that creates a fresh router instance for every request, which is essential to avoid state leakage between users on the server.
+javascript
+import { createRouter as createTanStackRouter } from '@tanstack/react-router'
+import { routeTree } from './routeTree.gen' // Auto-generated by the CLI/Plugin
+
+
+export function createRouter() {
+  return createTanStackRouter({
+    routeTree,
+  })
+}
+* Use code with caution.
+src/client.jsx: This is the client-side counterpart that "hydrates" the HTML sent by the server.
+javascript
+import { hydrateRoot } from 'react-dom/client'
+import { StartClient } from '@tanstack/react-start/client'
+import { createRouter } from './router'
+
+
+const router = createRouter()
+
+
+hydrateRoot(document, <StartClient router={router} />)
+* Use code with caution.
+ [1, 2, 3, 4]
+Important Runtime Note
+Because you are using .jsx, ensure your package.json contains "type": "module". This allows Node.js to treat your JavaScript files as ES Modules, which is required for the Vite-based bundling system used by TanStack Start. [1]
+Would you like to see how to define a server function in a .js file to handle data fetching?
+Client Entry Point | TanStack Start React Docs
+
+TanStack
+
+Server Entry Point | TanStack Start React Docs
+
+TanStack
+
+Build a Project from Scratch | TanStack Start Solid Docs
+
+TanStack
+
+Show all
+yes
+6:27 PM
+
+6 sites
+In TanStack Start, server functions are built using the createServerFn utility. Even without TypeScript, you can use these functions in standard .js files to perform secure server-side logic like database queries or calling private APIs. [1, 2, 3]
+Sample Server Function in .js
+You can define these functions with a GET or POST method. If you don't specify one, it defaults to GET. [1, 2]
+javascript
+// src/utils/users.js
+import { createServerFn } from '@tanstack/react-start'
+
+
+// A GET server function for data fetching
+export const getUser = createServerFn({ method: 'GET' })
+  .handler(async ({ data }) => {
+    // This code ONLY runs on the server
+    console.log('Fetching user from DB for ID:', data.id)
+    
+    // Example: Replace with your actual DB call
+    return { 
+      id: data.id, 
+      name: 'John Doe', 
+      email: 'john@example.com' 
+    }
+  })
+
+
+Use code with caution.
+How to Use It in Your Components
+Even though the logic runs on the server, you can import and call it directly in your .jsx files. The framework automatically handles the network boundary by creating a hidden API endpoint for you. [1, 2, 3]
+jsx
+// src/routes/user.jsx
+import { createFileRoute } from '@tanstack/react-router'
+import { getUser } from '../utils/users'
+
+
+export const Route = createFileRoute('/user/$id')({
+  // Use the server function in a route loader
+  loader: ({ params }) => getUser({ data: { id: params.id } }),
+  component: UserComponent,
+})
+
+
+function UserComponent() {
+  const user = Route.useLoaderData()
+  return (
+    <div>
+      <h1>{user.name}</h1>
+      <p>{user.email}</p>
+    </div>
+  )
+}
+
+
+Use code with caution.
+Important JS-Specific Tips
+   * Single Data Argument: Server functions must take exactly one argument as an object (e.g., data) to ensure they can be properly serialized over the network.
+   * Runtime Validation: Because you are skipping TypeScript, you lose compile-time safety. It is highly recommended to use a library like Zod in your .handler to manually validate incoming data and prevent server-side errors.
+   * Client vs. Server Boundary: Although you can call these functions from the client, the code inside the .handler() is automatically removed from the client-side bundle to keep your secrets (like database credentials) secure. [1, 2, 3, 4]
+Would you like to see how to add runtime validation using Zod to replace the missing TypeScript safety?
+Server Functions Don't Exist (It Matters)
+
+YouTube·Jack Herrington
+
+13:19
+Server Functions | TanStack Start React Docs
+
+TanStack
+
+TanStack Start vs Next.js
+
+TanStack
+
+Show all
+my activity was turned on halfway through this conversation but I don't see it saved
+6:52 PM
+
+10 sites
+When Gemini activity is turned on mid-session, it usually saves data from that point forward. Conversations that occurred while activity tracking was off are typically not saved. [1, 2]
+Where to Look for Missing Data
+   * Gemini Activity Log: Check for raw data at myactivity.google.com/product/gemini.
+   * Sidebar Menu: On the desktop Gemini site, click the Menu (three horizontal lines) in the top left to see your "Recent" chats.
+   * Browser History: The specific URL for that chat may be found in the browser history (search for gemini.google.com/app/) to reload the page and see if any cached data remains. [1, 2, 3, 4, 5, 6]
+Why It Might Not Be Showing
+   1. Sync Delay: It may take a few minutes for the backend to update and display a new chat in the sidebar. Refresh the page.
+   2. Display Bug: Chats may exist but not be listed due to a loading error. Using an Incognito window can help verify if it's a browser-specific issue.
+   3. Auto-Delete Settings: Check if activity is set to auto-delete too frequently (e.g., every 3 months), though this usually only affects much older chats. [1, 2, 3, 4]
+To avoid losing data, conversations can be exported directly to Google Docs or Gmail using the "Share" button at the bottom of a response. [1]
+How can I clear my browser's cache and cookies for Gemini?
+Does turning on Gemini Apps Activity also save chats from Bard?
+How do I manage my auto-delete settings for Gemini activity?
+Find & manage your recent chats in Gemini Apps - Computer - Google Help
+
+Google Help
+Find & manage your recent chats in Gemini Apps - Android - Google Help
+
+Google Help
+Chat history gone. - Gemini Apps Community - Google Help
+
+Google Help
+Show all
