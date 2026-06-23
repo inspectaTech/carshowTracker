@@ -1,0 +1,2050 @@
+{
+  "version": "2.13",
+  "children": [
+    {
+      "type": "frame",
+      "id": "root",
+      "x": 0,
+      "y": 0,
+      "name": "Dashboard",
+      "clip": true,
+      "width": 1440,
+      "height": 960,
+      "fill": "#04080b",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "sidebar",
+          "x": 0,
+          "y": 0,
+          "name": "Sidebar",
+          "clip": true,
+          "width": 250,
+          "height": 960,
+          "fill": "#04080b",
+          "stroke": "#333333",
+          "strokeWidth": {
+            "right": 1
+          },
+          "strokeAlignment": "inner",
+          "layout": "vertical",
+          "padding": [
+            0,
+            0,
+            24,
+            0
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "logoContainer",
+              "name": "LogoContainer",
+              "clip": true,
+              "width": 252,
+              "height": 130,
+              "fill": "transparent",
+              "layout": "vertical",
+              "padding": [
+                10,
+                0,
+                0,
+                0
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "inner_logo",
+                  "name": "InnerLogo",
+                  "width": 247,
+                  "height": 101,
+                  "fill": "transparent",
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 8,
+                      "id": "logo",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Logo",
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "cst_logo.png",
+                        "mode": "fill"
+                      },
+                      "width": 247,
+                      "height": 101
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "logoSpacer",
+              "name": "LogoSpacer",
+              "width": "fill_container",
+              "height": 5,
+              "fill": "transparent"
+            },
+            {
+              "type": "frame",
+              "id": "nav1",
+              "name": "Nav_Dashboard",
+              "clip": true,
+              "width": 250,
+              "height": 48,
+              "fill": "#0e1116",
+              "gap": 12,
+              "padding": [
+                0,
+                24
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "nb1",
+                  "name": "Border",
+                  "fill": "#e10908",
+                  "width": 3,
+                  "height": 24
+                },
+                {
+                  "type": "text",
+                  "id": "ni1",
+                  "name": "Icon",
+                  "fill": "#FFF",
+                  "content": "🏠",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "nl1",
+                  "name": "Label",
+                  "fill": "#FFF",
+                  "content": "Dashboard",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nav2",
+              "name": "Nav_Explore",
+              "clip": true,
+              "width": 250,
+              "height": 44,
+              "fill": "transparent",
+              "gap": 12,
+              "padding": [
+                0,
+                24
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ni2",
+                  "name": "Icon",
+                  "fill": "#AAA",
+                  "content": "🔍",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "nl2",
+                  "name": "Label",
+                  "fill": "#AAA",
+                  "content": "Explore",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nav3",
+              "name": "Nav_Garage",
+              "clip": true,
+              "width": 250,
+              "height": 44,
+              "fill": "transparent",
+              "gap": 12,
+              "padding": [
+                0,
+                24
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ni3",
+                  "name": "Icon",
+                  "fill": "#AAA",
+                  "content": "🚗",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "nl3",
+                  "name": "Label",
+                  "fill": "#AAA",
+                  "content": "Garage",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nav4",
+              "name": "Nav_Community",
+              "clip": true,
+              "width": 250,
+              "height": 44,
+              "fill": "transparent",
+              "gap": 12,
+              "padding": [
+                0,
+                24
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ni4",
+                  "name": "Icon",
+                  "fill": "#AAA",
+                  "content": "👥",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "nl4",
+                  "name": "Label",
+                  "fill": "#AAA",
+                  "content": "Community",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nav5",
+              "name": "Nav_MyEvents",
+              "clip": true,
+              "width": 250,
+              "height": 44,
+              "fill": "transparent",
+              "gap": 12,
+              "padding": [
+                0,
+                24
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ni5",
+                  "name": "Icon",
+                  "fill": "#AAA",
+                  "content": "📅",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "nl5",
+                  "name": "Label",
+                  "fill": "#AAA",
+                  "content": "My Events",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nav6",
+              "name": "Nav_News",
+              "clip": true,
+              "width": 250,
+              "height": 44,
+              "fill": "transparent",
+              "gap": 12,
+              "padding": [
+                0,
+                24
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ni6",
+                  "name": "Icon",
+                  "fill": "#AAA",
+                  "content": "📰",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "nl6",
+                  "name": "Label",
+                  "fill": "#AAA",
+                  "content": "News",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nav7",
+              "name": "Nav_PitShop",
+              "clip": true,
+              "width": 250,
+              "height": 44,
+              "fill": "transparent",
+              "gap": 12,
+              "padding": [
+                0,
+                24
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ni7",
+                  "name": "Icon",
+                  "fill": "#AAA",
+                  "content": "🛒",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "nl7",
+                  "name": "Label",
+                  "fill": "#AAA",
+                  "content": "Pit Shop",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nav8",
+              "name": "Nav_Merch",
+              "clip": true,
+              "width": 250,
+              "height": 44,
+              "fill": "transparent",
+              "gap": 12,
+              "padding": [
+                0,
+                24
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ni8",
+                  "name": "Icon",
+                  "fill": "#AAA",
+                  "content": "👕",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "nl8",
+                  "name": "Label",
+                  "fill": "#AAA",
+                  "content": "Merch",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "spacer1",
+              "name": "Spacer",
+              "width": 250,
+              "height": "fill_container",
+              "fill": "transparent"
+            },
+            {
+              "type": "frame",
+              "id": "miniProfile",
+              "name": "MiniProfile",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "#0e1116",
+              "gap": 12,
+              "padding": [
+                12,
+                24
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 39,
+                  "id": "avatar",
+                  "name": "Avatar",
+                  "fill": {
+                    "type": "image",
+                    "enabled": true,
+                    "url": "skyline.png",
+                    "mode": "fill"
+                  },
+                  "width": 66,
+                  "height": 66
+                },
+                {
+                  "type": "frame",
+                  "id": "profInfo",
+                  "name": "ProfileInfo",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "username",
+                      "name": "Username",
+                      "fill": "#FFF",
+                      "content": "Gearhead_23",
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "viewProfText",
+                      "name": "ViewProfileText",
+                      "fill": "#e10908",
+                      "content": "View Profile",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "navSet",
+              "name": "Nav_Settings",
+              "clip": true,
+              "width": 250,
+              "height": 36,
+              "fill": "transparent",
+              "gap": 12,
+              "padding": [
+                0,
+                24
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "nsi",
+                  "name": "Icon",
+                  "fill": "#AAA",
+                  "content": "⚙️",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "nsl",
+                  "name": "Label",
+                  "fill": "#AAA",
+                  "content": "Settings",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "navLog",
+              "name": "Nav_Logout",
+              "clip": true,
+              "width": 250,
+              "height": 36,
+              "fill": "transparent",
+              "gap": 12,
+              "padding": [
+                0,
+                24
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "nli",
+                  "name": "Icon",
+                  "fill": "#AAA",
+                  "content": "🚪",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "nll",
+                  "name": "Label",
+                  "fill": "#AAA",
+                  "content": "Logout",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "main",
+          "x": 250,
+          "y": 0,
+          "name": "MainContent",
+          "clip": true,
+          "width": 1190,
+          "height": 960,
+          "fill": "#04080b",
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 20,
+          "children": [
+            {
+              "type": "frame",
+              "id": "top",
+              "name": "TopSection",
+              "clip": true,
+              "width": "fill_container",
+              "height": 440,
+              "fill": "transparent",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "topRow",
+                  "name": "TopRow",
+                  "width": "fill_container",
+                  "height": 326,
+                  "fill": "transparent",
+                  "gap": 10,
+                  "justifyContent": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "ad",
+                      "name": "AdImage",
+                      "clip": true,
+                      "width": 777,
+                      "height": "fill_container",
+                      "fill": "#0a0d12",
+                      "cornerRadius": 12,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 12,
+                          "id": "adImg",
+                          "x": 0,
+                          "y": 0,
+                          "name": "AdImageContent",
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "satellite.jpeg",
+                            "mode": "fill"
+                          },
+                          "width": 862,
+                          "height": 326
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "pf",
+                      "layoutPosition": "absolute",
+                      "x": 0,
+                      "y": 0,
+                      "name": "ProfileCard",
+                      "clip": true,
+                      "width": 570,
+                      "height": 326,
+                      "fill": "#04080bbf",
+                      "cornerRadius": 12,
+                      "gap": 20,
+                      "padding": [
+                        20,
+                        24
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 90,
+                          "id": "pfImg",
+                          "name": "CarImage",
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "skyline.png",
+                            "mode": "fill"
+                          },
+                          "width": 163,
+                          "height": 163,
+                          "stroke": "#e10908",
+                          "strokeWidth": {
+                            "right": 4
+                          },
+                          "strokeAlignment": "outer"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "pfTxt",
+                          "name": "TextBlock",
+                          "width": 360,
+                          "height": "fill_container",
+                          "fill": "transparent",
+                          "layout": "vertical",
+                          "gap": 8,
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "pfName",
+                              "name": "Name",
+                              "fill": "#FFFFFF",
+                              "content": "Gearhead_23",
+                              "fontFamily": "Inter",
+                              "fontSize": 28,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "pfHandle",
+                              "name": "Handle",
+                              "fill": "#777777",
+                              "content": "@gearhead_23",
+                              "fontFamily": "Inter",
+                              "fontSize": 20,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "pfBio",
+                              "name": "Bio",
+                              "fill": "#AAAAAA",
+                              "textGrowth": "fixed-width-height",
+                              "width": 310,
+                              "height": 34,
+                              "content": "Cars are my passion. Speed is my therapy. Built not bought.",
+                              "fontFamily": "Inter",
+                              "fontSize": 16,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "pfJoin",
+                              "name": "Joined",
+                              "width": "fill_container",
+                              "fill": "transparent",
+                              "gap": 16,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "joinPlace",
+                                  "name": "JoinPlace",
+                                  "fill": "transparent",
+                                  "gap": 6,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "id": "placeIcon",
+                                      "name": "Icon",
+                                      "width": 16,
+                                      "height": 16,
+                                      "icon": "map-pin",
+                                      "library": "lucide",
+                                      "fill": "#888888"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "placeText",
+                                      "name": "Text",
+                                      "fill": "#888888",
+                                      "content": "Los Angeles, CA",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "joinTime",
+                                  "name": "JoinTime",
+                                  "fill": "transparent",
+                                  "gap": 6,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "id": "timeIcon",
+                                      "name": "Icon",
+                                      "width": 16,
+                                      "height": 16,
+                                      "icon": "calendar",
+                                      "library": "lucide",
+                                      "fill": "#888888"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "timeText",
+                                      "name": "Text",
+                                      "fill": "#888888",
+                                      "content": "Joined May 2022",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "pfSoc",
+                              "name": "Social",
+                              "fill": "#888888",
+                              "content": "Instagram  YouTube  TikTok",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "notifBell",
+                      "layoutPosition": "absolute",
+                      "x": 1060,
+                      "y": 10,
+                      "name": "NotificationBell",
+                      "width": 24,
+                      "height": 24,
+                      "icon": "bell",
+                      "library": "lucide",
+                      "fill": "#FFFFFF"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "settingsCog",
+                      "layoutPosition": "absolute",
+                      "x": 1092,
+                      "y": 10,
+                      "name": "SettingsCog",
+                      "width": 24,
+                      "height": 24,
+                      "icon": "settings",
+                      "library": "lucide",
+                      "fill": "#FFFFFF"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "editProfBtn",
+                      "layoutPosition": "absolute",
+                      "x": 960,
+                      "y": 267,
+                      "name": "EditProfileBtn",
+                      "width": 180,
+                      "height": 47,
+                      "fill": "#0a0d12",
+                      "cornerRadius": 6,
+                      "gap": 6,
+                      "padding": [
+                        6,
+                        12
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "editPenIcon",
+                          "name": "PencilIcon",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "pencil",
+                          "library": "lucide",
+                          "fill": "#FFFFFF"
+                        },
+                        {
+                          "type": "text",
+                          "id": "editProfLabel",
+                          "name": "EditLabel",
+                          "fill": "#FFFFFF",
+                          "content": "Edit Profile",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "stRow",
+                  "name": "StatsRow",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#0a0d12",
+                  "cornerRadius": 12,
+                  "padding": [
+                    10,
+                    20
+                  ],
+                  "justifyContent": "space_around",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "st1",
+                      "name": "Stat_TotalPoints",
+                      "width": "fill_container",
+                      "height": 70,
+                      "fill": "transparent",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "st1_inner",
+                          "name": "inner_stats",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "transparent",
+                          "gap": 8,
+                          "padding": [
+                            0,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "st1_icon",
+                              "name": "Icon",
+                              "width": 28,
+                              "height": 28,
+                              "icon": "gauge",
+                              "library": "lucide",
+                              "fill": "#e10908"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "st1_txt",
+                              "name": "TextBlock",
+                              "fill": "transparent",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "justifyContent": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "st1_v",
+                                  "name": "Value",
+                                  "fill": "#FFFFFF",
+                                  "content": "2.4K",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 28,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "st1_l",
+                                  "name": "Label",
+                                  "fill": "#FFFFFF",
+                                  "content": "Total Points",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 16,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "hr_st_1",
+                      "name": "HR",
+                      "fill": "#333333",
+                      "width": 1,
+                      "height": 50
+                    },
+                    {
+                      "type": "frame",
+                      "id": "st2",
+                      "name": "Stat_Badges",
+                      "width": "fill_container",
+                      "height": 70,
+                      "fill": "transparent",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "st2_inner",
+                          "name": "inner_stats",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "transparent",
+                          "gap": 8,
+                          "padding": [
+                            0,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "st2_icon",
+                              "name": "Icon",
+                              "width": 28,
+                              "height": 28,
+                              "icon": "trophy",
+                              "library": "lucide",
+                              "fill": "#e10908"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "st2_txt",
+                              "name": "TextBlock",
+                              "fill": "transparent",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "justifyContent": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "st2_v",
+                                  "name": "Value",
+                                  "fill": "#FFFFFF",
+                                  "content": "47",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 28,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "st2_l",
+                                  "name": "Label",
+                                  "fill": "#FFFFFF",
+                                  "content": "Badges",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 16,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "hr_st_2",
+                      "name": "HR",
+                      "fill": "#333333",
+                      "width": 1,
+                      "height": 50
+                    },
+                    {
+                      "type": "frame",
+                      "id": "st3",
+                      "name": "Stat_CarsinGarage",
+                      "width": "fill_container",
+                      "height": 70,
+                      "fill": "transparent",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "st3_inner",
+                          "name": "inner_stats",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "transparent",
+                          "gap": 8,
+                          "padding": [
+                            0,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "st3_icon",
+                              "name": "Icon",
+                              "width": 28,
+                              "height": 28,
+                              "icon": "car",
+                              "library": "lucide",
+                              "fill": "#e10908"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "st3_txt",
+                              "name": "TextBlock",
+                              "fill": "transparent",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "justifyContent": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "st3_v",
+                                  "name": "Value",
+                                  "fill": "#FFFFFF",
+                                  "content": "12",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 28,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "st3_l",
+                                  "name": "Label",
+                                  "fill": "#FFFFFF",
+                                  "content": "Cars in Garage",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 16,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "hr_st_3",
+                      "name": "HR",
+                      "fill": "#333333",
+                      "width": 1,
+                      "height": 50
+                    },
+                    {
+                      "type": "frame",
+                      "id": "st4",
+                      "name": "Stat_Followers",
+                      "width": "fill_container",
+                      "height": 70,
+                      "fill": "transparent",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "st4_inner",
+                          "name": "inner_stats",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "transparent",
+                          "gap": 8,
+                          "padding": [
+                            0,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "st4_icon",
+                              "name": "Icon",
+                              "width": 28,
+                              "height": 28,
+                              "icon": "users",
+                              "library": "lucide",
+                              "fill": "#e10908"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "st4_txt",
+                              "name": "TextBlock",
+                              "fill": "transparent",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "justifyContent": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "st4_v",
+                                  "name": "Value",
+                                  "fill": "#FFFFFF",
+                                  "content": "1.8K",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 28,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "st4_l",
+                                  "name": "Label",
+                                  "fill": "#FFFFFF",
+                                  "content": "Followers",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 16,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "hr_st_4",
+                      "name": "HR",
+                      "fill": "#333333",
+                      "width": 1,
+                      "height": 50
+                    },
+                    {
+                      "type": "frame",
+                      "id": "st5",
+                      "name": "Stat_Following",
+                      "width": "fill_container",
+                      "height": 70,
+                      "fill": "transparent",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "st5_inner",
+                          "name": "inner_stats",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "transparent",
+                          "gap": 8,
+                          "padding": [
+                            0,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "st5_icon",
+                              "name": "Icon",
+                              "width": 28,
+                              "height": 28,
+                              "icon": "message-circle",
+                              "library": "lucide",
+                              "fill": "#e10908"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "st5_txt",
+                              "name": "TextBlock",
+                              "fill": "transparent",
+                              "layout": "vertical",
+                              "gap": 2,
+                              "justifyContent": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "st5_v",
+                                  "name": "Value",
+                                  "fill": "#FFFFFF",
+                                  "content": "320",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 28,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "st5_l",
+                                  "name": "Label",
+                                  "fill": "#FFFFFF",
+                                  "content": "Following",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 16,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bot",
+              "name": "Bottom",
+              "clip": true,
+              "width": "fill_container",
+              "height": 440,
+              "fill": "transparent",
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "abt",
+                  "x": 0,
+                  "y": 0,
+                  "name": "AboutMe",
+                  "clip": true,
+                  "width": 243,
+                  "height": 440,
+                  "fill": "#0a0d12",
+                  "cornerRadius": 12,
+                  "layout": "vertical",
+                  "gap": 10,
+                  "padding": [
+                    16,
+                    20
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "abtT",
+                      "name": "Title",
+                      "fill": "#FFFFFF",
+                      "content": "About Me",
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": 1,
+                      "id": "abtUnderline",
+                      "name": "Underline",
+                      "fill": "#e10908",
+                      "width": 44,
+                      "height": 2
+                    },
+                    {
+                      "type": "text",
+                      "id": "abtBio",
+                      "name": "Bio",
+                      "fill": "#AAAAAA",
+                      "textGrowth": "fixed-width-height",
+                      "width": 188,
+                      "height": 108,
+                      "content": "Car enthusiast since day one. I live for weekend drives, track days, and late night builds. JDM at heart. Always chasing the next build.",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fav",
+                      "name": "Favorite Brand",
+                      "width": "fill_container",
+                      "fill": "transparent",
+                      "gap": 10,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "favIcon",
+                          "name": "Icon",
+                          "width": 24,
+                          "height": 24,
+                          "icon": "star",
+                          "library": "lucide",
+                          "fill": "#FFFFFF"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "favText",
+                          "name": "TextWrapper",
+                          "width": "fill_container",
+                          "fill": "transparent",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "favLbl",
+                              "name": "Label",
+                              "fill": "#FFFFFF",
+                              "content": "Favorite Brand",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "favVal",
+                              "name": "Value",
+                              "fill": "#e10908",
+                              "content": "Nissan",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "dream",
+                      "name": "Dream Car",
+                      "width": "fill_container",
+                      "fill": "transparent",
+                      "gap": 10,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "dreamIcon",
+                          "name": "Icon",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "car",
+                          "library": "lucide",
+                          "fill": "#FFFFFF"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "dreamText",
+                          "name": "TextWrapper",
+                          "width": "fill_container",
+                          "fill": "transparent",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "dreamLbl",
+                              "name": "Label",
+                              "fill": "#FFFFFF",
+                              "content": "Dream Car",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "dreamVal",
+                              "name": "Value",
+                              "fill": "#e10908",
+                              "content": "Nissan GT-R R34",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "occ",
+                      "name": "Occupation",
+                      "width": "fill_container",
+                      "fill": "transparent",
+                      "gap": 10,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "occIcon",
+                          "name": "Icon",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "camera",
+                          "library": "lucide",
+                          "fill": "#FFFFFF"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "occText",
+                          "name": "TextWrapper",
+                          "width": "fill_container",
+                          "fill": "transparent",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "occLbl",
+                              "name": "Label",
+                              "fill": "#FFFFFF",
+                              "content": "Occupation",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "occVal",
+                              "name": "Value",
+                              "fill": "#e10908",
+                              "content": "Automotive Photographer",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "drive",
+                      "name": "Drive",
+                      "width": "fill_container",
+                      "fill": "transparent",
+                      "gap": 10,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "driveIcon",
+                          "name": "Icon",
+                          "width": 20,
+                          "height": 20,
+                          "icon": "flag",
+                          "library": "lucide",
+                          "fill": "#FFFFFF"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "driveText",
+                          "name": "TextWrapper",
+                          "width": "fill_container",
+                          "fill": "transparent",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "driveLbl",
+                              "name": "Label",
+                              "fill": "#FFFFFF",
+                              "content": "Drive",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "driveVal",
+                              "name": "Value",
+                              "fill": "#e10908",
+                              "content": "Performance & Style",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "garage",
+                  "x": 260,
+                  "y": 0,
+                  "name": "MyGarage",
+                  "clip": true,
+                  "width": 890,
+                  "height": 201,
+                  "fill": "#0a0d12",
+                  "cornerRadius": 12,
+                  "layout": "vertical",
+                  "justifyContent": "space_around",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "grHdr",
+                      "name": "Header",
+                      "width": "fill_container",
+                      "height": 36,
+                      "fill": "transparent",
+                      "padding": [
+                        20,
+                        16
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "grTtl",
+                          "name": "Title",
+                          "fill": "#FFFFFF",
+                          "content": "My Garage",
+                          "fontFamily": "Inter",
+                          "fontSize": 20,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "grView",
+                          "name": "ViewAll",
+                          "fill": "#e10908",
+                          "content": "View All",
+                          "textAlign": "right",
+                          "fontFamily": "Inter",
+                          "fontSize": 20,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "hr_garage",
+                      "name": "HR",
+                      "fill": "#333333",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "carRow",
+                      "name": "CarRow",
+                      "width": 818,
+                      "height": 132,
+                      "fill": "transparent",
+                      "gap": 8,
+                      "padding": [
+                        16,
+                        20
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "CarEntry1",
+                          "name": "CarEntry1",
+                          "width": "fill_container",
+                          "height": 50,
+                          "fill": "transparent",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "padding": [
+                            0,
+                            20
+                          ],
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "CarEntry1_inner",
+                              "name": "Inner",
+                              "width": "fill_container",
+                              "fill": "transparent",
+                              "stroke": "#e10908",
+                              "strokeWidth": {
+                                "left": 2
+                              },
+                              "layout": "vertical",
+                              "gap": 2,
+                              "padding": [
+                                0,
+                                8
+                              ],
+                              "justifyContent": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "c0t",
+                                  "name": "Title",
+                                  "fill": "#FFFFFF",
+                                  "content": "Nissan GT-R R34",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 16,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "c0s",
+                                  "name": "Specs",
+                                  "fill": "#888888",
+                                  "content": "2000 | 600 HP | AWD",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CarEntry2",
+                          "name": "CarEntry2",
+                          "width": "fill_container",
+                          "height": 50,
+                          "fill": "transparent",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "padding": [
+                            0,
+                            20
+                          ],
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "CarEntry2_inner",
+                              "name": "Inner",
+                              "width": "fill_container",
+                              "fill": "transparent",
+                              "stroke": "#e10908",
+                              "strokeWidth": {
+                                "left": 2
+                              },
+                              "layout": "vertical",
+                              "gap": 2,
+                              "padding": [
+                                0,
+                                8
+                              ],
+                              "justifyContent": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "c1t",
+                                  "name": "Title",
+                                  "fill": "#FFFFFF",
+                                  "content": "Toyota Supra MK4",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 16,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "c1s",
+                                  "name": "Specs",
+                                  "fill": "#888888",
+                                  "content": "1998 | 320 HP | RWD",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CarEntry3",
+                          "name": "CarEntry3",
+                          "width": "fill_container",
+                          "height": 50,
+                          "fill": "transparent",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "padding": [
+                            0,
+                            20
+                          ],
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "CarEntry3_inner",
+                              "name": "Inner",
+                              "width": "fill_container",
+                              "fill": "transparent",
+                              "stroke": "#e10908",
+                              "strokeWidth": {
+                                "left": 2
+                              },
+                              "layout": "vertical",
+                              "gap": 2,
+                              "padding": [
+                                0,
+                                8
+                              ],
+                              "justifyContent": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "c2t",
+                                  "name": "Title",
+                                  "fill": "#FFFFFF",
+                                  "content": "Honda Civic Type R",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 16,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "c2s",
+                                  "name": "Specs",
+                                  "fill": "#888888",
+                                  "content": "2021 | 306 HP | FWD",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CarEntry4",
+                          "name": "CarEntry4",
+                          "width": "fill_container",
+                          "height": 50,
+                          "fill": "transparent",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "padding": [
+                            0,
+                            20
+                          ],
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "CarEntry4_inner",
+                              "name": "Inner",
+                              "width": "fill_container",
+                              "fill": "transparent",
+                              "stroke": "#e10908",
+                              "strokeWidth": {
+                                "left": 2
+                              },
+                              "layout": "vertical",
+                              "gap": 2,
+                              "padding": [
+                                0,
+                                8
+                              ],
+                              "justifyContent": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "c3t",
+                                  "name": "Title",
+                                  "fill": "#FFFFFF",
+                                  "content": "Mazda RX-7 FD",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 16,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "c3s",
+                                  "name": "Specs",
+                                  "fill": "#888888",
+                                  "content": "1995 | 276 HP | RWD",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 12,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hwy",
+                  "x": 260,
+                  "y": 220,
+                  "name": "MyHighway",
+                  "clip": true,
+                  "width": 890,
+                  "height": 220,
+                  "fill": "#0a0d12",
+                  "cornerRadius": 12,
+                  "layout": "vertical",
+                  "justifyContent": "space_around",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "hwHdr",
+                      "name": "Header",
+                      "width": "fill_container",
+                      "height": 36,
+                      "fill": "transparent",
+                      "padding": [
+                        20,
+                        16
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "hwTtl",
+                          "name": "Title",
+                          "fill": "#FFFFFF",
+                          "content": "My Highway",
+                          "fontFamily": "Inter",
+                          "fontSize": 20,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "hwView",
+                          "name": "ViewAll",
+                          "fill": "#e10908",
+                          "content": "View All",
+                          "textAlign": "right",
+                          "fontFamily": "Inter",
+                          "fontSize": 20,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "hr_hwy",
+                      "name": "HR",
+                      "fill": "#333333",
+                      "width": "fill_container",
+                      "height": 1
+                    },
+                    {
+                      "type": "frame",
+                      "id": "hwContent",
+                      "name": "Content",
+                      "width": "fill_container",
+                      "height": 150,
+                      "fill": "transparent",
+                      "gap": 20,
+                      "padding": [
+                        16,
+                        20
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 8,
+                          "id": "hwPhoto",
+                          "name": "Photo",
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "nissan_gtr.png",
+                            "mode": "fill"
+                          },
+                          "width": 80,
+                          "height": 80
+                        },
+                        {
+                          "type": "frame",
+                          "id": "hwText",
+                          "name": "TextBlock",
+                          "width": "fill_container",
+                          "height": "fill_container",
+                          "fill": "transparent",
+                          "layout": "vertical",
+                          "gap": 6,
+                          "justifyContent": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "hwAct",
+                              "name": "Action",
+                              "fill": "#FFFFFF",
+                              "content": "Posted a new photo",
+                              "fontFamily": "Inter",
+                              "fontSize": 16,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "hwDesc",
+                              "name": "Desc",
+                              "fill": "#AAAAAA",
+                              "content": "Nissan GT-R R34 at Angeles Crest Hwy",
+                              "fontFamily": "Inter",
+                              "fontSize": 16,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "hwTime",
+                              "name": "Time",
+                              "fill": "#666666",
+                              "content": "2h ago",
+                              "fontFamily": "Inter",
+                              "fontSize": 16,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "postStats",
+                          "name": "PostStats",
+                          "width": 200,
+                          "height": "fill_container",
+                          "fill": "transparent",
+                          "gap": 12,
+                          "justifyContent": "space_around",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "post_tally",
+                              "name": "PostTally",
+                              "fill": "transparent",
+                              "gap": 12,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "likes",
+                                  "name": "Likes",
+                                  "fill": "transparent",
+                                  "gap": 6,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "id": "likeIcon",
+                                      "name": "Icon",
+                                      "width": 16,
+                                      "height": 16,
+                                      "icon": "heart",
+                                      "library": "lucide",
+                                      "fill": "#FFFFFF"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "likeCount",
+                                      "name": "Count",
+                                      "fill": "#888888",
+                                      "content": "128",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "comments",
+                                  "name": "Comments",
+                                  "fill": "transparent",
+                                  "gap": 6,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "id": "commentIcon",
+                                      "name": "Icon",
+                                      "width": 16,
+                                      "height": 16,
+                                      "icon": "message-circle",
+                                      "library": "lucide",
+                                      "fill": "#FFFFFF"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "commentCount",
+                                      "name": "Count",
+                                      "fill": "#888888",
+                                      "content": "16",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 16,
+                                      "fontWeight": "normal"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "moreDots",
+                              "name": "More",
+                              "fill": "#FFFFFF",
+                              "content": "⋯",
+                              "fontFamily": "Inter",
+                              "fontSize": 18,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

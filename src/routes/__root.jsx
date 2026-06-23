@@ -1,4 +1,4 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import { HeadContent, Scripts, createRootRoute, useLocation } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { useState, useEffect } from 'react'
@@ -40,6 +40,10 @@ function RootDocument({ children }) {
     setShowDevtools(true)
   }, [])
 
+  // The dashboard has its own sidebar + icon-mode hamburger, so we hide the root Header and Footer there.
+  const location = useLocation()
+  const isDashboard = location.pathname === '/dashboard'
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -50,11 +54,11 @@ function RootDocument({ children }) {
         className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]"
         suppressHydrationWarning
       >
-        <Header />
+        {!isDashboard && <Header />}
         <main className="min-h-screen">
           {children}
         </main>
-        <Footer />
+        {!isDashboard && <Footer />}
         {showDevtools && (
           <TanStackDevtools
             config={{

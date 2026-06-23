@@ -35,8 +35,18 @@ async function checkDatabaseConnection() {
 }
 
 const server = createServer(async (req, res) => {
-  // Enable CORS
-  res.setHeader('Access-Control-Allow-Origin', '*')
+  // Enable CORS — restrict origin in production
+  const allowedOrigins = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(',')
+    : ['http://localhost:3000', 'http://127.0.0.1:3000', 'https://cst.sunzao.win']
+
+  const origin = req.headers.origin
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin)
+  } else if (!origin) {
+    // Allow same-origin requests (no Origin header)
+    res.setHeader('Access-Control-Allow-Origin', '*')
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
 

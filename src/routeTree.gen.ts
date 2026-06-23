@@ -14,8 +14,13 @@ import { Route as TestRouteImport } from './routes/test'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as Dash2RouteImport } from './routes/dash2'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiUploadRouteImport } from './routes/api.upload'
+import { Route as ApiSeedRouteImport } from './routes/api.seed'
+import { Route as ApiImagesRouteImport } from './routes/api.images'
 import { Route as ApiHealthRouteImport } from './routes/api.health'
+import { Route as ApiImagesIdRouteImport } from './routes/api.images.$id'
 
 const TestcopyRoute = TestcopyRouteImport.update({
   id: '/test copy',
@@ -42,9 +47,29 @@ const Dash2Route = Dash2RouteImport.update({
   path: '/dash2',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUploadRoute = ApiUploadRouteImport.update({
+  id: '/api/upload',
+  path: '/api/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSeedRoute = ApiSeedRouteImport.update({
+  id: '/api/seed',
+  path: '/api/seed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiImagesRoute = ApiImagesRouteImport.update({
+  id: '/api/images',
+  path: '/api/images',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
@@ -52,73 +77,112 @@ const ApiHealthRoute = ApiHealthRouteImport.update({
   path: '/api/health',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiImagesIdRoute = ApiImagesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiImagesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/dash2': typeof Dash2Route
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/test': typeof TestRoute
   '/test copy': typeof TestcopyRoute
   '/api/health': typeof ApiHealthRoute
+  '/api/images': typeof ApiImagesRouteWithChildren
+  '/api/seed': typeof ApiSeedRoute
+  '/api/upload': typeof ApiUploadRoute
+  '/api/images/$id': typeof ApiImagesIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/dash2': typeof Dash2Route
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/test': typeof TestRoute
   '/test copy': typeof TestcopyRoute
   '/api/health': typeof ApiHealthRoute
+  '/api/images': typeof ApiImagesRouteWithChildren
+  '/api/seed': typeof ApiSeedRoute
+  '/api/upload': typeof ApiUploadRoute
+  '/api/images/$id': typeof ApiImagesIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/dash2': typeof Dash2Route
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
   '/test': typeof TestRoute
   '/test copy': typeof TestcopyRoute
   '/api/health': typeof ApiHealthRoute
+  '/api/images': typeof ApiImagesRouteWithChildren
+  '/api/seed': typeof ApiSeedRoute
+  '/api/upload': typeof ApiUploadRoute
+  '/api/images/$id': typeof ApiImagesIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/dash2'
     | '/dashboard'
     | '/login'
     | '/test'
     | '/test copy'
     | '/api/health'
+    | '/api/images'
+    | '/api/seed'
+    | '/api/upload'
+    | '/api/images/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/dash2'
     | '/dashboard'
     | '/login'
     | '/test'
     | '/test copy'
     | '/api/health'
+    | '/api/images'
+    | '/api/seed'
+    | '/api/upload'
+    | '/api/images/$id'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/dash2'
     | '/dashboard'
     | '/login'
     | '/test'
     | '/test copy'
     | '/api/health'
+    | '/api/images'
+    | '/api/seed'
+    | '/api/upload'
+    | '/api/images/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   Dash2Route: typeof Dash2Route
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
   TestRoute: typeof TestRoute
   TestcopyRoute: typeof TestcopyRoute
   ApiHealthRoute: typeof ApiHealthRoute
+  ApiImagesRoute: typeof ApiImagesRouteWithChildren
+  ApiSeedRoute: typeof ApiSeedRoute
+  ApiUploadRoute: typeof ApiUploadRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -158,11 +222,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Dash2RouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/upload': {
+      id: '/api/upload'
+      path: '/api/upload'
+      fullPath: '/api/upload'
+      preLoaderRoute: typeof ApiUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/seed': {
+      id: '/api/seed'
+      path: '/api/seed'
+      fullPath: '/api/seed'
+      preLoaderRoute: typeof ApiSeedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/images': {
+      id: '/api/images'
+      path: '/api/images'
+      fullPath: '/api/images'
+      preLoaderRoute: typeof ApiImagesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/health': {
@@ -172,17 +264,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/images/$id': {
+      id: '/api/images/$id'
+      path: '/$id'
+      fullPath: '/api/images/$id'
+      preLoaderRoute: typeof ApiImagesIdRouteImport
+      parentRoute: typeof ApiImagesRoute
+    }
   }
 }
 
+interface ApiImagesRouteChildren {
+  ApiImagesIdRoute: typeof ApiImagesIdRoute
+}
+
+const ApiImagesRouteChildren: ApiImagesRouteChildren = {
+  ApiImagesIdRoute: ApiImagesIdRoute,
+}
+
+const ApiImagesRouteWithChildren = ApiImagesRoute._addFileChildren(
+  ApiImagesRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   Dash2Route: Dash2Route,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
   TestRoute: TestRoute,
   TestcopyRoute: TestcopyRoute,
   ApiHealthRoute: ApiHealthRoute,
+  ApiImagesRoute: ApiImagesRouteWithChildren,
+  ApiSeedRoute: ApiSeedRoute,
+  ApiUploadRoute: ApiUploadRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

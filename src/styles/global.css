@@ -9,6 +9,16 @@
   --color-text: #1f2937;
   --color-text-muted: #6b7280;
   --color-border: #e5e7eb;
+
+  /* Dashboard dark theme tokens */
+  --color-alt-bg: #04080b;
+  --color-section-bg: #0a0d12;
+  --color-nav-active: #0e1116;
+  --color-red-accent: #e10908;
+  --color-text-muted-soft: #AAAAAA;
+  --color-text-dim: #888888;
+  --color-text-dark: #666666;
+  --color-border-subtle: #333333;
 }
 
 /* Dark mode variables */

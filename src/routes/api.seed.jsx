@@ -1,0 +1,87 @@
+import { createFileRoute } from '@tanstack/react-router'
+import { json } from '@tanstack/react-start'
+import { connectToDatabase } from '../lib/db'
+import { isSeedAllowed, guardMessage } from '../lib/env-guard'
+
+export const Route = createFileRoute('/api/seed')({
+  server: {
+    handlers: {
+      GET: async () => {
+        try {
+          if (!isSeedAllowed()) {
+            return json(guardMessage('Database seeding'))
+          }
+
+          const { db } = await connectToDatabase()
+
+          // Check if seed data already exists
+          const existing = await db.collection('profiles').findOne({ userId: 'user_001' })
+          if (existing) {
+            return json({
+              success: true,
+              message: 'Dashboard seed data already exists',
+              seeded: false,
+            })
+          }
+
+          // Seed profiles
+          await db.collection('profiles').insertOne({
+            userId: 'user_001',
+            username: 'Gearhead_23',
+            handle: '@gearhead_23',
+            bio: 'Cars are my passion. Speed is my therapy. Built not bought.',
+            avatarUrl: '/uploads/user_001/avatar.jpg',
+            location: 'Los Angeles, CA',
+            joinedAt: 'May 2022',
+            socialLinks: ['Instagram', 'YouTube', 'TikTok'],
+            aboutMe: 'Car enthusiast since day one. I live for weekend drives, track days, and late night builds. JDM at heart. Always chasing the next build.',
+            favoriteBrand: 'Nissan',
+            dreamCar: 'Nissan GT-R R34',
+            occupation: 'Automotive Photographer',
+            driveStyle: 'Performance & Style',
+            stats: {
+              totalPoints: 2400,
+              badges: 47,
+              carsInGarage: 12,
+              followers: 1800,
+              following: 320,
+            },
+            createdAt: new Date(),
+          })
+
+          // Seed vehicles
+          await db.collection('vehicles').insertMany([
+            { userId: 'user_001', name: 'Nissan GT-R R34', year: 2000, hp: 600, drivetrain: 'AWD' },
+            { userId: 'user_001', name: 'Toyota Supra MK4', year: 1998, hp: 320, drivetrain: 'RWD' },
+            { userId: 'user_001', name: 'Honda Civic Type R', year: 2021, hp: 306, drivetrain: 'FWD' },
+            { userId: 'user_001', name: 'Mazda RX-7 FD', year: 1995, hp: 276, drivetrain: 'RWD' },
+          ])
+
+          // Seed activities
+          await db.collection('activities').insertOne({
+            userId: 'user_001',
+            type: 'photo',
+            action: 'Posted a new photo',
+            description: 'Nissan GT-R R34 at Angeles Crest Hwy',
+            imageUrl: '/uploads/user_001/photos/nissan-gtr-angle-crest.jpg',
+            timestamp: new Date(Date.now() - 2 * 3_600_000), // 2 hours ago
+            likes: 128,
+            comments: 16,
+          })
+
+          return json({
+            success: true,
+            message: 'Dashboard seed data inserted successfully',
+            seeded: true,
+          })
+        } catch (error) {
+          return json({
+            success: false,
+            message: `Seed failed: ${error.message}`,
+            seeded: false,
+          })
+        }
+      },
+    },
+  },
+})
