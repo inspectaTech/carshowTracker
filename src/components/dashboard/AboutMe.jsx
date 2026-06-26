@@ -2,7 +2,7 @@ import { Star, Car, Camera, Flag } from 'lucide-react'
 
 export function InfoItem({ icon: Icon, label, value }) {
   return (
-    <div className="flex items-center gap-2.5 w-full">
+    <div data-component="InfoItem" className="flex items-center gap-2.5 w-full">
       <div className="text-white shrink-0">
         <Icon size={20} strokeWidth={1.5} />
       </div>
@@ -25,7 +25,7 @@ export default function AboutMe({ profile }) {
   ]
 
   return (
-    <div className="bg-[#0a0d12] rounded-xl p-4 w-[243px] h-full flex flex-col gap-2.5">
+    <div data-component="AboutMe" className="bg-[#0a0d12] rounded-xl p-4 w-full lg:w-[243px] h-full flex flex-col gap-2.5">
       {/* Title */}
       <h3 className="text-white text-[20px] font-normal">About Me</h3>
       <div className="w-11 h-0.5 bg-[#e10908] mb-1" />

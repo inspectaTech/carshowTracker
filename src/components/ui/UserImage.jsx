@@ -36,6 +36,7 @@ export default function UserImage({
   if (!src || hasError) {
     return (
       <div
+        data-component="UserImage"
         className={`${className} ${rounded ? 'rounded-full' : 'rounded-lg'}`}
         style={{
           width: width || '100%',
@@ -55,6 +56,7 @@ export default function UserImage({
 
   return (
     <img
+      data-component="UserImage"
       src={src}
       alt={alt}
       loading="lazy"

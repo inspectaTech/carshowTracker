@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from '@tanstack/react-router'
 import {
   LayoutDashboard, Search, Car, Users, Calendar, Newspaper,
-  ShoppingCart, Shirt, Settings, LogOut, User, Shield,
+  ShoppingCart, Shirt, Settings, LogOut, User, Shield, ChevronRight, X,
 } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import UserImage from '../ui/UserImage'
 
 const navItems = [
@@ -26,6 +27,7 @@ const bottomItems = [
 export function NavItem({ icon: Icon, label, active, onClick }) {
   return (
     <button
+      data-component="NavItem"
       onClick={onClick}
       className={`
         flex items-center gap-3 w-full h-11 px-6 text-left transition-colors
@@ -43,7 +45,7 @@ export function NavItem({ icon: Icon, label, active, onClick }) {
 
 export function MiniProfile({ profile }) {
   return (
-    <div className="flex items-center gap-3 px-6 py-3 bg-[#0e1116] w-full">
+    <div data-component="MiniProfile" className="flex items-center gap-3 px-6 py-3 bg-[#0e1116] w-full">
       <UserImage
         src={profile?.avatarUrl}
         userId={profile?.userId || 'user_001'}
@@ -65,19 +67,21 @@ export function MiniProfile({ profile }) {
   )
 }
 
-export default function Sidebar({ profile, activeNav = 'dashboard', onNavClick, dataSourceInfo }) {
-  const handleNavClick = (id) => {
-    if (onNavClick) onNavClick(id)
-  }
-
+function SidebarLogo() {
   return (
-    <aside className="w-[250px] min-h-screen bg-[#04080b] border-r border-[#333333] flex flex-col shrink-0">
-      {/* Logo */}
-      <div className="px-4 pt-3 pb-0">
-        <div className="w-full h-[101px] bg-[#1a1a2e] rounded-lg flex items-center justify-center">
-          <span className="text-white/60 text-sm">Car Show</span>
-        </div>
+    <div data-component="SidebarLogo" className="px-4 py-3">
+      <div className="w-full h-[101px] bg-[#1a1a2e] rounded-lg flex items-center justify-center">
+        <span className="text-white/60 text-sm">Car Show</span>
       </div>
+    </div>
+  )
+}
+
+function SidebarContent({ profile, activeNav, onNavClick, dataSourceInfo }) {
+  return (
+    <>
+      {/* Logo */}
+      <SidebarLogo />
 
       <div className="h-[5px]" />
 
@@ -89,7 +93,7 @@ export default function Sidebar({ profile, activeNav = 'dashboard', onNavClick, 
             icon={item.icon}
             label={item.label}
             active={item.id === activeNav}
-            onClick={() => handleNavClick(item.id)}
+            onClick={() => onNavClick && onNavClick(item.id)}
           />
         ))}
       </nav>
@@ -108,7 +112,7 @@ export default function Sidebar({ profile, activeNav = 'dashboard', onNavClick, 
             icon={item.icon}
             label={item.label}
             active={false}
-            onClick={() => handleNavClick(item.id)}
+            onClick={() => onNavClick && onNavClick(item.id)}
           />
         ))}
         {/* Data source badge */}
@@ -125,6 +129,90 @@ export default function Sidebar({ profile, activeNav = 'dashboard', onNavClick, 
           </div>
         </div>
       </nav>
-    </aside>
+    </>
+  )
+}
+
+export default function Sidebar({ profile, activeNav = 'dashboard', onNavClick, dataSourceInfo }) {
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  const handleNavClick = (id) => {
+    if (onNavClick) onNavClick(id)
+    setMobileOpen(false)
+  }
+
+  // Lock body scroll when mobile drawer is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [mobileOpen])
+
+  return (
+    <>
+      {/* Desktop sidebar — always visible */}
+      <aside data-component="Sidebar" className="hidden lg:flex w-[250px] min-h-screen bg-[#04080b] border-r border-[#333333] flex-col shrink-0">
+        <SidebarContent
+          profile={profile}
+          activeNav={activeNav}
+          onNavClick={handleNavClick}
+          dataSourceInfo={dataSourceInfo}
+        />
+      </aside>
+
+      {/* Mobile sidebar trigger — floating button */}
+      <button
+        className="lg:hidden fixed top-4 left-4 z-50 bg-[#04080b] border border-[#333333] rounded-lg p-2 text-white hover:text-[#e10908] transition-colors shadow-lg"
+        onClick={() => setMobileOpen(true)}
+        aria-label="Open sidebar"
+      >
+        <ChevronRight size={24} />
+      </button>
+
+      {/* Mobile sidebar overlay */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 lg:hidden"
+              onClick={() => setMobileOpen(false)}
+            />
+            <motion.aside
+              data-component="Sidebar"
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="fixed top-0 left-0 h-full w-[280px] bg-[#04080b] border-r border-[#333333] flex flex-col z-50 lg:hidden shadow-2xl [overscroll-behavior:contain]"
+            >
+              {/* Close button */}
+              <div className="flex items-center justify-end px-4 pt-4 pb-0">
+                <button
+                  className="text-[#AAAAAA] hover:text-white transition-colors"
+                  onClick={() => setMobileOpen(false)}
+                  aria-label="Close sidebar"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+              <SidebarContent
+                profile={profile}
+                activeNav={activeNav}
+                onNavClick={handleNavClick}
+                dataSourceInfo={dataSourceInfo}
+              />
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   )
 }

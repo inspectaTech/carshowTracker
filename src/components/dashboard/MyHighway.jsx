@@ -5,7 +5,7 @@ export function ActivityItem({ activity }) {
   if (!activity) return null
 
   return (
-    <div className="flex items-center gap-3 px-5 flex-1">
+    <div data-component="ActivityItem" className="flex items-center gap-3 px-5 flex-1 w-full max-w-full overflow-hidden">
       {/* Photo */}
       <UserImage
         src={activity.imageUrl}
@@ -41,7 +41,7 @@ export function ActivityItem({ activity }) {
 
 export default function MyHighway({ activities }) {
   return (
-    <div className="bg-[#0a0d12] rounded-xl w-full h-full flex flex-col">
+    <div data-component="MyHighway" className="bg-[#0a0d12] rounded-xl w-full h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-3">
         <h3 className="text-white text-[20px] font-normal">My Highway</h3>
@@ -51,7 +51,7 @@ export default function MyHighway({ activities }) {
       <div className="w-full h-px bg-[#333333]" />
 
       {/* Activity content */}
-      <div className="flex-1 flex items-center">
+      <div className="flex-1 flex items-center py-3">
         {activities?.length > 0 ? (
           <ActivityItem activity={activities[0]} />
         ) : (

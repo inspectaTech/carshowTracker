@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
 import Sidebar from '#/components/dashboard/Sidebar'
-import TopSection from '#/components/dashboard/TopSection'
+import TopSection, { TopActions } from '#/components/dashboard/TopSection'
 import AboutMe from '#/components/dashboard/AboutMe'
 import MyGarage from '#/components/dashboard/MyGarage'
 import MyHighway from '#/components/dashboard/MyHighway'
@@ -76,14 +76,15 @@ function DashboardPage() {
     <div className="min-h-screen bg-[#04080b] flex">
       <Sidebar profile={profile} activeNav="dashboard" dataSourceInfo={dataSourceInfo} />
 
-      <main className="flex-1 flex flex-col gap-4 p-5 overflow-y-auto">
+      <main className="flex-1 flex flex-col gap-4 p-5 pt-16 lg:pt-5 overflow-y-auto relative">
+        <TopActions />
         <TopSection profile={profile} />
 
-        <div className="flex gap-2.5 flex-1 min-h-0">
+        <div className="flex flex-col lg:flex-row gap-2.5 flex-1 min-h-0">
           <AboutMe profile={profile} />
 
           <div className="flex flex-col gap-2.5 flex-1">
-            <div className="h-[201px]">
+            <div className="lg:h-[201px]">
               <MyGarage vehicles={vehicles} />
             </div>
             <div className="flex-1">

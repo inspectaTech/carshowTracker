@@ -11,7 +11,11 @@ if (!global._mongoClientPromise) {
   client = new MongoClient(MONGODB_URI, {
     maxPoolSize: 10,
   })
-  global._mongoClientPromise = client.connect()
+  // Catch the rejection so it doesn't crash the process when MongoDB isn't running
+  global._mongoClientPromise = client.connect().catch((err) => {
+    console.warn('[DB] MongoDB not available:', err.message)
+    return null
+  })
 }
 clientPromise = global._mongoClientPromise
 
@@ -35,6 +39,7 @@ export async function connectToDatabase() {
   console.log('[C2DB] attempting to connect to db', DB_NAME);
   try {
     const client = await clientPromise
+    if (!client) throw new Error('MongoDB client not available')
     const db = client.db(DB_NAME)
     console.log('db is', db);
     return { client, db }
