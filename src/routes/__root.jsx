@@ -40,9 +40,9 @@ function RootDocument({ children }) {
     setShowDevtools(true)
   }, [])
 
-  // The dashboard has its own sidebar + icon-mode hamburger, so we hide the root Header and Footer there.
+  // Dashboard, Garage, and other app pages have their own sidebar, so we hide the root Header and Footer there.
   const location = useLocation()
-  const isDashboard = location.pathname === '/dashboard'
+  const hideRootShell = ['/dashboard', '/garage', '/explore', '/settings', '/community', '/my-events', '/admin'].includes(location.pathname)
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -54,11 +54,11 @@ function RootDocument({ children }) {
         className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]"
         suppressHydrationWarning
       >
-        {!isDashboard && <Header />}
+        {!hideRootShell && <Header />}
         <main className="min-h-screen">
           {children}
         </main>
-        {!isDashboard && <Footer />}
+        {!hideRootShell && <Footer />}
         {showDevtools && (
           <TanStackDevtools
             config={{
