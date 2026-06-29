@@ -39,13 +39,18 @@ export function ActivityItem({ activity }) {
   )
 }
 
-export default function MyHighway({ activities }) {
+export default function MyHighway({ activities, onUpload }) {
   return (
     <div data-component="MyHighway" className="bg-[#0a0d12] rounded-xl w-full h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-3">
         <h3 className="text-white text-[20px] font-normal">My Highway</h3>
-        <span className="text-[#e10908] text-[20px] cursor-pointer hover:underline">View All</span>
+        <div className="flex items-center gap-3">
+          <button data-part="upload-btn" onClick={onUpload} className="text-[#888888] text-[14px] hover:text-white transition-colors cursor-pointer">
+            + Upload
+          </button>
+          <span className="text-[#e10908] text-[20px] cursor-pointer hover:underline">View All</span>
+        </div>
       </div>
 
       <div className="w-full h-px bg-[#333333]" />

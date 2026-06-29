@@ -85,9 +85,9 @@ export function AdImage() {
   )
 }
 
-export function EditProfileButton() {
+export function EditProfileButton({ onClick }) {
   return (
-    <div data-component="EditProfileButton" className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-[#0a0d12] border border-[#333333] rounded-md px-3 py-2 cursor-pointer hover:bg-[#0e1116] transition-colors">
+    <div data-component="EditProfileButton" onClick={onClick} className="absolute bottom-3 right-3 flex items-center gap-1.5 bg-[#0a0d12] border border-[#333333] rounded-md px-3 py-2 cursor-pointer hover:bg-[#0e1116] transition-colors">
       <svg className="text-white" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
         <path d="m15 5 4 4" />
@@ -117,7 +117,7 @@ export function TopActions() {
   )
 }
 
-export default function TopSection({ profile }) {
+export default function TopSection({ profile, onEditProfile }) {
   return (
     <div data-component="TopSection" className="flex flex-col gap-2.5 w-full">
       {/* Top Row - Profile + Ad + overlays */}
@@ -127,7 +127,7 @@ export default function TopSection({ profile }) {
         <div className="w-full lg:flex-1 relative min-h-[240px] lg:h-full">
           <AdImage />
 
-          <EditProfileButton />
+          <EditProfileButton onClick={onEditProfile} />
         </div>
       </div>
 

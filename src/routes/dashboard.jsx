@@ -5,6 +5,8 @@ import TopSection, { TopActions } from '#/components/dashboard/TopSection'
 import AboutMe from '#/components/dashboard/AboutMe'
 import MyGarage from '#/components/dashboard/MyGarage'
 import MyHighway from '#/components/dashboard/MyHighway'
+import EditProfileModal from '#/components/dashboard/EditProfileModal'
+import UploadPhotoModal from '#/components/dashboard/UploadPhotoModal'
 import { getDashboardData, getDataSourceStatus } from '#/server/db-actions'
 
 export const Route = createFileRoute('/dashboard')({ component: DashboardPage })
@@ -14,6 +16,8 @@ function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [dataSourceInfo, setDataSourceInfo] = useState({ source: '', dbAvailable: false })
+  const [showEditProfile, setShowEditProfile] = useState(false)
+  const [showUpload, setShowUpload] = useState(false)
 
   useEffect(() => {
     async function loadData() {
@@ -78,7 +82,7 @@ function DashboardPage() {
 
       <main className="flex-1 flex flex-col gap-4 p-5 pt-16 lg:pt-5 overflow-y-auto relative">
         <TopActions />
-        <TopSection profile={profile} />
+        <TopSection profile={profile} onEditProfile={() => setShowEditProfile(true)} />
 
         <div className="flex flex-col lg:flex-row gap-2.5 flex-1 min-h-0">
           <AboutMe profile={profile} />
@@ -88,10 +92,21 @@ function DashboardPage() {
               <MyGarage vehicles={vehicles} />
             </div>
             <div className="flex-1">
-              <MyHighway activities={activities} />
+              <MyHighway activities={activities} onUpload={() => setShowUpload(true)} />
             </div>
           </div>
         </div>
+
+        <EditProfileModal
+          isOpen={showEditProfile}
+          onClose={() => setShowEditProfile(false)}
+          profile={profile}
+          onUploadPhoto={() => { setShowEditProfile(false); setShowUpload(true) }}
+        />
+        <UploadPhotoModal
+          isOpen={showUpload}
+          onClose={() => setShowUpload(false)}
+        />
       </main>
     </div>
   )

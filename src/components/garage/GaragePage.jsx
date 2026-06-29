@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import Sidebar from '#/components/dashboard/Sidebar'
 import { getDashboardData } from '#/server/db-actions'
-import { Link } from '@tanstack/react-router'
 import { Plus, Search, Car } from 'lucide-react'
+import AddCarModal from './AddCarModal'
+import UploadPhotoModal from '#/components/dashboard/UploadPhotoModal'
 
 const MOCK_VEHICLES = [
   { id: '1', name: 'Nissan GT-R R34', year: 2000, hp: 600, drivetrain: 'AWD', tags: ['JDM', 'Track Ready'] },
@@ -32,7 +33,7 @@ function CarCard({ car }) {
           {car.year} &bull; {car.hp} HP &bull; {car.drivetrain}
         </p>
         <div data-part="car-tags" className="flex gap-1.5 flex-wrap">
-          {car.tags.map((tag) => (
+          {(car.tags || []).map((tag) => (
             <span
               key={tag}
               className="px-2 py-0.5 bg-[#1a1d22] text-[#e10908] text-[11px] rounded"
@@ -51,6 +52,9 @@ export default function GaragePage() {
   const [vehicles, setVehicles] = useState(MOCK_VEHICLES)
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [showAddCar, setShowAddCar] = useState(false)
+  const [editCar, setEditCar] = useState(null)
+  const [showUpload, setShowUpload] = useState(false)
 
   useEffect(() => {
     async function loadData() {
@@ -58,7 +62,13 @@ export default function GaragePage() {
         const result = await getDashboardData({ data: { userId: 'user_001' } })
         setProfile(result.profile)
         if (result.vehicles && result.vehicles.length > 0) {
-          setVehicles(result.vehicles)
+          // Normalize MongoDB vehicles: add _id as id, ensure tags array
+          const normalized = result.vehicles.map((v) => ({
+            ...v,
+            id: v._id || v.id,
+            tags: v.tags || [],
+          }))
+          setVehicles(normalized)
         }
       } catch (err) {
         console.error('[Garage] Failed to load data:', err)
@@ -99,6 +109,7 @@ export default function GaragePage() {
           </div>
           <button
             data-part="add-car-btn"
+            onClick={() => { setEditCar(null); setShowAddCar(true) }}
             className="flex items-center gap-2 px-4 sm:px-5 py-2.5 bg-[#e10908] hover:bg-[#c00807] text-white text-[14px] sm:text-[15px] font-medium rounded-lg transition-colors shrink-0"
           >
             <Plus className="h-4 w-4" />
@@ -157,12 +168,29 @@ export default function GaragePage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
               {filteredVehicles.map((car) => (
-                <CarCard key={car.id} car={car} />
+                <CarCard key={car.id || car._id || car.name} car={car} />
               ))}
             </div>
           )}
         </div>
       </main>
-    </div>
+
+      <AddCarModal
+        isOpen={showAddCar}
+        onClose={() => setShowAddCar(false)}
+        editCar={editCar}
+        onSave={(car) => {
+          if (editCar) {
+            setVehicles((prev) => prev.map((v) => v.id === editCar.id ? { ...v, ...car, id: v.id, name: `${car.make} ${car.model}` } : v))
+          } else {
+            const newCar = { ...car, id: Date.now().toString(), name: `${car.make} ${car.model}`, tags: [] }
+            setVehicles((prev) => [newCar, ...prev])
+          }
+        }}
+      />
+      <UploadPhotoModal
+        isOpen={showUpload}
+        onClose={() => setShowUpload(false)}
+      />    </div>
   )
 }

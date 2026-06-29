@@ -11,7 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestcopyRouteImport } from './routes/test copy'
 import { Route as TestRouteImport } from './routes/test'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as GarageRouteImport } from './routes/garage'
+import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as Dash2RouteImport } from './routes/dash2'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -32,9 +35,24 @@ const TestRoute = TestRouteImport.update({
   path: '/test',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GarageRoute = GarageRouteImport.update({
+  id: '/garage',
+  path: '/garage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreRoute = ExploreRouteImport.update({
+  id: '/explore',
+  path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -88,7 +106,10 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/dash2': typeof Dash2Route
   '/dashboard': typeof DashboardRoute
+  '/explore': typeof ExploreRoute
+  '/garage': typeof GarageRoute
   '/login': typeof LoginRoute
+  '/settings': typeof SettingsRoute
   '/test': typeof TestRoute
   '/test copy': typeof TestcopyRoute
   '/api/health': typeof ApiHealthRoute
@@ -102,7 +123,10 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/dash2': typeof Dash2Route
   '/dashboard': typeof DashboardRoute
+  '/explore': typeof ExploreRoute
+  '/garage': typeof GarageRoute
   '/login': typeof LoginRoute
+  '/settings': typeof SettingsRoute
   '/test': typeof TestRoute
   '/test copy': typeof TestcopyRoute
   '/api/health': typeof ApiHealthRoute
@@ -117,7 +141,10 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/dash2': typeof Dash2Route
   '/dashboard': typeof DashboardRoute
+  '/explore': typeof ExploreRoute
+  '/garage': typeof GarageRoute
   '/login': typeof LoginRoute
+  '/settings': typeof SettingsRoute
   '/test': typeof TestRoute
   '/test copy': typeof TestcopyRoute
   '/api/health': typeof ApiHealthRoute
@@ -133,7 +160,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/dash2'
     | '/dashboard'
+    | '/explore'
+    | '/garage'
     | '/login'
+    | '/settings'
     | '/test'
     | '/test copy'
     | '/api/health'
@@ -147,7 +177,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/dash2'
     | '/dashboard'
+    | '/explore'
+    | '/garage'
     | '/login'
+    | '/settings'
     | '/test'
     | '/test copy'
     | '/api/health'
@@ -161,7 +194,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/dash2'
     | '/dashboard'
+    | '/explore'
+    | '/garage'
     | '/login'
+    | '/settings'
     | '/test'
     | '/test copy'
     | '/api/health'
@@ -176,7 +212,10 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   Dash2Route: typeof Dash2Route
   DashboardRoute: typeof DashboardRoute
+  ExploreRoute: typeof ExploreRoute
+  GarageRoute: typeof GarageRoute
   LoginRoute: typeof LoginRoute
+  SettingsRoute: typeof SettingsRoute
   TestRoute: typeof TestRoute
   TestcopyRoute: typeof TestcopyRoute
   ApiHealthRoute: typeof ApiHealthRoute
@@ -201,11 +240,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TestRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/garage': {
+      id: '/garage'
+      path: '/garage'
+      fullPath: '/garage'
+      preLoaderRoute: typeof GarageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore': {
+      id: '/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof ExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -291,7 +351,10 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   Dash2Route: Dash2Route,
   DashboardRoute: DashboardRoute,
+  ExploreRoute: ExploreRoute,
+  GarageRoute: GarageRoute,
   LoginRoute: LoginRoute,
+  SettingsRoute: SettingsRoute,
   TestRoute: TestRoute,
   TestcopyRoute: TestcopyRoute,
   ApiHealthRoute: ApiHealthRoute,

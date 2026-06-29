@@ -2049,8 +2049,8 @@
     {
       "type": "frame",
       "id": "loginRoot",
-      "x": 1566,
-      "y": 0,
+      "x": 1568,
+      "y": 17,
       "name": "Login",
       "clip": true,
       "width": 1440,
@@ -4167,6 +4167,7 @@
                     14
                   ],
                   "justifyContent": "center",
+                  "alignItems": "center",
                   "children": [
                     {
                       "type": "text",
@@ -4243,6 +4244,7 @@
                     14
                   ],
                   "justifyContent": "center",
+                  "alignItems": "center",
                   "children": [
                     {
                       "type": "text",
@@ -4796,6 +4798,7 @@
                         14
                       ],
                       "justifyContent": "center",
+                      "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
