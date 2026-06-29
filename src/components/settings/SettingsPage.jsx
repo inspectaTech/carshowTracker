@@ -1,0 +1,233 @@
+import { useState, useEffect } from 'react'
+import Sidebar from '#/components/dashboard/Sidebar'
+import { getDashboardData } from '#/server/db-actions'
+import { Settings as SettingsIcon, User, Bell, Lock, MapPin, Palette, Link as LinkIcon } from 'lucide-react'
+
+const SETTINGS_NAV = [
+  { id: 'profile', label: 'Profile', icon: User },
+  { id: 'notifications', label: 'Notifications', icon: Bell },
+  { id: 'privacy', label: 'Privacy', icon: Lock },
+  { id: 'home-location', label: 'Home Location', icon: MapPin },
+  { id: 'theme', label: 'Theme', icon: Palette },
+  { id: 'connected', label: 'Connected Accounts', icon: LinkIcon },
+]
+
+export default function SettingsPage() {
+  const [profile, setProfile] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [activeSection, setActiveSection] = useState('profile')
+  const [darkMode, setDarkMode] = useState(true)
+  const [notifications, setNotifications] = useState({
+    events: true,
+    followers: false,
+    updates: true,
+  })
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const result = await getDashboardData({ data: { userId: 'user_001' } })
+        setProfile(result.profile)
+      } catch (err) {
+        console.error('[Settings] Failed to load data:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadData()
+  }, [])
+
+  const Toggle = ({ enabled, onChange }) => (
+    <button
+      type="button"
+      data-part="toggle"
+      onClick={() => onChange(!enabled)}
+      className={`relative w-[44px] h-[24px] rounded-full transition-colors ${
+        enabled ? 'bg-[#e10908]' : 'bg-[#333333]'
+      }`}
+    >
+      <span
+        className={`absolute top-[3px] w-[18px] h-[18px] rounded-full bg-white transition-transform ${
+          enabled ? 'left-[23px]' : 'left-[3px]'
+        }`}
+      />
+    </button>
+  )
+
+  return (
+    <div data-component="settings-page" className="min-h-screen bg-[#04080b] flex flex-col lg:flex-row">
+      <Sidebar profile={profile} activeNav="settings" />
+
+      <main
+        data-part="main-content"
+        className="flex-1 flex flex-col min-h-screen lg:min-h-0 overflow-y-auto"
+      >
+        {/* Header */}
+        <header
+          data-part="page-header"
+          className="bg-[#0a0d12] px-4 sm:px-8 py-4 sm:py-5 flex items-center gap-3 shrink-0"
+        >
+          <SettingsIcon className="h-6 w-6 sm:h-7 sm:w-7 text-[#e10908]" />
+          <h1 className="text-white text-[22px] sm:text-[28px] font-medium">
+            Settings
+          </h1>
+        </header>
+
+        {/* Content */}
+        <div data-part="content" className="flex-1 flex flex-col lg:flex-row overflow-hidden">
+          {/* Left sidebar nav */}
+          <nav
+            data-part="settings-nav"
+            className="w-full lg:w-[240px] bg-[#0a0d12] border-b lg:border-b-0 lg:border-r border-[#1a1d22] shrink-0 overflow-y-auto"
+          >
+            {SETTINGS_NAV.map((item) => {
+              const Icon = item.icon
+              return (
+                <button
+                  key={item.id}
+                  data-part={`nav-${item.id}`}
+                  onClick={() => setActiveSection(item.id)}
+                  className={`w-full flex items-center gap-3 px-5 py-3 text-left transition-colors ${
+                    activeSection === item.id
+                      ? 'bg-[#0e1116] text-white border-l-[3px] border-[#e10908]'
+                      : 'text-[#888888] hover:text-white hover:bg-[#0e1116]/50 border-l-[3px] border-transparent'
+                  }`}
+                >
+                  <Icon size={18} strokeWidth={1.5} />
+                  <span className="text-[15px]">{item.label}</span>
+                </button>
+              )
+            })}
+          </nav>
+
+          {/* Right panel */}
+          <div
+            data-part="settings-panel"
+            className="flex-1 p-4 sm:p-8 overflow-y-auto"
+          >
+            {loading ? (
+              <div className="flex items-center justify-center h-64">
+                <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#e10908] border-t-transparent" />
+              </div>
+            ) : (
+              <div className="max-w-2xl space-y-6">
+                {activeSection === 'profile' && (
+                  <>
+                    <h2 className="text-white text-[22px] font-medium mb-6">Profile Settings</h2>
+
+                    {/* Dark Mode */}
+                    <div className="bg-[#0a0d12] rounded-xl p-4 sm:p-5 flex items-center gap-3">
+                      <Palette className="h-5 w-5 text-[#888888] shrink-0" />
+                      <span className="text-white text-[15px] flex-1">Dark Mode</span>
+                      <Toggle enabled={darkMode} onChange={setDarkMode} />
+                    </div>
+
+                    {/* Home Location */}
+                    <div className="bg-[#0a0d12] rounded-xl p-4 sm:p-5">
+                      <div className="flex items-center gap-3">
+                        <MapPin className="h-5 w-5 text-[#888888] shrink-0" />
+                        <span className="text-white text-[15px] flex-1">Home Location</span>
+                        <span className="text-white text-[14px] bg-[#04080b] rounded-lg px-3 py-2">
+                          {profile?.location || 'Los Angeles, CA'}
+                        </span>
+                        <button
+                          data-part="change-location-btn"
+                          className="text-[#888888] text-[13px] bg-[#04080b] border border-[#333333] rounded-lg px-3 py-2 hover:text-white transition-colors"
+                        >
+                          Change
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {activeSection === 'notifications' && (
+                  <>
+                    <h2 className="text-white text-[22px] font-medium mb-6">Notification Preferences</h2>
+
+                    <div className="bg-[#0a0d12] rounded-xl p-4 sm:p-5 flex items-center gap-3">
+                      <Bell className="h-5 w-5 text-[#888888] shrink-0" />
+                      <span className="text-white text-[15px] flex-1">Event reminders</span>
+                      <Toggle
+                        enabled={notifications.events}
+                        onChange={(v) => setNotifications({ ...notifications, events: v })}
+                      />
+                    </div>
+
+                    <div className="bg-[#0a0d12] rounded-xl p-4 sm:p-5 flex items-center gap-3">
+                      <Bell className="h-5 w-5 text-[#888888] shrink-0" />
+                      <span className="text-white text-[15px] flex-1">New followers</span>
+                      <Toggle
+                        enabled={notifications.followers}
+                        onChange={(v) => setNotifications({ ...notifications, followers: v })}
+                      />
+                    </div>
+
+                    <div className="bg-[#0a0d12] rounded-xl p-4 sm:p-5 flex items-center gap-3">
+                      <Bell className="h-5 w-5 text-[#888888] shrink-0" />
+                      <span className="text-white text-[15px] flex-1">Car show updates</span>
+                      <Toggle
+                        enabled={notifications.updates}
+                        onChange={(v) => setNotifications({ ...notifications, updates: v })}
+                      />
+                    </div>
+                  </>
+                )}
+
+                {activeSection === 'privacy' && (
+                  <>
+                    <h2 className="text-white text-[22px] font-medium mb-6">Privacy</h2>
+                    <div className="bg-[#0a0d12] rounded-xl p-6 text-center">
+                      <Lock className="h-10 w-10 text-[#333333] mx-auto mb-3" />
+                      <p className="text-[#888888] text-[15px]">Privacy settings coming soon</p>
+                    </div>
+                  </>
+                )}
+
+                {activeSection === 'home-location' && (
+                  <>
+                    <h2 className="text-white text-[22px] font-medium mb-6">Home Location</h2>
+                    <div className="bg-[#0a0d12] rounded-xl p-6">
+                      <p className="text-[#888888] text-[15px] mb-4">Your current home location is used to find events near you.</p>
+                      <div className="flex items-center gap-3">
+                        <MapPin className="h-5 w-5 text-[#e10908]" />
+                        <span className="text-white text-[16px]">{profile?.location || 'Los Angeles, CA'}</span>
+                      </div>
+                      <button
+                        data-part="update-location-btn"
+                        className="mt-4 px-4 py-2 bg-[#e10908] text-white text-[14px] rounded-lg hover:bg-[#c00807] transition-colors"
+                      >
+                        Update Location
+                      </button>
+                    </div>
+                  </>
+                )}
+
+                {activeSection === 'theme' && (
+                  <>
+                    <h2 className="text-white text-[22px] font-medium mb-6">Theme</h2>
+                    <div className="bg-[#0a0d12] rounded-xl p-4 sm:p-5 flex items-center gap-3">
+                      <Palette className="h-5 w-5 text-[#888888] shrink-0" />
+                      <span className="text-white text-[15px] flex-1">Dark Mode</span>
+                      <Toggle enabled={darkMode} onChange={setDarkMode} />
+                    </div>
+                  </>
+                )}
+
+                {activeSection === 'connected' && (
+                  <>
+                    <h2 className="text-white text-[22px] font-medium mb-6">Connected Accounts</h2>
+                    <div className="bg-[#0a0d12] rounded-xl p-6 text-center">
+                      <LinkIcon className="h-10 w-10 text-[#333333] mx-auto mb-3" />
+                      <p className="text-[#888888] text-[15px]">Account connections coming soon</p>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}
