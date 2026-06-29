@@ -1,11 +1,25 @@
 import { useState, useEffect } from 'react'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import {
   LayoutDashboard, Search, Car, Users, Calendar, Newspaper,
   ShoppingCart, Shirt, Settings, LogOut, User, Shield, ChevronRight, X,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import UserImage from '../ui/UserImage'
+
+// Route map: nav item ID -> URL path
+const routeMap = {
+  dashboard: '/dashboard',
+  explore: '/explore',
+  garage: '/garage',
+  community: '/community',
+  'my-events': '/my-events',
+  news: '/news',
+  'pit-shop': '/pit-shop',
+  merch: '/merch',
+  admin: '/admin',
+  settings: '/settings',
+}
 
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -24,18 +38,31 @@ const bottomItems = [
   { id: 'logout', label: 'Logout', icon: LogOut },
 ]
 
-export function NavItem({ icon: Icon, label, active, onClick }) {
+export function NavItem({ icon: Icon, label, active, onClick, to }) {
+  const baseClass = `flex items-center gap-3 w-full h-11 px-6 text-left transition-colors ${
+    active
+      ? 'bg-[#0e1116] border-l-[3px] border-[#e10908] text-white'
+      : 'bg-transparent border-l-[3px] border-transparent text-[#AAAAAA] hover:text-white hover:bg-[#0e1116]/50'
+  }`
+
+  if (to) {
+    return (
+      <Link
+        to={to}
+        data-component="NavItem"
+        className={baseClass}
+      >
+        <Icon size={20} strokeWidth={1.5} />
+        <span className="text-[16px] font-normal">{label}</span>
+      </Link>
+    )
+  }
+
   return (
     <button
       data-component="NavItem"
       onClick={onClick}
-      className={`
-        flex items-center gap-3 w-full h-11 px-6 text-left transition-colors
-        ${active
-          ? 'bg-[#0e1116] border-l-[3px] border-[#e10908] text-white'
-          : 'bg-transparent border-l-[3px] border-transparent text-[#AAAAAA] hover:text-white hover:bg-[#0e1116]/50'
-        }
-      `}
+      className={baseClass}
     >
       <Icon size={20} strokeWidth={1.5} />
       <span className="text-[16px] font-normal">{label}</span>
@@ -93,6 +120,7 @@ function SidebarContent({ profile, activeNav, onNavClick, dataSourceInfo }) {
             icon={item.icon}
             label={item.label}
             active={item.id === activeNav}
+            to={routeMap[item.id]}
             onClick={() => onNavClick && onNavClick(item.id)}
           />
         ))}
@@ -112,6 +140,7 @@ function SidebarContent({ profile, activeNav, onNavClick, dataSourceInfo }) {
             icon={item.icon}
             label={item.label}
             active={false}
+            to={routeMap[item.id]}
             onClick={() => onNavClick && onNavClick(item.id)}
           />
         ))}
@@ -135,9 +164,15 @@ function SidebarContent({ profile, activeNav, onNavClick, dataSourceInfo }) {
 
 export default function Sidebar({ profile, activeNav = 'dashboard', onNavClick, dataSourceInfo }) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const navigate = useNavigate()
 
   const handleNavClick = (id) => {
     if (onNavClick) onNavClick(id)
+    // Navigate to route if it exists in the map
+    const route = routeMap[id]
+    if (route) {
+      navigate({ to: route })
+    }
     setMobileOpen(false)
   }
 

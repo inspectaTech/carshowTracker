@@ -36,6 +36,7 @@ export default function Header({ variant = 'full' }) {
                   <Link to="/" className="text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors" activeProps={{ className: 'text-blue-600 dark:text-blue-400 font-semibold' }}>Home</Link>
                   <Link to="/test" className="text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors" activeProps={{ className: 'text-blue-600 dark:text-blue-400 font-semibold' }}>Test</Link>
                   <Link to="/dashboard" className="text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors" activeProps={{ className: 'text-blue-600 dark:text-blue-400 font-semibold' }}>Dashboard</Link>
+                  <Link to="/garage" className="text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors" activeProps={{ className: 'text-blue-600 dark:text-blue-400 font-semibold' }}>Garage</Link>
                   <Link to="/dash2" className="text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors" activeProps={{ className: 'text-blue-600 dark:text-blue-400 font-semibold' }}>Dash2</Link>
                   <Link to="/admin" className="text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors" activeProps={{ className: 'text-blue-600 dark:text-blue-400 font-semibold' }}>Admin</Link>
                   <Link to="/login" className="inline-flex items-center space-x-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors">
@@ -102,6 +103,7 @@ export default function Header({ variant = 'full' }) {
                 <Link to="/" className={linkClass(overlayDark)} activeProps={{ className: activeLinkClass(overlayDark) }} onClick={() => setIsMenuOpen(false)}>Home</Link>
                 <Link to="/test" className={linkClass(overlayDark)} activeProps={{ className: activeLinkClass(overlayDark) }} onClick={() => setIsMenuOpen(false)}>Test</Link>
                 <Link to="/dashboard" className={linkClass(overlayDark)} activeProps={{ className: activeLinkClass(overlayDark) }} onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
+                <Link to="/garage" className={linkClass(overlayDark)} activeProps={{ className: activeLinkClass(overlayDark) }} onClick={() => setIsMenuOpen(false)}>Garage</Link>
                 <Link to="/dash2" className={linkClass(overlayDark)} activeProps={{ className: activeLinkClass(overlayDark) }} onClick={() => setIsMenuOpen(false)}>Dash2</Link>
                 <Link to="/admin" className={linkClass(overlayDark)} activeProps={{ className: activeLinkClass(overlayDark) }} onClick={() => setIsMenuOpen(false)}>Admin</Link>
                 <Link

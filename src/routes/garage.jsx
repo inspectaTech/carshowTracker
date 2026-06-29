@@ -1,9 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router'
+import GaragePage from '#/components/garage/GaragePage'
 
-export const Route = createFileRoute('/garage')({
-  component: RouteComponent,
-})
-
-function RouteComponent() {
-  return <div>Hello "/garage"!</div>
-}
+export const Route = createFileRoute('/garage')({ component: GaragePage })
