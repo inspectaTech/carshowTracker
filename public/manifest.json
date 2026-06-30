@@ -1,0 +1,23 @@
+{
+  "short_name": "CarShow Tracker",
+  "name": "CarShow Tracker - Track and Manage Car Shows",
+  "description": "Track car shows, manage your garage, share your automotive journey.",
+  "start_url": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "portrait-primary",
+  "theme_color": "#04080b",
+  "background_color": "#04080b",
+  "scope": "/",
+  "categories": ["lifestyle", "automotive", "social"],
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/pwa-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/pwa-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Dashboard", "short_name": "Dashboard", "url": "/dashboard", "icons": [{ "src": "/favicon.svg", "sizes": "any" }] },
+    { "name": "My Garage", "short_name": "Garage", "url": "/garage", "icons": [{ "src": "/favicon.svg", "sizes": "any" }] },
+    { "name": "Explore", "short_name": "Explore", "url": "/explore", "icons": [{ "src": "/favicon.svg", "sizes": "any" }] }
+  ]
+}

@@ -48,6 +48,35 @@ html {
   background-color: #050505;
 }
 
+/* Custom scrollbar - Webkit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #04080b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e10908;
+}
+
+::-webkit-scrollbar-corner {
+  background: #04080b;
+}
+
+/* Custom scrollbar - Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #333333 #04080b;
+}
+
 
 /* Utility classes */
 .text-primary {

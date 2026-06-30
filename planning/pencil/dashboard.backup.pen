@@ -211,6 +211,43 @@
             },
             {
               "type": "frame",
+              "id": "navHW",
+              "name": "Nav_MyHighway",
+              "clip": true,
+              "width": 250,
+              "height": 44,
+              "fill": "transparent",
+              "gap": 12,
+              "padding": [
+                0,
+                24
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "nihwi",
+                  "name": "Icon",
+                  "fill": "#AAA",
+                  "content": "⚡",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "nihwl",
+                  "name": "Label",
+                  "fill": "#AAA",
+                  "content": "My Highway",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
               "id": "nav4",
               "name": "Nav_Community",
               "clip": true,
@@ -5992,6 +6029,1462 @@
                           "fontFamily": "Inter",
                           "fontSize": 16,
                           "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "highwayRoot",
+      "x": 0,
+      "y": 4994,
+      "name": "MyHighway",
+      "clip": true,
+      "width": 1440,
+      "height": 960,
+      "fill": "#04080b",
+      "layout": "vertical",
+      "gap": 0,
+      "children": [
+        {
+          "type": "frame",
+          "id": "hwHdr",
+          "name": "PageHeader",
+          "clip": true,
+          "width": "fill_container",
+          "height": 80,
+          "fill": "#0a0d12",
+          "padding": [
+            0,
+            30
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "hwTitleBlock",
+              "name": "TitleBlock",
+              "fill": "transparent",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "hwTitle",
+                  "name": "Title",
+                  "fill": "#FFFFFF",
+                  "content": "My Highway",
+                  "fontFamily": "Inter",
+                  "fontSize": 28,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "hwCount",
+                  "name": "Count",
+                  "fill": "#888888",
+                  "content": "24 activities",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "hwUploadBtn",
+              "name": "UploadButton",
+              "clip": true,
+              "width": 140,
+              "height": 44,
+              "fill": "#e10908",
+              "cornerRadius": 8,
+              "gap": 8,
+              "padding": [
+                0,
+                16
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "hwUploadIcon",
+                  "name": "Icon",
+                  "fill": "#FFFFFF",
+                  "content": "+",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "hwUploadLabel",
+                  "name": "Label",
+                  "fill": "#FFFFFF",
+                  "content": "Upload",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "hwFilter",
+          "name": "FilterBar",
+          "clip": true,
+          "width": "fill_container",
+          "height": 50,
+          "fill": "#04080b",
+          "padding": [
+            0,
+            30
+          ],
+          "gap": 24,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "hwTabs",
+              "name": "Tabs",
+              "fill": "transparent",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "hwTab1",
+                  "name": "Tab",
+                  "fill": "#e10908",
+                  "content": "All Activity",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "hwTab2",
+                  "name": "Tab",
+                  "fill": "#888888",
+                  "content": "Photos",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "hwTab3",
+                  "name": "Tab",
+                  "fill": "#888888",
+                  "content": "Events",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "hwViewToggle",
+              "name": "ViewToggle",
+              "fill": "transparent",
+              "gap": 4,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "hwListViewBtn",
+                  "name": "ListViewBtn",
+                  "width": 36,
+                  "height": 36,
+                  "fill": "#0e1116",
+                  "cornerRadius": 6,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hwListIcon",
+                      "name": "Icon",
+                      "fill": "#e10908",
+                      "content": "☰",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hwGridViewBtn",
+                  "name": "GridViewBtn",
+                  "width": 36,
+                  "height": 36,
+                  "fill": "transparent",
+                  "cornerRadius": 6,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hwGridIcon",
+                      "name": "Icon",
+                      "fill": "#666666",
+                      "content": "⊞",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "justifyContent": "space_between"
+        },
+        {
+          "type": "rectangle",
+          "id": "74c54928e4ec",
+          "name": "Divider",
+          "fill": "#333333",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "hwFeed",
+          "name": "ActivityFeed",
+          "clip": true,
+          "width": "fill_container",
+          "height": "fill_container",
+          "fill": "transparent",
+          "layout": "vertical",
+          "gap": 0,
+          "children": [
+            {
+              "type": "frame",
+              "id": "hwAct1",
+              "name": "ActivityItem",
+              "clip": true,
+              "width": "fill_container",
+              "height": 100,
+              "fill": "transparent",
+              "gap": 16,
+              "padding": [
+                30,
+                24
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "hwA1Img",
+                  "name": "Photo",
+                  "fill": "#1a1d22",
+                  "width": 70,
+                  "height": 70,
+                  "cornerRadius": 8
+                },
+                {
+                  "type": "frame",
+                  "id": "hwA1Text",
+                  "name": "TextBlock",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hwA1Act",
+                      "name": "Action",
+                      "fill": "#FFFFFF",
+                      "content": "Posted a new photo",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hwA1Desc",
+                      "name": "Desc",
+                      "fill": "#AAAAAA",
+                      "content": "Nissan GT-R R34 at Angeles Crest Hwy",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hwA1Time",
+                      "name": "Time",
+                      "fill": "#666666",
+                      "content": "2h ago",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hwA1Stats",
+                  "name": "Stats",
+                  "fill": "transparent",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hwA1Like",
+                      "name": "Likes",
+                      "fill": "#888888",
+                      "content": "♥ 128",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hwA1Comm",
+                      "name": "Comments",
+                      "fill": "#888888",
+                      "content": "☭ 16",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hwA1More",
+                      "name": "More",
+                      "fill": "#FFFFFF",
+                      "content": "⋯",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "2534c42f7806",
+              "name": "HR",
+              "fill": "#333333",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "hwAct2",
+              "name": "ActivityItem",
+              "clip": true,
+              "width": "fill_container",
+              "height": 100,
+              "fill": "transparent",
+              "gap": 16,
+              "padding": [
+                30,
+                24
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "hwA2Img",
+                  "name": "Photo",
+                  "fill": "#1a1d22",
+                  "width": 70,
+                  "height": 70,
+                  "cornerRadius": 8
+                },
+                {
+                  "type": "frame",
+                  "id": "hwA2Text",
+                  "name": "TextBlock",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hwA2Act",
+                      "name": "Action",
+                      "fill": "#FFFFFF",
+                      "content": "Added a new car",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hwA2Desc",
+                      "name": "Desc",
+                      "fill": "#AAAAAA",
+                      "content": "Porsche 911 GT3 added to garage",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hwA2Time",
+                      "name": "Time",
+                      "fill": "#666666",
+                      "content": "1d ago",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hwA2Stats",
+                  "name": "Stats",
+                  "fill": "transparent",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hwA2Like",
+                      "name": "Likes",
+                      "fill": "#888888",
+                      "content": "♥ 42",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hwA2Comm",
+                      "name": "Comments",
+                      "fill": "#888888",
+                      "content": "☭ 8",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hwA2More",
+                      "name": "More",
+                      "fill": "#FFFFFF",
+                      "content": "⋯",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "2ff5a6436886",
+              "name": "HR",
+              "fill": "#333333",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "hwAct3",
+              "name": "ActivityItem",
+              "clip": true,
+              "width": "fill_container",
+              "height": 100,
+              "fill": "transparent",
+              "gap": 16,
+              "padding": [
+                30,
+                24
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "hwA3Img",
+                  "name": "Photo",
+                  "fill": "#1a1d22",
+                  "width": 70,
+                  "height": 70,
+                  "cornerRadius": 8
+                },
+                {
+                  "type": "frame",
+                  "id": "hwA3Text",
+                  "name": "TextBlock",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "justifyContent": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hwA3Act",
+                      "name": "Action",
+                      "fill": "#FFFFFF",
+                      "content": "Attended a car show",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hwA3Desc",
+                      "name": "Desc",
+                      "fill": "#AAAAAA",
+                      "content": "SoCal JDM Meet 2026",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hwA3Time",
+                      "name": "Time",
+                      "fill": "#666666",
+                      "content": "3d ago",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hwA3Stats",
+                  "name": "Stats",
+                  "fill": "transparent",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hwA3Like",
+                      "name": "Likes",
+                      "fill": "#888888",
+                      "content": "♥ 89",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hwA3Comm",
+                      "name": "Comments",
+                      "fill": "#888888",
+                      "content": "☭ 12",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hwA3More",
+                      "name": "More",
+                      "fill": "#FFFFFF",
+                      "content": "⋯",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "highwayGridRoot",
+      "x": 1566,
+      "y": 4994,
+      "name": "MyHighway_Grid",
+      "clip": true,
+      "width": 1440,
+      "height": 960,
+      "fill": "#04080b",
+      "layout": "vertical",
+      "gap": 0,
+      "children": [
+        {
+          "type": "frame",
+          "id": "hwgHdr",
+          "name": "PageHeader",
+          "clip": true,
+          "width": "fill_container",
+          "height": 80,
+          "fill": "#0a0d12",
+          "padding": [
+            0,
+            30
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "hwgTitleBlock",
+              "name": "TitleBlock",
+              "fill": "transparent",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "hwgTitle",
+                  "name": "Title",
+                  "fill": "#FFFFFF",
+                  "content": "My Highway",
+                  "fontFamily": "Inter",
+                  "fontSize": 28,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "hwgCount",
+                  "name": "Count",
+                  "fill": "#888888",
+                  "content": "24 activities",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "hwgUploadBtn",
+              "name": "UploadButton",
+              "clip": true,
+              "width": 140,
+              "height": 44,
+              "fill": "#e10908",
+              "cornerRadius": 8,
+              "gap": 8,
+              "padding": [
+                0,
+                16
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "hwgUploadIcon",
+                  "name": "Icon",
+                  "fill": "#FFFFFF",
+                  "content": "+",
+                  "fontFamily": "Inter",
+                  "fontSize": 20,
+                  "fontWeight": "bold"
+                },
+                {
+                  "type": "text",
+                  "id": "hwgUploadLabel",
+                  "name": "Label",
+                  "fill": "#FFFFFF",
+                  "content": "Upload",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "hwgFilter",
+          "name": "FilterBar",
+          "clip": true,
+          "width": "fill_container",
+          "height": 50,
+          "fill": "#04080b",
+          "padding": [
+            0,
+            30
+          ],
+          "gap": 24,
+          "alignItems": "center",
+          "justifyContent": "space_between",
+          "children": [
+            {
+              "type": "frame",
+              "id": "hwgTabs",
+              "name": "Tabs",
+              "fill": "transparent",
+              "gap": 24,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "hwgTab1",
+                  "name": "Tab",
+                  "fill": "#e10908",
+                  "content": "All Activity",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "hwgTab2",
+                  "name": "Tab",
+                  "fill": "#888888",
+                  "content": "Photos",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "hwgTab3",
+                  "name": "Tab",
+                  "fill": "#888888",
+                  "content": "Events",
+                  "fontFamily": "Inter",
+                  "fontSize": 16,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "hwgViewToggle",
+              "name": "ViewToggle",
+              "fill": "transparent",
+              "gap": 4,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "hwgListViewBtn",
+                  "name": "ListViewBtn",
+                  "width": 36,
+                  "height": 36,
+                  "fill": "transparent",
+                  "cornerRadius": 6,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hwgListIcon",
+                      "name": "Icon",
+                      "fill": "#666666",
+                      "content": "☰",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hwgGridViewBtn",
+                  "name": "GridViewBtn",
+                  "width": 36,
+                  "height": 36,
+                  "fill": "#0e1116",
+                  "cornerRadius": 6,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hwgGridIcon",
+                      "name": "Icon",
+                      "fill": "#e10908",
+                      "content": "⊞",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "95cfefcd8cee",
+          "name": "Divider",
+          "fill": "#333333",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "hwgGrid",
+          "name": "PhotoGrid",
+          "clip": true,
+          "width": "fill_container",
+          "height": "fill_container",
+          "fill": "#04080b",
+          "layout": "vertical",
+          "gap": 4,
+          "padding": [
+            30,
+            24
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "hwgRow1",
+              "name": "GridRow",
+              "width": "fill_container",
+              "height": 260,
+              "fill": "transparent",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "hwgG1",
+                  "name": "GridCard",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#0a0d12",
+                  "cornerRadius": 10,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "7980a423974f",
+                      "name": "Photo",
+                      "fill": "#1a1d22",
+                      "width": "fill_container",
+                      "height": 180,
+                      "cornerRadius": [
+                        10,
+                        10,
+                        0,
+                        0
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "2579c0ae89a1",
+                      "name": "Info",
+                      "fill": "transparent",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "padding": [
+                        8,
+                        12
+                      ],
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "hwgG1_act",
+                          "name": "Action",
+                          "fill": "#FFFFFF",
+                          "content": "Posted a new photo",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "hwgG1_desc",
+                          "name": "Desc",
+                          "fill": "#AAAAAA",
+                          "content": "Nissan GT-R R34 at Angeles Crest Hwy",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "hwgG1_time",
+                          "name": "Time",
+                          "fill": "#666666",
+                          "content": "2h ago",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "hwgG1_stats",
+                          "name": "Stats",
+                          "fill": "transparent",
+                          "gap": 8,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "hwgG1_like",
+                              "name": "Likes",
+                              "fill": "#888888",
+                              "content": "♥ 128",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "hwgG1_comm",
+                              "name": "Comments",
+                              "fill": "#888888",
+                              "content": "✉ 16",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hwgG2",
+                  "name": "GridCard",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#0a0d12",
+                  "cornerRadius": 10,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "14f543ce2402",
+                      "name": "Photo",
+                      "fill": "#1a1d22",
+                      "width": "fill_container",
+                      "height": 180,
+                      "cornerRadius": [
+                        10,
+                        10,
+                        0,
+                        0
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "53a05549d04a",
+                      "name": "Info",
+                      "fill": "transparent",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "padding": [
+                        8,
+                        12
+                      ],
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "hwgG2_act",
+                          "name": "Action",
+                          "fill": "#FFFFFF",
+                          "content": "Added a new car",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "hwgG2_desc",
+                          "name": "Desc",
+                          "fill": "#AAAAAA",
+                          "content": "Porsche 911 GT3 added to garage",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "hwgG2_time",
+                          "name": "Time",
+                          "fill": "#666666",
+                          "content": "1d ago",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "hwgG2_stats",
+                          "name": "Stats",
+                          "fill": "transparent",
+                          "gap": 8,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "hwgG2_like",
+                              "name": "Likes",
+                              "fill": "#888888",
+                              "content": "♥ 42",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "hwgG2_comm",
+                              "name": "Comments",
+                              "fill": "#888888",
+                              "content": "✉ 8",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hwgG3",
+                  "name": "GridCard",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#0a0d12",
+                  "cornerRadius": 10,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "15285c431a13",
+                      "name": "Photo",
+                      "fill": "#1a1d22",
+                      "width": "fill_container",
+                      "height": 180,
+                      "cornerRadius": [
+                        10,
+                        10,
+                        0,
+                        0
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "2a25327eeeba",
+                      "name": "Info",
+                      "fill": "transparent",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "padding": [
+                        8,
+                        12
+                      ],
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "hwgG3_act",
+                          "name": "Action",
+                          "fill": "#FFFFFF",
+                          "content": "Attended a car show",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "hwgG3_desc",
+                          "name": "Desc",
+                          "fill": "#AAAAAA",
+                          "content": "SoCal JDM Meet 2026",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "hwgG3_time",
+                          "name": "Time",
+                          "fill": "#666666",
+                          "content": "3d ago",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "hwgG3_stats",
+                          "name": "Stats",
+                          "fill": "transparent",
+                          "gap": 8,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "hwgG3_like",
+                              "name": "Likes",
+                              "fill": "#888888",
+                              "content": "♥ 89",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "hwgG3_comm",
+                              "name": "Comments",
+                              "fill": "#888888",
+                              "content": "✉ 12",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "hwgRow2",
+              "name": "GridRow",
+              "width": "fill_container",
+              "height": 260,
+              "fill": "transparent",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "hwgG4",
+                  "name": "GridCard",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#0a0d12",
+                  "cornerRadius": 10,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "eb7a5c716328",
+                      "name": "Photo",
+                      "fill": "#1a1d22",
+                      "width": "fill_container",
+                      "height": 180,
+                      "cornerRadius": [
+                        10,
+                        10,
+                        0,
+                        0
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "25e112057acd",
+                      "name": "Info",
+                      "fill": "transparent",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "padding": [
+                        8,
+                        12
+                      ],
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "hwgG4_act",
+                          "name": "Action",
+                          "fill": "#FFFFFF",
+                          "content": "Won Best in Show",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "hwgG4_desc",
+                          "name": "Desc",
+                          "fill": "#AAAAAA",
+                          "content": "Angeles Crest Cars & Coffee",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "hwgG4_time",
+                          "name": "Time",
+                          "fill": "#666666",
+                          "content": "5d ago",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "hwgG4_stats",
+                          "name": "Stats",
+                          "fill": "transparent",
+                          "gap": 8,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "hwgG4_like",
+                              "name": "Likes",
+                              "fill": "#888888",
+                              "content": "♥ 312",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "hwgG4_comm",
+                              "name": "Comments",
+                              "fill": "#888888",
+                              "content": "✉ 45",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hwgG5",
+                  "name": "GridCard",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#0a0d12",
+                  "cornerRadius": 10,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "1cf4e96149fc",
+                      "name": "Photo",
+                      "fill": "#1a1d22",
+                      "width": "fill_container",
+                      "height": 180,
+                      "cornerRadius": [
+                        10,
+                        10,
+                        0,
+                        0
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "dbc7ec7a33e7",
+                      "name": "Info",
+                      "fill": "transparent",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "padding": [
+                        8,
+                        12
+                      ],
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "hwgG5_act",
+                          "name": "Action",
+                          "fill": "#FFFFFF",
+                          "content": "New mod installed",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "hwgG5_desc",
+                          "name": "Desc",
+                          "fill": "#AAAAAA",
+                          "content": "Carbon fiber hood on GT-R",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "hwgG5_time",
+                          "name": "Time",
+                          "fill": "#666666",
+                          "content": "1w ago",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "hwgG5_stats",
+                          "name": "Stats",
+                          "fill": "transparent",
+                          "gap": 8,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "hwgG5_like",
+                              "name": "Likes",
+                              "fill": "#888888",
+                              "content": "♥ 67",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "hwgG5_comm",
+                              "name": "Comments",
+                              "fill": "#888888",
+                              "content": "✉ 11",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hwgG6",
+                  "name": "GridCard",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#0a0d12",
+                  "cornerRadius": 10,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "id": "4601dba93f0d",
+                      "name": "Photo",
+                      "fill": "#1a1d22",
+                      "width": "fill_container",
+                      "height": 180,
+                      "cornerRadius": [
+                        10,
+                        10,
+                        0,
+                        0
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "7a3d356cfc0e",
+                      "name": "Info",
+                      "fill": "transparent",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "padding": [
+                        8,
+                        12
+                      ],
+                      "justifyContent": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "hwgG6_act",
+                          "name": "Action",
+                          "fill": "#FFFFFF",
+                          "content": "Track day personal best",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "hwgG6_desc",
+                          "name": "Desc",
+                          "fill": "#AAAAAA",
+                          "content": "Buttonwillow Raceway - 1:52.3",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "hwgG6_time",
+                          "name": "Time",
+                          "fill": "#666666",
+                          "content": "1w ago",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "hwgG6_stats",
+                          "name": "Stats",
+                          "fill": "transparent",
+                          "gap": 8,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "hwgG6_like",
+                              "name": "Likes",
+                              "fill": "#888888",
+                              "content": "♥ 203",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "hwgG6_comm",
+                              "name": "Comments",
+                              "fill": "#888888",
+                              "content": "✉ 28",
+                              "fontFamily": "Inter",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
                         }
                       ]
                     }

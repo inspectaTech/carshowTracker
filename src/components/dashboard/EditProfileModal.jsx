@@ -7,6 +7,11 @@ const EMPTY_STATE = {
   bio: 'Car enthusiast since day one. I live for weekend drives, track days, and late night builds.',
   location: 'Los Angeles, CA',
   socialLinks: '',
+  aboutMe: 'Car enthusiast since day one. I live for weekend drives, track days, and late night builds. JDM at heart. Always chasing the next build.',
+  favoriteBrand: 'Nissan',
+  dreamCar: 'Nissan GT-R R34',
+  occupation: 'Automotive Photographer',
+  driveStyle: 'Performance & Style',
 }
 
 export default function EditProfileModal({ isOpen, onClose, profile, onUploadPhoto }) {
@@ -15,6 +20,11 @@ export default function EditProfileModal({ isOpen, onClose, profile, onUploadPho
     bio: profile?.aboutMe || EMPTY_STATE.bio,
     location: profile?.location || EMPTY_STATE.location,
     socialLinks: '',
+    aboutMe: profile?.aboutMe || EMPTY_STATE.aboutMe,
+    favoriteBrand: profile?.favoriteBrand || EMPTY_STATE.favoriteBrand,
+    dreamCar: profile?.dreamCar || EMPTY_STATE.dreamCar,
+    occupation: profile?.occupation || EMPTY_STATE.occupation,
+    driveStyle: profile?.driveStyle || EMPTY_STATE.driveStyle,
   })
   const [saving, setSaving] = useState(false)
 
@@ -139,6 +149,48 @@ export default function EditProfileModal({ isOpen, onClose, profile, onUploadPho
                     placeholder="Instagram, YouTube, TikTok URLs"
                     className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors"
                   />
+                </div>
+
+                {/* Divider */}
+                <div className="w-full h-px bg-[#333333]" />
+
+                {/* About Me section */}
+                <div data-part="about-me-section">
+                  <h3 className="text-white text-[18px] font-medium mb-1">About Me</h3>
+                  <p className="text-[#888888] text-[13px] mb-4">Tell the community about yourself — your car preferences, style, and story.</p>
+
+                  <div className="space-y-5">
+                    <div data-part="field-aboutme">
+                      <label className="block text-white text-[14px] mb-1.5">About Me</label>
+                      <textarea value={form.aboutMe} onChange={(e) => handleChange('aboutMe', e.target.value)}
+                        data-part="input-aboutme" rows={3}
+                        className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors resize-none" />
+                    </div>
+                    <div data-part="field-favbrand">
+                      <label className="block text-white text-[14px] mb-1.5">Favorite Brand</label>
+                      <input type="text" value={form.favoriteBrand} onChange={(e) => handleChange('favoriteBrand', e.target.value)}
+                        data-part="input-favbrand" placeholder="e.g. Nissan"
+                        className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors" />
+                    </div>
+                    <div data-part="field-dreamcar">
+                      <label className="block text-white text-[14px] mb-1.5">Dream Car</label>
+                      <input type="text" value={form.dreamCar} onChange={(e) => handleChange('dreamCar', e.target.value)}
+                        data-part="input-dreamcar" placeholder="e.g. Nissan GT-R R34"
+                        className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors" />
+                    </div>
+                    <div data-part="field-occupation">
+                      <label className="block text-white text-[14px] mb-1.5">Occupation</label>
+                      <input type="text" value={form.occupation} onChange={(e) => handleChange('occupation', e.target.value)}
+                        data-part="input-occupation" placeholder="e.g. Automotive Photographer"
+                        className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors" />
+                    </div>
+                    <div data-part="field-drive">
+                      <label className="block text-white text-[14px] mb-1.5">Drive Style</label>
+                      <input type="text" value={form.driveStyle} onChange={(e) => handleChange('driveStyle', e.target.value)}
+                        data-part="input-drive" placeholder="e.g. Performance & Style"
+                        className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors" />
+                    </div>
+                  </div>
                 </div>
               </div>
 

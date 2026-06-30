@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import Sidebar from '#/components/dashboard/Sidebar'
 import { getDashboardData } from '#/server/db-actions'
-import { Search, Map, Users, Calendar, MapPin } from 'lucide-react'
+import { Search, Users, Calendar, MapPin } from 'lucide-react'
+import MapView from './MapView'
 
 const FEATURED_EVENTS = [
   {
@@ -187,13 +188,9 @@ export default function ExplorePage() {
 
               {/* Right column - Map + Users */}
               <div data-part="right-column" className="w-full lg:w-[400px] flex flex-col gap-4">
-                {/* Map placeholder */}
-                <div
-                  data-part="map-placeholder"
-                  className="bg-[#0a0d12] rounded-xl h-[220px] flex flex-col items-center justify-center gap-3"
-                >
-                  <Map className="h-12 w-12 text-[#333333]" />
-                  <p className="text-[#555555] text-[14px]">Map view coming soon</p>
+                {/* Leaflet Map */}
+                <div data-part="map-container" className="rounded-xl overflow-hidden h-[220px]">
+                  <MapView />
                 </div>
 
                 {/* Popular users */}

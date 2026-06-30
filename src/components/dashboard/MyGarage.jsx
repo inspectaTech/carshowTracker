@@ -1,3 +1,6 @@
+import { Link } from '@tanstack/react-router'
+import { Heart, MessageCircle, MoreHorizontal } from 'lucide-react'
+
 export function CarEntry({ name, specs }) {
   return (
     <div data-component="CarEntry" className="w-full">
@@ -15,7 +18,7 @@ export default function MyGarage({ vehicles }) {
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-3">
         <h3 className="text-white text-[20px] font-normal">My Garage</h3>
-        <span className="text-[#e10908] text-[20px] cursor-pointer hover:underline">View All</span>
+        <Link to="/garage" className="text-[#e10908] text-[20px] cursor-pointer hover:underline">View All</Link>
       </div>
 
       <div className="w-full h-px bg-[#333333]" />

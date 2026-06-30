@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestcopyRouteImport } from './routes/test copy'
 import { Route as TestRouteImport } from './routes/test'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as MyHighwayRouteImport } from './routes/my-highway'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as GarageRouteImport } from './routes/garage'
 import { Route as ExploreRouteImport } from './routes/explore'
@@ -38,6 +39,11 @@ const TestRoute = TestRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyHighwayRoute = MyHighwayRouteImport.update({
+  id: '/my-highway',
+  path: '/my-highway',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/explore': typeof ExploreRoute
   '/garage': typeof GarageRoute
   '/login': typeof LoginRoute
+  '/my-highway': typeof MyHighwayRoute
   '/settings': typeof SettingsRoute
   '/test': typeof TestRoute
   '/test copy': typeof TestcopyRoute
@@ -126,6 +133,7 @@ export interface FileRoutesByTo {
   '/explore': typeof ExploreRoute
   '/garage': typeof GarageRoute
   '/login': typeof LoginRoute
+  '/my-highway': typeof MyHighwayRoute
   '/settings': typeof SettingsRoute
   '/test': typeof TestRoute
   '/test copy': typeof TestcopyRoute
@@ -144,6 +152,7 @@ export interface FileRoutesById {
   '/explore': typeof ExploreRoute
   '/garage': typeof GarageRoute
   '/login': typeof LoginRoute
+  '/my-highway': typeof MyHighwayRoute
   '/settings': typeof SettingsRoute
   '/test': typeof TestRoute
   '/test copy': typeof TestcopyRoute
@@ -163,6 +172,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/garage'
     | '/login'
+    | '/my-highway'
     | '/settings'
     | '/test'
     | '/test copy'
@@ -180,6 +190,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/garage'
     | '/login'
+    | '/my-highway'
     | '/settings'
     | '/test'
     | '/test copy'
@@ -197,6 +208,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/garage'
     | '/login'
+    | '/my-highway'
     | '/settings'
     | '/test'
     | '/test copy'
@@ -215,6 +227,7 @@ export interface RootRouteChildren {
   ExploreRoute: typeof ExploreRoute
   GarageRoute: typeof GarageRoute
   LoginRoute: typeof LoginRoute
+  MyHighwayRoute: typeof MyHighwayRoute
   SettingsRoute: typeof SettingsRoute
   TestRoute: typeof TestRoute
   TestcopyRoute: typeof TestcopyRoute
@@ -245,6 +258,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-highway': {
+      id: '/my-highway'
+      path: '/my-highway'
+      fullPath: '/my-highway'
+      preLoaderRoute: typeof MyHighwayRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -354,6 +374,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExploreRoute: ExploreRoute,
   GarageRoute: GarageRoute,
   LoginRoute: LoginRoute,
+  MyHighwayRoute: MyHighwayRoute,
   SettingsRoute: SettingsRoute,
   TestRoute: TestRoute,
   TestcopyRoute: TestcopyRoute,

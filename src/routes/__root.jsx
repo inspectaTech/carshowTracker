@@ -20,6 +20,10 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
+        name: 'theme-color',
+        content: '#04080b',
+      },
+      {
         title: 'CarShow Tracker - Track and Manage Car Shows',
       },
     ],
@@ -27,6 +31,10 @@ export const Route = createRootRoute({
       {
         rel: 'stylesheet',
         href: appCss,
+      },
+      {
+        rel: 'manifest',
+        href: '/manifest.json',
       },
     ],
   }),

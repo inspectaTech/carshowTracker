@@ -1,4 +1,5 @@
 import { Heart, MessageCircle, MoreHorizontal } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 import UserImage from '../ui/UserImage'
 
 export function ActivityItem({ activity }) {
@@ -49,7 +50,7 @@ export default function MyHighway({ activities, onUpload }) {
           <button data-part="upload-btn" onClick={onUpload} className="text-[#888888] text-[14px] hover:text-white transition-colors cursor-pointer">
             + Upload
           </button>
-          <span className="text-[#e10908] text-[20px] cursor-pointer hover:underline">View All</span>
+          <Link to="/my-highway" className="text-[#e10908] text-[20px] cursor-pointer hover:underline">View All</Link>
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import {
-  LayoutDashboard, Search, Car, Users, Calendar, Newspaper,
+  LayoutDashboard, Search, Car, Route, Users, Calendar, Newspaper,
   ShoppingCart, Shirt, Settings, LogOut, User, Shield, ChevronRight, X,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -12,12 +12,12 @@ const routeMap = {
   dashboard: '/dashboard',
   explore: '/explore',
   garage: '/garage',
+  'my-highway': '/my-highway',
   community: '/community',
   'my-events': '/my-events',
   news: '/news',
   'pit-shop': '/pit-shop',
   merch: '/merch',
-  admin: '/admin',
   settings: '/settings',
 }
 
@@ -25,12 +25,12 @@ const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'explore', label: 'Explore', icon: Search },
   { id: 'garage', label: 'Garage', icon: Car },
+  { id: 'my-highway', label: 'My Highway', icon: Route },
   { id: 'community', label: 'Community', icon: Users },
   { id: 'my-events', label: 'My Events', icon: Calendar },
   { id: 'news', label: 'News', icon: Newspaper },
   { id: 'pit-shop', label: 'Pit Shop', icon: ShoppingCart },
   { id: 'merch', label: 'Merch', icon: Shirt },
-  { id: 'admin', label: 'Admin', icon: Shield },
 ]
 
 const bottomItems = [
