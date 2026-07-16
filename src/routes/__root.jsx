@@ -2,8 +2,10 @@ import { HeadContent, Scripts, createRootRoute, useLocation } from '@tanstack/re
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { useState, useEffect } from 'react'
+import { ThemeProvider } from '@mui/material/styles'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import muiTheme from '../lib/mui-theme'
 
 import appCss from '../styles/global.css?url'
 
@@ -62,11 +64,13 @@ function RootDocument({ children }) {
         className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]"
         suppressHydrationWarning
       >
-        {!hideRootShell && <Header />}
-        <main className="min-h-screen">
-          {children}
-        </main>
-        {!hideRootShell && <Footer />}
+        <ThemeProvider theme={muiTheme}>
+          {!hideRootShell && <Header />}
+          <main className="min-h-screen">
+            {children}
+          </main>
+          {!hideRootShell && <Footer />}
+        </ThemeProvider>
         {showDevtools && (
           <TanStackDevtools
             config={{

@@ -39,9 +39,12 @@ export default function MapView() {
         const map = L.map(mapRef.current, {
           center: CENTER,
           zoom: ZOOM,
-          zoomControl: true,
+          zoomControl: false,
           attributionControl: false,
         })
+
+        // Add zoom controls to bottom-right (avoids clashing with mobile sidebar)
+        L.control.zoom({ position: 'bottomright' }).addTo(map)
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,

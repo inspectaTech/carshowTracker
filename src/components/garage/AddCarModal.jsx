@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { X, ImagePlus } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import TextField from '@mui/material/TextField'
+import MenuItem from '@mui/material/MenuItem'
 
 const INITIAL_STATE = {
   make: '',
@@ -59,35 +61,6 @@ export default function AddCarModal({ isOpen, onClose, onSave, editCar }) {
     onClose()
   }
 
-  const Select = ({ label, value, options, placeholder, onChange }) => (
-    <div className="space-y-1.5">
-      <label className="text-white text-[14px]">{label}</label>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white focus:outline-none focus:border-[#e10908] transition-colors appearance-none cursor-pointer"
-      >
-        <option value="">{placeholder}</option>
-        {options.map((opt) => (
-          <option key={opt} value={opt}>{opt}</option>
-        ))}
-      </select>
-    </div>
-  )
-
-  const Input = ({ label, value, placeholder, onChange }) => (
-    <div className="space-y-1.5">
-      <label className="text-white text-[14px]">{label}</label>
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors"
-      />
-    </div>
-  )
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -133,33 +106,90 @@ export default function AddCarModal({ isOpen, onClose, onSave, editCar }) {
 
                 {/* Row 1: Make + Model */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Select label="Make" value={form.make} options={MAKES} placeholder="Select make ▾" onChange={(v) => handleChange('make', v)} />
-                  <Input label="Model" value={form.model} placeholder="Enter model" onChange={(v) => handleChange('model', v)} />
+                  <TextField
+                    label="Make"
+                    value={form.make}
+                    onChange={(e) => handleChange('make', e.target.value)}
+                    select
+                    fullWidth
+                    size="small"
+                  >
+                    <MenuItem value="" disabled>Select make</MenuItem>
+                    {MAKES.map((opt) => (
+                      <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+                    ))}
+                  </TextField>
+                  <TextField
+                    label="Model"
+                    value={form.model}
+                    onChange={(e) => handleChange('model', e.target.value)}
+                    placeholder="Enter model"
+                    fullWidth
+                    size="small"
+                  />
                 </div>
 
                 {/* Row 2: Year + HP */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Select label="Year" value={form.year} options={YEARS} placeholder="Select year ▾" onChange={(v) => handleChange('year', v)} />
-                  <Input label="Horsepower" value={form.hp} placeholder="Enter HP" onChange={(v) => handleChange('hp', v)} />
+                  <TextField
+                    label="Year"
+                    value={form.year}
+                    onChange={(e) => handleChange('year', e.target.value)}
+                    select
+                    fullWidth
+                    size="small"
+                  >
+                    <MenuItem value="" disabled>Select year</MenuItem>
+                    {YEARS.map((opt) => (
+                      <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+                    ))}
+                  </TextField>
+                  <TextField
+                    label="Horsepower"
+                    value={form.hp}
+                    onChange={(e) => handleChange('hp', e.target.value)}
+                    placeholder="Enter HP"
+                    fullWidth
+                    size="small"
+                  />
                 </div>
 
                 {/* Row 3: Drivetrain + Color */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Select label="Drivetrain" value={form.drivetrain} options={DRIVETRAINS} placeholder="Select drivetrain ▾" onChange={(v) => handleChange('drivetrain', v)} />
-                  <Input label="Color" value={form.color} placeholder="Enter color" onChange={(v) => handleChange('color', v)} />
+                  <TextField
+                    label="Drivetrain"
+                    value={form.drivetrain}
+                    onChange={(e) => handleChange('drivetrain', e.target.value)}
+                    select
+                    fullWidth
+                    size="small"
+                  >
+                    <MenuItem value="" disabled>Select drivetrain</MenuItem>
+                    {DRIVETRAINS.map((opt) => (
+                      <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+                    ))}
+                  </TextField>
+                  <TextField
+                    label="Color"
+                    value={form.color}
+                    onChange={(e) => handleChange('color', e.target.value)}
+                    placeholder="Enter color"
+                    fullWidth
+                    size="small"
+                  />
                 </div>
 
                 {/* Mods */}
-                <div className="space-y-1.5">
-                  <label className="text-white text-[14px]">Modifications / Notes</label>
-                  <textarea
-                    value={form.mods}
-                    onChange={(e) => handleChange('mods', e.target.value)}
-                    placeholder="List any modifications..."
-                    rows={3}
-                    className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors resize-none"
-                  />
-                </div>
+                <TextField
+                  label="Modifications / Notes"
+                  value={form.mods}
+                  onChange={(e) => handleChange('mods', e.target.value)}
+                  placeholder="List any modifications..."
+                  multiline
+                  rows={3}
+                  fullWidth
+                  size="small"
+                />
               </div>
 
               {/* Footer */}

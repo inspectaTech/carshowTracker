@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import Sidebar from '#/components/dashboard/Sidebar'
 import { getDashboardData } from '#/server/db-actions'
+import TextField from '@mui/material/TextField'
+import InputAdornment from '@mui/material/InputAdornment'
 import { Search, Users, Calendar, MapPin } from 'lucide-react'
 import MapView from './MapView'
 
@@ -97,15 +99,17 @@ export default function ExplorePage() {
           data-part="search-row"
           className="bg-[#04080b] px-4 sm:px-8 py-3 flex items-center gap-4 flex-wrap shrink-0 border-b border-[#1a1d22]"
         >
-          <div data-part="search-field" className="relative flex-1 min-w-[200px] max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555555]" />
-            <input
-              type="text"
+          <div data-part="search-field" className="flex-1 min-w-[200px] max-w-md">
+            <TextField
               data-part="search-input"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search car shows, users, events..."
-              className="w-full pl-9 pr-3 py-2 bg-[#0a0d12] text-white text-[14px] placeholder-[#555555] rounded-lg border border-[#1a1d22] focus:outline-none focus:border-[#e10908] transition-colors"
+              size="small"
+              fullWidth
+              InputProps={{
+                startAdornment: <InputAdornment position="start"><Search className="h-5 w-5 text-[#555555]" /></InputAdornment>,
+              }}
             />
           </div>
 

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import Sidebar from '#/components/dashboard/Sidebar'
 import { getDashboardData } from '#/server/db-actions'
-import { Settings as SettingsIcon, User, Bell, Lock, MapPin, Palette, Link as LinkIcon } from 'lucide-react'
+import { Settings as SettingsIcon, User, Bell, Lock, MapPin, Palette, Link as LinkIcon, Sliders } from 'lucide-react'
+import { getToolbarLayout, setToolbarLayout as saveToolbarLayout } from '#/lib/toolbar-layout'
 
 const SETTINGS_NAV = [
   { id: 'profile', label: 'Profile', icon: User },
@@ -9,6 +10,7 @@ const SETTINGS_NAV = [
   { id: 'privacy', label: 'Privacy', icon: Lock },
   { id: 'home-location', label: 'Home Location', icon: MapPin },
   { id: 'theme', label: 'Theme', icon: Palette },
+  { id: 'toolbar', label: 'Toolbar', icon: Sliders },
   { id: 'connected', label: 'Connected Accounts', icon: LinkIcon },
 ]
 
@@ -17,6 +19,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true)
   const [activeSection, setActiveSection] = useState('profile')
   const [darkMode, setDarkMode] = useState(true)
+  const [toolbarLayout, setToolbarLayout] = useState(getToolbarLayout)
   const [notifications, setNotifications] = useState({
     events: true,
     followers: false,
@@ -210,6 +213,40 @@ export default function SettingsPage() {
                       <Palette className="h-5 w-5 text-[#888888] shrink-0" />
                       <span className="text-white text-[15px] flex-1">Dark Mode</span>
                       <Toggle enabled={darkMode} onChange={setDarkMode} />
+                    </div>
+                  </>
+                )}
+
+                {activeSection === 'toolbar' && (
+                  <>
+                    <h2 className="text-white text-[22px] font-medium mb-6">Toolbar</h2>
+                    <div className="bg-[#0a0d12] rounded-xl p-4 sm:p-5">
+                      <label className="text-white text-[15px] block mb-3">Layout Style</label>
+                      <p className="text-[#888888] text-[13px] mb-4">Choose how the editor toolbar displays its buttons.</p>
+                      <div className="flex items-center gap-3">
+                        <button
+                          data-part="layout-scroll"
+                          onClick={() => { setToolbarLayout('scroll'); saveToolbarLayout('scroll') }}
+                          className={`flex-1 h-11 rounded-lg text-[14px] font-normal transition-colors ${
+                            toolbarLayout === 'scroll'
+                              ? 'bg-[#e10908] text-white'
+                              : 'bg-[#1a1d22] text-white hover:bg-[#2a2d32]'
+                          }`}
+                        >
+                          Single Row
+                        </button>
+                        <button
+                          data-part="layout-wrap"
+                          onClick={() => { setToolbarLayout('wrap'); saveToolbarLayout('wrap') }}
+                          className={`flex-1 h-11 rounded-lg text-[14px] font-normal transition-colors ${
+                            toolbarLayout === 'wrap'
+                              ? 'bg-[#e10908] text-white'
+                              : 'bg-[#1a1d22] text-white hover:bg-[#2a2d32]'
+                          }`}
+                        >
+                          Grid
+                        </button>
+                      </div>
                     </div>
                   </>
                 )}

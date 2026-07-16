@@ -13,6 +13,7 @@ import { Route as TestcopyRouteImport } from './routes/test copy'
 import { Route as TestRouteImport } from './routes/test'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as MyHighwayRouteImport } from './routes/my-highway'
+import { Route as MyEventsRouteImport } from './routes/my-events'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as GarageRouteImport } from './routes/garage'
 import { Route as ExploreRouteImport } from './routes/explore'
@@ -44,6 +45,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const MyHighwayRoute = MyHighwayRouteImport.update({
   id: '/my-highway',
   path: '/my-highway',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyEventsRoute = MyEventsRouteImport.update({
+  id: '/my-events',
+  path: '/my-events',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -115,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/explore': typeof ExploreRoute
   '/garage': typeof GarageRoute
   '/login': typeof LoginRoute
+  '/my-events': typeof MyEventsRoute
   '/my-highway': typeof MyHighwayRoute
   '/settings': typeof SettingsRoute
   '/test': typeof TestRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/explore': typeof ExploreRoute
   '/garage': typeof GarageRoute
   '/login': typeof LoginRoute
+  '/my-events': typeof MyEventsRoute
   '/my-highway': typeof MyHighwayRoute
   '/settings': typeof SettingsRoute
   '/test': typeof TestRoute
@@ -152,6 +160,7 @@ export interface FileRoutesById {
   '/explore': typeof ExploreRoute
   '/garage': typeof GarageRoute
   '/login': typeof LoginRoute
+  '/my-events': typeof MyEventsRoute
   '/my-highway': typeof MyHighwayRoute
   '/settings': typeof SettingsRoute
   '/test': typeof TestRoute
@@ -172,6 +181,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/garage'
     | '/login'
+    | '/my-events'
     | '/my-highway'
     | '/settings'
     | '/test'
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/garage'
     | '/login'
+    | '/my-events'
     | '/my-highway'
     | '/settings'
     | '/test'
@@ -208,6 +219,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/garage'
     | '/login'
+    | '/my-events'
     | '/my-highway'
     | '/settings'
     | '/test'
@@ -227,6 +239,7 @@ export interface RootRouteChildren {
   ExploreRoute: typeof ExploreRoute
   GarageRoute: typeof GarageRoute
   LoginRoute: typeof LoginRoute
+  MyEventsRoute: typeof MyEventsRoute
   MyHighwayRoute: typeof MyHighwayRoute
   SettingsRoute: typeof SettingsRoute
   TestRoute: typeof TestRoute
@@ -265,6 +278,13 @@ declare module '@tanstack/react-router' {
       path: '/my-highway'
       fullPath: '/my-highway'
       preLoaderRoute: typeof MyHighwayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-events': {
+      id: '/my-events'
+      path: '/my-events'
+      fullPath: '/my-events'
+      preLoaderRoute: typeof MyEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -374,6 +394,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExploreRoute: ExploreRoute,
   GarageRoute: GarageRoute,
   LoginRoute: LoginRoute,
+  MyEventsRoute: MyEventsRoute,
   MyHighwayRoute: MyHighwayRoute,
   SettingsRoute: SettingsRoute,
   TestRoute: TestRoute,

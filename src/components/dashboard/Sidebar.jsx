@@ -202,7 +202,7 @@ export default function Sidebar({ profile, activeNav = 'dashboard', onNavClick, 
 
       {/* Mobile sidebar trigger — floating button */}
       <button
-        className="lg:hidden fixed top-4 left-4 z-50 bg-[#04080b] border border-[#333333] rounded-lg p-2 text-white hover:text-[#e10908] transition-colors shadow-lg"
+        className="lg:hidden fixed top-4 left-4 z-[1200] bg-[#04080b] border border-[#333333] rounded-lg p-2 text-white hover:text-[#e10908] transition-colors shadow-lg"
         onClick={() => setMobileOpen(true)}
         aria-label="Open sidebar"
       >
@@ -217,7 +217,7 @@ export default function Sidebar({ profile, activeNav = 'dashboard', onNavClick, 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 lg:hidden"
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[1000] lg:hidden"
               onClick={() => setMobileOpen(false)}
             />
             <motion.aside
@@ -226,7 +226,7 @@ export default function Sidebar({ profile, activeNav = 'dashboard', onNavClick, 
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="fixed top-0 left-0 h-full w-[280px] bg-[#04080b] border-r border-[#333333] flex flex-col z-50 lg:hidden shadow-2xl [overscroll-behavior:contain]"
+              className="fixed top-0 left-0 h-full w-[280px] bg-[#04080b] border-r border-[#333333] flex flex-col z-[1100] lg:hidden shadow-2xl [overscroll-behavior:contain]"
             >
               {/* Close button */}
               <div className="flex items-center justify-end px-4 pt-4 pb-0">

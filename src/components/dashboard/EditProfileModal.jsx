@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { X, Camera } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import TextField from '@mui/material/TextField'
 
 const EMPTY_STATE = {
   displayName: 'Gearhead_23',
@@ -103,53 +104,47 @@ export default function EditProfileModal({ isOpen, onClose, profile, onUploadPho
                 </div>
 
                 {/* Display Name */}
-                <div data-part="field-display-name">
-                  <label className="block text-white text-[14px] mb-1.5">Display Name</label>
-                  <input
-                    type="text"
-                    value={form.displayName}
-                    onChange={(e) => handleChange('displayName', e.target.value)}
-                    data-part="input-display-name"
-                    className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors"
-                  />
-                </div>
+                <TextField
+                  label="Display Name"
+                  value={form.displayName}
+                  onChange={(e) => handleChange('displayName', e.target.value)}
+                  inputProps={{ 'data-part': 'input-display-name' }}
+                  fullWidth
+                  size="small"
+                />
 
                 {/* Bio */}
-                <div data-part="field-bio">
-                  <label className="block text-white text-[14px] mb-1.5">Bio</label>
-                  <textarea
-                    value={form.bio}
-                    onChange={(e) => handleChange('bio', e.target.value)}
-                    data-part="input-bio"
-                    rows={4}
-                    className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors resize-none"
-                  />
-                </div>
+                <TextField
+                  label="Bio"
+                  value={form.bio}
+                  onChange={(e) => handleChange('bio', e.target.value)}
+                  inputProps={{ 'data-part': 'input-bio' }}
+                  multiline
+                  rows={4}
+                  fullWidth
+                  size="small"
+                />
 
                 {/* Location */}
-                <div data-part="field-location">
-                  <label className="block text-white text-[14px] mb-1.5">Location</label>
-                  <input
-                    type="text"
-                    value={form.location}
-                    onChange={(e) => handleChange('location', e.target.value)}
-                    data-part="input-location"
-                    className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors"
-                  />
-                </div>
+                <TextField
+                  label="Location"
+                  value={form.location}
+                  onChange={(e) => handleChange('location', e.target.value)}
+                  inputProps={{ 'data-part': 'input-location' }}
+                  fullWidth
+                  size="small"
+                />
 
                 {/* Social Links */}
-                <div data-part="field-social">
-                  <label className="block text-white text-[14px] mb-1.5">Social Links</label>
-                  <input
-                    type="text"
-                    value={form.socialLinks}
-                    onChange={(e) => handleChange('socialLinks', e.target.value)}
-                    data-part="input-social"
-                    placeholder="Instagram, YouTube, TikTok URLs"
-                    className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors"
-                  />
-                </div>
+                <TextField
+                  label="Social Links"
+                  value={form.socialLinks}
+                  onChange={(e) => handleChange('socialLinks', e.target.value)}
+                  inputProps={{ 'data-part': 'input-social' }}
+                  placeholder="Instagram, YouTube, TikTok URLs"
+                  fullWidth
+                  size="small"
+                />
 
                 {/* Divider */}
                 <div className="w-full h-px bg-[#333333]" />
@@ -160,36 +155,52 @@ export default function EditProfileModal({ isOpen, onClose, profile, onUploadPho
                   <p className="text-[#888888] text-[13px] mb-4">Tell the community about yourself — your car preferences, style, and story.</p>
 
                   <div className="space-y-5">
-                    <div data-part="field-aboutme">
-                      <label className="block text-white text-[14px] mb-1.5">About Me</label>
-                      <textarea value={form.aboutMe} onChange={(e) => handleChange('aboutMe', e.target.value)}
-                        data-part="input-aboutme" rows={3}
-                        className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors resize-none" />
-                    </div>
-                    <div data-part="field-favbrand">
-                      <label className="block text-white text-[14px] mb-1.5">Favorite Brand</label>
-                      <input type="text" value={form.favoriteBrand} onChange={(e) => handleChange('favoriteBrand', e.target.value)}
-                        data-part="input-favbrand" placeholder="e.g. Nissan"
-                        className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors" />
-                    </div>
-                    <div data-part="field-dreamcar">
-                      <label className="block text-white text-[14px] mb-1.5">Dream Car</label>
-                      <input type="text" value={form.dreamCar} onChange={(e) => handleChange('dreamCar', e.target.value)}
-                        data-part="input-dreamcar" placeholder="e.g. Nissan GT-R R34"
-                        className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors" />
-                    </div>
-                    <div data-part="field-occupation">
-                      <label className="block text-white text-[14px] mb-1.5">Occupation</label>
-                      <input type="text" value={form.occupation} onChange={(e) => handleChange('occupation', e.target.value)}
-                        data-part="input-occupation" placeholder="e.g. Automotive Photographer"
-                        className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors" />
-                    </div>
-                    <div data-part="field-drive">
-                      <label className="block text-white text-[14px] mb-1.5">Drive Style</label>
-                      <input type="text" value={form.driveStyle} onChange={(e) => handleChange('driveStyle', e.target.value)}
-                        data-part="input-drive" placeholder="e.g. Performance & Style"
-                        className="w-full px-4 py-3 bg-[#04080b] border border-[#333333] rounded-lg text-white placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors" />
-                    </div>
+                    <TextField
+                      label="About Me"
+                      value={form.aboutMe}
+                      onChange={(e) => handleChange('aboutMe', e.target.value)}
+                      inputProps={{ 'data-part': 'input-aboutme' }}
+                      multiline
+                      rows={3}
+                      fullWidth
+                      size="small"
+                    />
+                    <TextField
+                      label="Favorite Brand"
+                      value={form.favoriteBrand}
+                      onChange={(e) => handleChange('favoriteBrand', e.target.value)}
+                      inputProps={{ 'data-part': 'input-favbrand' }}
+                      placeholder="e.g. Nissan"
+                      fullWidth
+                      size="small"
+                    />
+                    <TextField
+                      label="Dream Car"
+                      value={form.dreamCar}
+                      onChange={(e) => handleChange('dreamCar', e.target.value)}
+                      inputProps={{ 'data-part': 'input-dreamcar' }}
+                      placeholder="e.g. Nissan GT-R R34"
+                      fullWidth
+                      size="small"
+                    />
+                    <TextField
+                      label="Occupation"
+                      value={form.occupation}
+                      onChange={(e) => handleChange('occupation', e.target.value)}
+                      inputProps={{ 'data-part': 'input-occupation' }}
+                      placeholder="e.g. Automotive Photographer"
+                      fullWidth
+                      size="small"
+                    />
+                    <TextField
+                      label="Drive Style"
+                      value={form.driveStyle}
+                      onChange={(e) => handleChange('driveStyle', e.target.value)}
+                      inputProps={{ 'data-part': 'input-drive' }}
+                      placeholder="e.g. Performance & Style"
+                      fullWidth
+                      size="small"
+                    />
                   </div>
                 </div>
               </div>

@@ -122,15 +122,17 @@ export default function GaragePage() {
           data-part="filter-bar"
           className="bg-[#04080b] px-4 sm:px-8 py-3 flex items-center gap-3 sm:gap-4 flex-wrap shrink-0 border-b border-[#1a1d22]"
         >
-          <div data-part="search-field" className="relative flex-1 min-w-[200px] max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#555555]" />
-            <input
-              type="text"
+          <div data-part="search-field" className="flex-1 min-w-[200px] max-w-xs">
+            <TextField
               data-part="search-input"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search vehicles..."
-              className="w-full pl-9 pr-3 py-2 bg-[#0a0d12] text-white text-[14px] placeholder-[#555555] rounded-lg border border-[#1a1d22] focus:outline-none focus:border-[#e10908] transition-colors"
+              size="small"
+              fullWidth
+              InputProps={{
+                startAdornment: <InputAdornment position="start"><Search className="h-4 w-4 text-[#555555]" /></InputAdornment>,
+              }}
             />
           </div>
           <span className="text-[#666666] text-[13px] sm:text-[14px] cursor-pointer hover:text-white transition-colors">
