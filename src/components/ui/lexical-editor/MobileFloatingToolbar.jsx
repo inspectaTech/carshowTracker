@@ -1,7 +1,27 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { GripHorizontal, Maximize2, Minimize2, UndoDot, Pen, Lock, Settings } from 'lucide-react'
 import LexicalToolbar from './LexicalToolbar'
-import { getToolbarLayout, setToolbarLayout as saveToolbarLayout, onToolbarLayoutChange } from '#/lib/toolbar-layout'
+
+// Inlined localStorage persistence for toolbar layout preference
+// (self-contained — no external dependencies)
+const STORAGE_KEY = 'cst_toolbar_layout'
+
+function getToolbarLayout() {
+  if (typeof window === 'undefined') return 'scroll'
+  return localStorage.getItem(STORAGE_KEY) || 'scroll'
+}
+
+function setToolbarLayout(layout) {
+  if (typeof window === 'undefined') return
+  localStorage.setItem(STORAGE_KEY, layout)
+  window.dispatchEvent(new CustomEvent('toolbarLayoutChange', { detail: layout }))
+}
+
+function onToolbarLayoutChange(fn) {
+  const handler = (e) => fn(e.detail)
+  window.addEventListener('toolbarLayoutChange', handler)
+  return () => window.removeEventListener('toolbarLayoutChange', handler)
+}
 
 export default function FloatingToolbar({ editor, activeFormats, onFormat, canUndo, canRedo }) {
   const [mode, setMode] = useState('parked') // 'parked' | 'floating' | 'minimized'
@@ -270,7 +290,7 @@ export default function FloatingToolbar({ editor, activeFormats, onFormat, canUn
             <div className="flex items-center gap-3">
               <button
                 data-part="modal-layout-scroll"
-                onClick={() => { setLayout('scroll'); saveToolbarLayout('scroll') }}
+                onClick={() => { setLayout('scroll'); setToolbarLayout('scroll') }}
                 className={`flex-1 h-10 rounded-lg text-[13px] font-normal transition-colors ${
                   layout === 'scroll'
                     ? 'bg-[#e10908] text-white'
@@ -281,7 +301,7 @@ export default function FloatingToolbar({ editor, activeFormats, onFormat, canUn
               </button>
               <button
                 data-part="modal-layout-wrap"
-                onClick={() => { setLayout('wrap'); saveToolbarLayout('wrap') }}
+                onClick={() => { setLayout('wrap'); setToolbarLayout('wrap') }}
                 className={`flex-1 h-10 rounded-lg text-[13px] font-normal transition-colors ${
                   layout === 'wrap'
                     ? 'bg-[#e10908] text-white'

@@ -4,7 +4,7 @@ import { X, ImagePlus, DollarSign } from 'lucide-react'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import FlatpickrInput from '#/components/ui/FlatpickrInput'
-import LexicalEditor from './LexicalEditor'
+import LexicalEditor from '#/components/ui/lexical-editor'
 
 const CATEGORIES = ['Meetup', 'JDM', 'Classic', 'Euro', 'Import']
 
