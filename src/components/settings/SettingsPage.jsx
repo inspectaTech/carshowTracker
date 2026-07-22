@@ -10,9 +10,16 @@ const SETTINGS_NAV = [
   { id: 'privacy', label: 'Privacy', icon: Lock },
   { id: 'home-location', label: 'Home Location', icon: MapPin },
   { id: 'theme', label: 'Theme', icon: Palette },
-  { id: 'toolbar', label: 'Toolbar', icon: Sliders },
+  { id: 'form', label: 'Form', icon: Sliders },
   { id: 'connected', label: 'Connected Accounts', icon: LinkIcon },
 ]
+
+const SKIP_CLOSE_KEY = 'cst_skip_close_confirm'
+
+function getSkipCloseConfirm() {
+  if (typeof window === 'undefined') return false
+  return localStorage.getItem(SKIP_CLOSE_KEY) === 'true'
+}
 
 export default function SettingsPage() {
   const [profile, setProfile] = useState(null)
@@ -20,6 +27,7 @@ export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState('profile')
   const [darkMode, setDarkMode] = useState(true)
   const [toolbarLayout, setToolbarLayout] = useState(getToolbarLayout)
+  const [skipCloseConfirm, setSkipCloseConfirm] = useState(getSkipCloseConfirm)
   const [notifications, setNotifications] = useState({
     events: true,
     followers: false,
@@ -217,11 +225,11 @@ export default function SettingsPage() {
                   </>
                 )}
 
-                {activeSection === 'toolbar' && (
+                {activeSection === 'form' && (
                   <>
-                    <h2 className="text-white text-[22px] font-medium mb-6">Toolbar</h2>
+                    <h2 className="text-white text-[22px] font-medium mb-6">Form</h2>
                     <div className="bg-[#0a0d12] rounded-xl p-4 sm:p-5">
-                      <label className="text-white text-[15px] block mb-3">Layout Style</label>
+                      <label className="text-white text-[15px] block mb-3">Toolbar Layout</label>
                       <p className="text-[#888888] text-[13px] mb-4">Choose how the editor toolbar displays its buttons.</p>
                       <div className="flex items-center gap-3">
                         <button
@@ -247,6 +255,33 @@ export default function SettingsPage() {
                           Grid
                         </button>
                       </div>
+                    </div>
+
+                    {/* Confirm Close toggle */}
+                    <div className="bg-[#0a0d12] rounded-xl p-4 sm:p-5 mt-4">
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-white text-[15px]">Confirm Before Closing</label>
+                        <button
+                          data-part="toggle-confirm-close"
+                          onClick={() => {
+                            const next = !skipCloseConfirm
+                            setSkipCloseConfirm(next)
+                            localStorage.setItem(SKIP_CLOSE_KEY, next)
+                          }}
+                          className={`relative w-11 h-6 rounded-full transition-colors ${
+                            !skipCloseConfirm ? 'bg-[#e10908]' : 'bg-[#333333]'
+                          }`}
+                        >
+                          <span
+                            className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                              !skipCloseConfirm ? 'translate-x-5' : 'translate-x-0'
+                            }`}
+                          />
+                        </button>
+                      </div>
+                      <p className="text-[#888888] text-[13px]">
+                        Show a warning when closing the Create Event form with unsaved changes.
+                      </p>
                     </div>
                   </>
                 )}

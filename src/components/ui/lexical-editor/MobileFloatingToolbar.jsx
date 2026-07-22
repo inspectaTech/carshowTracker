@@ -284,8 +284,8 @@ export default function FloatingToolbar({ editor, activeFormats, onFormat, canUn
             className="bg-[#0a0d12] border border-[#333333] rounded-xl p-5 w-[280px] shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-white text-[16px] font-medium mb-4">Toolbar Settings</h3>
-            <label className="text-white text-[14px] block mb-2">Layout Style</label>
+            <h3 className="text-white text-[16px] font-medium mb-4">Form Settings</h3>
+            <label className="text-white text-[14px] block mb-2">Toolbar Layout</label>
             <p className="text-[#888888] text-[12px] mb-3">Choose how the editor toolbar displays its buttons.</p>
             <div className="flex items-center gap-3">
               <button

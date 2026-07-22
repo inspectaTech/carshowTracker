@@ -86,25 +86,23 @@ export default function FlatpickrInput({
   const formatDate = (date, fmt) => {
     const pad = (n) => String(n).padStart(2, '0')
     const map = {
-      'Y': date.getFullYear(),
+      'Y': String(date.getFullYear()),
       'm': pad(date.getMonth() + 1),
       'd': pad(date.getDate()),
       'H': pad(date.getHours()),
       'i': pad(date.getMinutes()),
       'K': date.getHours() >= 12 ? 'PM' : 'AM',
       'h': pad(date.getHours() % 12 || 12),
-      'G': date.getHours() % 12 || 12,
-      'g': date.getHours() % 12 || 12,
+      'G': String(date.getHours() % 12 || 12),
+      'g': String(date.getHours() % 12 || 12),
       'M': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][date.getMonth()],
       'F': ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][date.getMonth()],
       'D': ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getDay()],
       'l': ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][date.getDay()],
     }
-    let result = fmt
-    for (const [key, val] of Object.entries(map)) {
-      result = result.replace(key, val)
-    }
-    return result
+    // Single-pass regex replacement — all tokens replaced simultaneously
+    // so intermediate results (e.g. 'l' inside 'Jul') never get re-matched
+    return fmt.replace(/[YmMKhdHiglFD]/g, (match) => map[match])
   }
 
   const displayValue = value ? (typeof value === 'string' ? value : formatDate(new Date(value), dateFormat)) : ''
