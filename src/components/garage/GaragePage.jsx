@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import Sidebar from '#/components/dashboard/Sidebar'
 import { getDashboardData } from '#/server/db-actions'
 import { Plus, Search, Car } from 'lucide-react'
+import TextField from '@mui/material/TextField'
+import InputAdornment from '@mui/material/InputAdornment'
 import AddCarModal from './AddCarModal'
 import UploadPhotoModal from '#/components/dashboard/UploadPhotoModal'
 

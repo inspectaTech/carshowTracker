@@ -104,17 +104,22 @@ export default function EventsPage() {
   const [activeTab, setActiveTab] = useState('Upcoming')
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [dataSource, setDataSource] = useState('mock')
+  const [debug, setDebug] = useState('waiting...')
 
   useEffect(() => {
     async function loadData() {
       try {
+        setDebug('calling getDashboardData...')
         const result = await getDashboardData({ data: { userId: 'user_001' } })
+        setDebug('got result: ' + (result ? 'OK' : 'null'))
         setProfile(result.profile)
         if (result.dataSource) setDataSource(result.dataSource)
       } catch (err) {
         console.error('[Events] Failed to load data:', err)
+        setDebug('ERROR: ' + (err.message || String(err)))
       } finally {
         setLoading(false)
+        setDebug(d => d + ' | loading=false')
       }
     }
     loadData()
@@ -129,6 +134,10 @@ export default function EventsPage() {
 
   return (
     <div data-component="events-page" className="min-h-screen bg-[#04080b] flex flex-col lg:flex-row">
+      {/* DEBUG — hidden unless ?debug=true or localStorage.setItem('cst_debug','true') */}
+      {typeof window !== 'undefined' && window.__DEBUG_MODE && (
+        <div id="debug-bar" suppressHydrationWarning style={{position:'fixed',top:0,left:0,right:0,zIndex:99999,background:'#e10908',color:'white',padding:'4px 8px',fontSize:'11px',fontFamily:'monospace'}}>{debug}</div>
+      )}
       <Sidebar profile={profile} activeNav="my-events" />
 
       <main data-part="main-content" className="flex-1 flex flex-col min-h-screen lg:min-h-0 overflow-y-auto">
