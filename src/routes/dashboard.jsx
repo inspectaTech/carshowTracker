@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useLoaderData } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
 import Sidebar from '#/components/dashboard/Sidebar'
 import TopSection, { TopActions } from '#/components/dashboard/TopSection'
@@ -7,37 +7,70 @@ import MyGarage from '#/components/dashboard/MyGarage'
 import MyHighway from '#/components/dashboard/MyHighway'
 import EditProfileModal from '#/components/dashboard/EditProfileModal'
 import UploadPhotoModal from '#/components/dashboard/UploadPhotoModal'
-import { getDashboardData, getDataSourceStatus } from '#/server/db-actions'
 
-export const Route = createFileRoute('/dashboard')({ component: DashboardPage })
+function getDashboardData() {
+  return {
+    profile: {
+      userId: 'user_001',
+      username: 'CarEnthusiast',
+      handle: '@cardude',
+      bio: 'Car enthusiast and show organizer',
+      avatarUrl: null,
+      location: 'Los Angeles, CA',
+      joinedAt: '2024-01-15',
+      socialLinks: ['instagram', 'twitter'],
+      aboutMe: 'I love cars and car shows!',
+      favoriteBrand: 'Porsche',
+      dreamCar: '911 GT3 RS',
+      occupation: 'Mechanic',
+      driveStyle: 'Sport',
+      stats: {
+        totalPoints: { value: '12.5K', label: 'Total Points' },
+        badges: { value: '24', label: 'Badges' },
+        carsInGarage: { value: '3', label: 'Cars in Garage' },
+        followers: { value: '1.2K', label: 'Followers' },
+        following: { value: '89', label: 'Following' },
+      },
+    },
+    vehicles: [
+      { name: 'Porsche 911 GT3', specs: '2023 | 502 HP | RWD' },
+      { name: 'BMW M3 Competition', specs: '2024 | 503 HP | AWD' },
+      { name: 'Shelby GT500', specs: '2022 | 760 HP | RWD' },
+    ],
+    activities: [
+      { type: 'show', action: 'Attended', description: 'Porsche Owners Club Meetup', timestamp: '2h ago', likes: 24, comments: 3 },
+      { type: 'award', action: 'Won', description: 'Best in Show - Luxury Class', timestamp: '1d ago', likes: 56, comments: 8 },
+      { type: 'upload', action: 'Added', description: '5 new photos to gallery', timestamp: '3d ago', likes: 12, comments: 1 },
+    ],
+    images: [],
+  }
+}
+
+export const Route = createFileRoute('/dashboard')({
+  component: DashboardPage,
+  loader: async () => {
+    console.log('[Dashboard] loader running on server')
+    try {
+      const data = getDashboardData()
+      return { data, error: null }
+    } catch (err) {
+      console.error('[Dashboard] loader error:', err)
+      return { data: null, error: err.message }
+    }
+  },
+})
 
 function DashboardPage() {
-  const [data, setData] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const loaderData = useLoaderData({ from: '/dashboard' })
+  const [data, setData] = useState(loaderData?.data ?? null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(loaderData?.error ?? null)
   const [dataSourceInfo, setDataSourceInfo] = useState({ source: '', dbAvailable: false })
   const [showEditProfile, setShowEditProfile] = useState(false)
   const [showUpload, setShowUpload] = useState(false)
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        const [statusResult, dashboardResult] = await Promise.all([
-          getDataSourceStatus(),
-          getDashboardData({ data: { userId: 'user_001' } }),
-        ])
-
-        setDataSourceInfo(statusResult)
-        setData(dashboardResult)
-      } catch (err) {
-        console.error('[Dashboard] Failed to load data:', err)
-        setError(err.message || 'Failed to load dashboard data')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadData()
+    console.log('[Dashboard] mounted with loaderData:', !!loaderData)
   }, [])
 
   if (loading) {

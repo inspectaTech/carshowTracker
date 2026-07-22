@@ -57,6 +57,7 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode })
   const markerInstance = useRef(null)
   const debounceTimer = useRef(null)
   const inputRef = useRef(null)
+  const justSelected = useRef(false)
 
   // --- Helper: remove existing marker ---
   const clearMarker = useCallback(() => {
@@ -103,6 +104,9 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode })
         shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
       })
 
+      // Prevent double initialization
+      if (mapRef.current._leaflet_map) return
+
       const map = L.map(mapRef.current, {
         center: DEFAULT_CENTER,
         zoom: DEFAULT_ZOOM,
@@ -128,16 +132,19 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode })
           const data = await res.json()
           const address = data.address ? formatCleanAddress(data.address) : data.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`
           notifyLocation({ address, lat, lng }, data.address)
+          justSelected.current = true
           setQuery(address)
           setShowSuggestions(false)
         } catch {
           notifyLocation({ address: `${lat.toFixed(6)}, ${lng.toFixed(6)}`, lat, lng })
+          justSelected.current = true
           setQuery(`${lat.toFixed(6)}, ${lng.toFixed(6)}`)
           setShowSuggestions(false)
         }
       })
 
       mapInstance.current = map
+      mapRef.current._leaflet_map = true
     }
 
     initMap()
@@ -146,6 +153,9 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode })
       if (mapInstance.current) {
         mapInstance.current.remove()
         mapInstance.current = null
+      }
+      if (mapRef.current) {
+        mapRef.current._leaflet_map = false
       }
     }
   }, [placeMarker, notifyLocation])
@@ -163,6 +173,12 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode })
 
   // --- Debounced Nominatim search ---
   useEffect(() => {
+    // Suppress search when query was set programmatically after selecting a suggestion
+    if (justSelected.current) {
+      justSelected.current = false
+      return
+    }
+
     if (debounceTimer.current) clearTimeout(debounceTimer.current)
 
     if (!query || query.trim().length < 3) {
@@ -209,9 +225,11 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode })
       const data = await res.json()
       const address = data.address ? formatCleanAddress(data.address) : data.display_name || s.display_name
       notifyLocation({ address, lat, lng }, data.address)
+      justSelected.current = true
       setQuery(address)
     } catch {
       notifyLocation({ address: s.display_name, lat, lng })
+      justSelected.current = true
       setQuery(s.display_name)
     }
   }, [placeMarker, notifyLocation])

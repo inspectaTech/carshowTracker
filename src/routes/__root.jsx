@@ -41,6 +41,15 @@ export const Route = createRootRoute({
     ],
   }),
   shellComponent: RootDocument,
+  notFoundComponent: () => (
+    <div className="min-h-screen bg-[#04080b] flex flex-col items-center justify-center p-8">
+      <h1 className="text-white text-[28px] font-medium mb-2">Page Not Found</h1>
+      <p className="text-[#888888] text-[16px] mb-6">This page doesn't exist yet.</p>
+      <a href="/dashboard" className="h-11 px-5 rounded-lg bg-[#e10908] hover:bg-[#c00807] text-white text-[16px] flex items-center transition-colors">
+        Go to Dashboard
+      </a>
+    </div>
+  ),
 })
 
 function RootDocument({ children }) {

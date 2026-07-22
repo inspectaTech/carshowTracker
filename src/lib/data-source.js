@@ -7,13 +7,24 @@ let dbStatusCache = { available: false, lastChecked: 0 }
 const CACHE_TTL = 30_000 // 30 seconds
 
 async function refreshDbStatus() {
+  console.log('[DS] refreshDbStatus called, USE_MONGODB =', process.env.USE_MONGODB)
+  // Skip database checks unless USE_MONGODB=true is explicitly set.
+  // This avoids SSR timeout issues when MongoDB isn't running.
+  // Set USE_MONGODB=true when you have a working MongoDB instance configured.
+  const useMongoDB = process.env.USE_MONGODB === 'true'
+  if (!useMongoDB) {
+    console.log('[DS] Skipping DB check, using JSON')
+    dbStatusCache = { available: false, lastChecked: Date.now() }
+    return false
+  }
   try {
     const result = await checkDatabaseConnection()
     dbStatusCache = {
       available: result.success,
       lastChecked: Date.now(),
     }
-  } catch {
+  } catch (err) {
+    console.warn('[DB] Status check failed, falling back to JSON:', err.message)
     dbStatusCache = { available: false, lastChecked: Date.now() }
   }
   return dbStatusCache.available

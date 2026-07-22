@@ -120,8 +120,8 @@ export default function FlatpickrInput({
       disabled={disabled}
       autoComplete="off"
       className={className}
-      InputProps={{
-        readOnly: false,
+      slotProps={{
+        input: { readOnly: false },
       }}
       {...rest}
     />

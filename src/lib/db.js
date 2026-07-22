@@ -7,17 +7,20 @@ const DB_NAME = 'carshow_tracker'
 let client
 let clientPromise
 
-if (!global._mongoClientPromise) {
-  client = new MongoClient(MONGODB_URI, {
-    maxPoolSize: 10,
-  })
-  // Catch the rejection so it doesn't crash the process when MongoDB isn't running
-  global._mongoClientPromise = client.connect().catch((err) => {
-    console.warn('[DB] MongoDB not available:', err.message)
-    return null
-  })
+function getClientPromise() {
+  if (!global._mongoClientPromise) {
+    client = new MongoClient(MONGODB_URI, {
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 3000, // fail fast if MongoDB isn't running
+    })
+    // Catch the rejection so it doesn't crash the process when MongoDB isn't running
+    global._mongoClientPromise = client.connect().catch((err) => {
+      console.warn('[DB] MongoDB not available:', err.message)
+      return null
+    })
+  }
+  return global._mongoClientPromise
 }
-clientPromise = global._mongoClientPromise
 
 /**
  * Quick TCP port check — is anything listening on the MongoDB port?
@@ -38,7 +41,7 @@ async function isPortReachable(host, port, timeout = 1000) {
 export async function connectToDatabase() {
   console.log('[C2DB] attempting to connect to db', DB_NAME);
   try {
-    const client = await clientPromise
+    const client = await getClientPromise()
     if (!client) throw new Error('MongoDB client not available')
     const db = client.db(DB_NAME)
     console.log('db is', db);
