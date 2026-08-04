@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { Mail, Lock, Eye, EyeOff, Github, Chrome } from 'lucide-react'
+import { authClient } from '#/lib/auth-client'
 
 export default function LoginForm() {
   const [isLogin, setIsLogin] = useState(true)
@@ -13,6 +14,7 @@ export default function LoginForm() {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -31,21 +33,55 @@ export default function LoginForm() {
       return
     }
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      if (isLogin) {
+        const { error: signInError } = await authClient.signIn.email({
+          email: formData.email,
+          password: formData.password,
+        })
+        if (signInError) {
+          setError(signInError.message || 'Invalid credentials')
+          setLoading(false)
+          return
+        }
+      } else {
+        const { error: signUpError } = await authClient.signUp.email({
+          email: formData.email,
+          password: formData.password,
+          name: formData.name || formData.email.split('@')[0],
+        })
+        if (signUpError) {
+          setError(signUpError.message || 'Could not create account')
+          setLoading(false)
+          return
+        }
+      }
+      navigate({ to: '/dashboard' })
+    } catch (err) {
+      setError(err.message || 'Something went wrong')
+    } finally {
       setLoading(false)
-      alert(isLogin
-        ? 'Login will be implemented with Auth.js'
-        : 'Registration will be implemented with Auth.js')
-    }, 1000)
+    }
   }
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
-  const handleOAuth = (provider) => {
-    alert(`${provider} OAuth will be implemented with Auth.js`)
+  const handleOAuth = async (provider) => {
+    setLoading(true)
+    setError('')
+    try {
+      if (provider === 'Google') {
+        await authClient.signIn.social({ provider: 'google', callbackURL: '/dashboard' })
+      } else if (provider === 'GitHub') {
+        setError('GitHub login is not configured yet')
+      }
+    } catch (err) {
+      setError(err.message || 'OAuth sign-in failed')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

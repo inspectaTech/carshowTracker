@@ -1,10 +1,12 @@
-import { useState } from 'react'
 import { X, ImagePlus } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useForm, Controller } from 'react-hook-form'
+import React from 'react'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
+import LexicalEditor from '#/components/ui/lexical-editor'
 
-const INITIAL_STATE = {
+const defaultValues = {
   make: '',
   model: '',
   year: '',
@@ -20,14 +22,15 @@ const DRIVETRAINS = ['AWD', 'RWD', 'FWD', '4WD']
 
 export default function AddCarModal({ isOpen, onClose, onSave, editCar }) {
   const isEditing = !!editCar
-  const [form, setForm] = useState(INITIAL_STATE)
-  const [saving, setSaving] = useState(false)
+  const { control, handleSubmit, reset, formState: { isDirty } } = useForm({ defaultValues })
+  const [confirmClose, setConfirmClose] = React.useState(false)
 
   // Reset form when opening
-  useState(() => {
-    if (isOpen) {
+  const prevOpen = React.useRef(isOpen)
+  React.useEffect(() => {
+    if (isOpen && !prevOpen.current) {
       if (editCar) {
-        setForm({
+        reset({
           make: editCar.make || '',
           model: editCar.model || '',
           year: String(editCar.year || ''),
@@ -37,27 +40,30 @@ export default function AddCarModal({ isOpen, onClose, onSave, editCar }) {
           mods: '',
         })
       } else {
-        setForm(INITIAL_STATE)
+        reset()
       }
+      setConfirmClose(false)
     }
-  }, [isOpen, editCar])
+    prevOpen.current = isOpen
+  }, [isOpen, editCar, reset])
 
-  const handleChange = (field, value) => {
-    setForm((prev) => ({ ...prev, [field]: value }))
+  const handleClose = () => {
+    if (isDirty) {
+      setConfirmClose(true)
+    } else {
+      onClose()
+    }
   }
 
-  const handleSubmit = async () => {
-    if (!form.make || !form.model) return
-    setSaving(true)
+  const onSubmit = async (data) => {
     await new Promise((r) => setTimeout(r, 800))
     if (onSave) {
       onSave({
-        ...form,
-        year: parseInt(form.year) || 2000,
-        hp: parseInt(form.hp) || 0,
+        ...data,
+        year: parseInt(data.year) || 2000,
+        hp: parseInt(data.hp) || 0,
       })
     }
-    setSaving(false)
     onClose()
   }
 
@@ -71,7 +77,7 @@ export default function AddCarModal({ isOpen, onClose, onSave, editCar }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50"
-            onClick={onClose}
+            onClick={handleClose}
           />
           <motion.div
             data-component="AddCarModal"
@@ -87,7 +93,7 @@ export default function AddCarModal({ isOpen, onClose, onSave, editCar }) {
                 <h2 className="text-white text-[20px] sm:text-[22px] font-medium">
                   {isEditing ? 'Edit Vehicle' : 'Add Vehicle'}
                 </h2>
-                <button data-part="close-btn" onClick={onClose} className="text-[#888888] hover:text-white transition-colors">
+                <button data-part="close-btn" onClick={handleClose} className="text-[#888888] hover:text-white transition-colors">
                   <X size={22} />
                 </button>
               </div>
@@ -106,105 +112,146 @@ export default function AddCarModal({ isOpen, onClose, onSave, editCar }) {
 
                 {/* Row 1: Make + Model */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <TextField
-                    label="Make"
-                    value={form.make}
-                    onChange={(e) => handleChange('make', e.target.value)}
-                    select
-                    fullWidth
-                    size="small"
-                  >
-                    <MenuItem value="" disabled>Select make</MenuItem>
-                    {MAKES.map((opt) => (
-                      <MenuItem key={opt} value={opt}>{opt}</MenuItem>
-                    ))}
-                  </TextField>
-                  <TextField
-                    label="Model"
-                    value={form.model}
-                    onChange={(e) => handleChange('model', e.target.value)}
-                    placeholder="Enter model"
-                    fullWidth
-                    size="small"
+                  <Controller
+                    name="make"
+                    control={control}
+                    rules={{ required: 'Make is required' }}
+                    render={({ field }) => (
+                      <TextField {...field} label="Make" select fullWidth size="small">
+                        <MenuItem value="" disabled>Select make</MenuItem>
+                        {MAKES.map((opt) => (
+                          <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+                        ))}
+                      </TextField>
+                    )}
+                  />
+                  <Controller
+                    name="model"
+                    control={control}
+                    rules={{ required: 'Model is required' }}
+                    render={({ field }) => (
+                      <TextField {...field} label="Model" placeholder="Enter model" fullWidth size="small" />
+                    )}
                   />
                 </div>
 
                 {/* Row 2: Year + HP */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <TextField
-                    label="Year"
-                    value={form.year}
-                    onChange={(e) => handleChange('year', e.target.value)}
-                    select
-                    fullWidth
-                    size="small"
-                  >
-                    <MenuItem value="" disabled>Select year</MenuItem>
-                    {YEARS.map((opt) => (
-                      <MenuItem key={opt} value={opt}>{opt}</MenuItem>
-                    ))}
-                  </TextField>
-                  <TextField
-                    label="Horsepower"
-                    value={form.hp}
-                    onChange={(e) => handleChange('hp', e.target.value)}
-                    placeholder="Enter HP"
-                    fullWidth
-                    size="small"
+                  <Controller
+                    name="year"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField {...field} label="Year" select fullWidth size="small">
+                        <MenuItem value="" disabled>Select year</MenuItem>
+                        {YEARS.map((opt) => (
+                          <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+                        ))}
+                      </TextField>
+                    )}
+                  />
+                  <Controller
+                    name="hp"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField {...field} label="Horsepower" placeholder="Enter HP" fullWidth size="small" />
+                    )}
                   />
                 </div>
 
                 {/* Row 3: Drivetrain + Color */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <TextField
-                    label="Drivetrain"
-                    value={form.drivetrain}
-                    onChange={(e) => handleChange('drivetrain', e.target.value)}
-                    select
-                    fullWidth
-                    size="small"
-                  >
-                    <MenuItem value="" disabled>Select drivetrain</MenuItem>
-                    {DRIVETRAINS.map((opt) => (
-                      <MenuItem key={opt} value={opt}>{opt}</MenuItem>
-                    ))}
-                  </TextField>
-                  <TextField
-                    label="Color"
-                    value={form.color}
-                    onChange={(e) => handleChange('color', e.target.value)}
-                    placeholder="Enter color"
-                    fullWidth
-                    size="small"
+                  <Controller
+                    name="drivetrain"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField {...field} label="Drivetrain" select fullWidth size="small">
+                        <MenuItem value="" disabled>Select drivetrain</MenuItem>
+                        {DRIVETRAINS.map((opt) => (
+                          <MenuItem key={opt} value={opt}>{opt}</MenuItem>
+                        ))}
+                      </TextField>
+                    )}
+                  />
+                  <Controller
+                    name="color"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField {...field} label="Color" placeholder="Enter color" fullWidth size="small" />
+                    )}
                   />
                 </div>
 
-                {/* Mods */}
-                <TextField
-                  label="Modifications / Notes"
-                  value={form.mods}
-                  onChange={(e) => handleChange('mods', e.target.value)}
-                  placeholder="List any modifications..."
-                  multiline
-                  rows={3}
-                  fullWidth
-                  size="small"
-                />
+                {/* Modifications — Lexical Rich Text */}
+                <div data-part="field" className="space-y-1.5">
+                  <label className="text-white text-[14px]">Modifications / Notes</label>
+                  <Controller
+                    name="mods"
+                    control={control}
+                    render={({ field }) => (
+                      <LexicalEditor
+                        initialHtml={field.value}
+                        onChange={(html) => field.onChange(html)}
+                      />
+                    )}
+                  />
+                </div>
               </div>
 
               {/* Footer */}
               <div className="flex items-center justify-end gap-3 px-6 py-4 shrink-0 border-t border-[#1a1d22]">
-                <button data-part="cancel-btn" onClick={onClose}
+                <button data-part="cancel-btn" onClick={handleClose}
                   className="px-5 py-2.5 bg-transparent border border-[#333333] text-[#888888] rounded-lg text-[15px] hover:text-white hover:border-[#555555] transition-colors">
                   Cancel
                 </button>
-                <button data-part="save-btn" onClick={handleSubmit} disabled={saving || !form.make || !form.model}
+                <button data-part="save-btn" onClick={handleSubmit(onSubmit)}
                   className="px-6 py-2.5 bg-[#e10908] text-white rounded-lg text-[15px] font-medium hover:bg-[#c00807] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                  {saving ? 'Saving...' : isEditing ? 'Save Changes' : 'Add Vehicle'}
+                  {isEditing ? 'Save Changes' : 'Add Vehicle'}
                 </button>
               </div>
             </div>
           </motion.div>
+
+          {/* Confirm close modal */}
+          <AnimatePresence>
+            {confirmClose && (
+              <>
+                <motion.div
+                  key="confirm-close-overlay"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60]"
+                  onClick={() => setConfirmClose(false)}
+                />
+                <motion.div
+                  key="confirm-close-modal"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="fixed inset-0 z-[60] flex items-center justify-center p-4 pointer-events-none"
+                >
+                  <div className="bg-[#0a0d12] rounded-2xl w-full max-w-[380px] p-6 pointer-events-auto shadow-2xl border border-[#1a1d22]">
+                    <h3 className="text-white text-[18px] font-medium mb-2">Discard changes?</h3>
+                    <p className="text-[#888888] text-[14px] mb-6">You have unsaved changes. Are you sure you want to close?</p>
+                    <div className="flex items-center justify-end gap-3">
+                      <button
+                        onClick={() => setConfirmClose(false)}
+                        className="px-4 py-2 bg-transparent border border-[#333333] text-[#888888] rounded-lg text-[14px] hover:text-white transition-colors"
+                      >
+                        Keep Editing
+                      </button>
+                      <button
+                        onClick={() => { setConfirmClose(false); onClose() }}
+                        className="px-4 py-2 bg-[#e10908] text-white rounded-lg text-[14px] hover:bg-[#c00807] transition-colors"
+                      >
+                        Discard
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
         </>
       )}
     </AnimatePresence>

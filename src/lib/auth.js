@@ -1,134 +1,87 @@
-// Placeholder for Auth.js configuration
-// This will be implemented with @auth/tanstack-start-adapter and @auth/mongodb-adapter
-// For now, this is a minimal placeholder to show authentication structure
+// Better Auth configuration for Car Show Tracker
+// Google OAuth + MongoDB + TanStack Start cookie handling
+import { betterAuth } from 'better-auth'
+import { mongodbAdapter } from 'better-auth/adapters/mongodb'
+import { tanstackStartCookies } from 'better-auth/tanstack-start'
+import { MongoClient } from 'mongodb'
 
-export const authConfig = {
-  // Placeholder configuration for Auth.js
-  providers: [],
-  adapter: 'mongodb',
-  pages: {
-    signIn: '/login',
-    error: '/login',
+// MongoDB connection
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017'
+const client = new MongoClient(MONGODB_URI, {
+  serverSelectionTimeoutMS: 3000,
+})
+
+export const auth = betterAuth({
+  database: mongodbAdapter(client.db('carshow_tracker'), {
+    // Local standalone MongoDB doesn't support transactions
+    transaction: false,
+  }),
+  plugins: [tanstackStartCookies()],
+  emailAndPassword: {
+    enabled: true,
+    autoSignIn: true,
   },
-  session: {
-    strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id
-        token.email = user.email
-        token.name = user.name
-      }
-      return token
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id
-        session.user.email = token.email
-        session.user.name = token.name
-      }
-      return session
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     },
   },
-}
-
-// Simulated user data for development
-export const mockUsers = [
-  {
-    id: '1',
-    name: 'John Doe',
-    email: 'john@example.com',
-    role: 'organizer',
+  advanced: {
+    defaultCookieAttributes: {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    },
   },
-  {
-    id: '2',
-    name: 'Jane Smith',
-    email: 'jane@example.com',
-    role: 'participant',
+  user: {
+    additionalFields: {
+      // Mirrors the dashboard's profile shape
+      username: {
+        type: 'string',
+        required: false,
+        input: true,
+      },
+      role: {
+        type: 'string',
+        required: false,
+        defaultValue: 'user',
+        input: false,
+      },
+    },
   },
-]
-
-// Simulated authentication functions
-export const authUtils = {
-  async signIn(email, password) {
-    // Simulate API call
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const user = mockUsers.find(u => u.email === email)
-        if (user) {
-          resolve({
-            success: true,
-            user,
-            message: 'Signed in successfully',
-          })
-        } else {
-          resolve({
-            success: false,
-            message: 'Invalid credentials',
-          })
-        }
-      }, 1000)
-    })
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          // Auto-create a matching `profiles` document so the dashboard
+          // can show real user data immediately after sign-up.
+          try {
+            const { connectToDatabase } = await import('./db')
+            const { db } = await connectToDatabase()
+            await db.collection('profiles').insertOne({
+              userId: user.id,
+              username: user.name || 'New Member',
+              handle: `@${(user.name || 'member').toLowerCase().replace(/\s+/g, '_')}`,
+              bio: '',
+              avatarUrl: user.image || null,
+              location: '',
+              joinedAt: new Date().toISOString().slice(0, 10),
+              socialLinks: [],
+              aboutMe: '',
+              favoriteBrand: '',
+              dreamCar: '',
+              occupation: '',
+              driveStyle: '',
+              stats: { totalPoints: 0, badges: 0, carsInGarage: 0, followers: 0, following: 0 },
+              email: user.email || '',
+              createdAt: new Date(),
+            })
+            console.log('[Auth] Created profile for user', user.id)
+          } catch (err) {
+            console.warn('[Auth] Failed to create profile:', err.message)
+          }
+        },
+      },
+    },
   },
-
-  async signUp(name, email, password) {
-    // Simulate API call
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const newUser = {
-          id: String(mockUsers.length + 1),
-          name,
-          email,
-          role: 'organizer',
-        }
-        // In real implementation, this would save to database
-        resolve({
-          success: true,
-          user: newUser,
-          message: 'Account created successfully',
-        })
-      }, 1000)
-    })
-  },
-
-  async signOut() {
-    // Simulate sign out
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          success: true,
-          message: 'Signed out successfully',
-        })
-      }, 500)
-    })
-  },
-
-  async getCurrentUser() {
-    // Simulate getting current user from session
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(mockUsers[0]) // Return first user as "logged in"
-      }, 500)
-    })
-  },
-
-  async checkAuth() {
-    // Simulate authentication check
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          authenticated: true,
-          user: mockUsers[0],
-        })
-      }, 300)
-    })
-  },
-}
-
-export default {
-  authConfig,
-  mockUsers,
-  authUtils,
-}
+})

@@ -1,8 +1,12 @@
 import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
+import { requireAuth } from '#/lib/route-guard'
 import { Car, Calendar, Users, MapPin, Settings, LogOut, Bell, Search, Plus } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
-export const Route = createFileRoute('/admin')({ component: AdminPage })
+export const Route = createFileRoute('/admin')({
+  beforeLoad: requireAuth,
+  component: AdminPage,
+})
 
 function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(true) // Placeholder for auth

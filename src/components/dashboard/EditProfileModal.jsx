@@ -2,25 +2,26 @@ import { useState } from 'react'
 import { X, Camera } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import TextField from '@mui/material/TextField'
+import { updateProfile } from '#/server/session'
 
 const EMPTY_STATE = {
-  displayName: 'Gearhead_23',
-  bio: 'Car enthusiast since day one. I live for weekend drives, track days, and late night builds.',
-  location: 'Los Angeles, CA',
+  displayName: '',
+  bio: '',
+  location: '',
   socialLinks: '',
-  aboutMe: 'Car enthusiast since day one. I live for weekend drives, track days, and late night builds. JDM at heart. Always chasing the next build.',
-  favoriteBrand: 'Nissan',
-  dreamCar: 'Nissan GT-R R34',
-  occupation: 'Automotive Photographer',
-  driveStyle: 'Performance & Style',
+  aboutMe: '',
+  favoriteBrand: '',
+  dreamCar: '',
+  occupation: '',
+  driveStyle: '',
 }
 
-export default function EditProfileModal({ isOpen, onClose, profile, onUploadPhoto }) {
+export default function EditProfileModal({ isOpen, onClose, profile, onUploadPhoto, onSaved }) {
   const [form, setForm] = useState({
     displayName: profile?.username || EMPTY_STATE.displayName,
-    bio: profile?.aboutMe || EMPTY_STATE.bio,
+    bio: profile?.bio || EMPTY_STATE.bio,
     location: profile?.location || EMPTY_STATE.location,
-    socialLinks: '',
+    socialLinks: Array.isArray(profile?.socialLinks) ? profile.socialLinks.join(', ') : '',
     aboutMe: profile?.aboutMe || EMPTY_STATE.aboutMe,
     favoriteBrand: profile?.favoriteBrand || EMPTY_STATE.favoriteBrand,
     dreamCar: profile?.dreamCar || EMPTY_STATE.dreamCar,
@@ -28,6 +29,7 @@ export default function EditProfileModal({ isOpen, onClose, profile, onUploadPho
     driveStyle: profile?.driveStyle || EMPTY_STATE.driveStyle,
   })
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
 
   const handleChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -35,10 +37,20 @@ export default function EditProfileModal({ isOpen, onClose, profile, onUploadPho
 
   const handleSave = async () => {
     setSaving(true)
-    // Simulate save
-    await new Promise((r) => setTimeout(r, 800))
-    setSaving(false)
-    onClose()
+    setError('')
+    try {
+      const result = await updateProfile({ data: { ...form } })
+      if (!result?.success) {
+        setError(result?.error || 'Could not save profile')
+        return
+      }
+      if (onSaved) onSaved()
+      onClose()
+    } catch (err) {
+      setError(err.message || 'Could not save profile')
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (

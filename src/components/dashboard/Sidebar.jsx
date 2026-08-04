@@ -166,8 +166,23 @@ export default function Sidebar({ profile, activeNav = 'dashboard', onNavClick, 
   const [mobileOpen, setMobileOpen] = useState(false)
   const navigate = useNavigate()
 
-  const handleNavClick = (id) => {
+  const handleNavClick = async (id) => {
     if (onNavClick) onNavClick(id)
+
+    // Logout: sign out via Better Auth, then redirect to home
+    if (id === 'logout') {
+      try {
+        const { authClient } = await import('#/lib/auth-client')
+        await authClient.signOut()
+      } catch (err) {
+        console.error('[Sidebar] Logout failed:', err)
+      } finally {
+        navigate({ to: '/' })
+        setMobileOpen(false)
+      }
+      return
+    }
+
     // Navigate to route if it exists in the map
     const route = routeMap[id]
     if (route) {

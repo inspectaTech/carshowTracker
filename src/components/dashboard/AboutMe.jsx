@@ -18,10 +18,10 @@ export default function AboutMe({ profile }) {
   if (!profile) return null
 
   const infoItems = [
-    { icon: Star, label: 'Favorite Brand', value: profile.favoriteBrand || 'Nissan' },
-    { icon: Car, label: 'Dream Car', value: profile.dreamCar || 'Nissan GT-R R34' },
-    { icon: Camera, label: 'Occupation', value: profile.occupation || 'Automotive Photographer' },
-    { icon: Flag, label: 'Drive', value: profile.driveStyle || 'Performance & Style' },
+    { icon: Star, label: 'Favorite Brand', value: profile.favoriteBrand || '—' },
+    { icon: Car, label: 'Dream Car', value: profile.dreamCar || '—' },
+    { icon: Camera, label: 'Occupation', value: profile.occupation || '—' },
+    { icon: Flag, label: 'Drive', value: profile.driveStyle || '—' },
   ]
 
   return (
@@ -32,7 +32,7 @@ export default function AboutMe({ profile }) {
 
       {/* Bio */}
       <p className="text-[#AAAAAA] text-[14px] leading-relaxed">
-        {profile.aboutMe || 'Car enthusiast since day one.'}
+        {profile.aboutMe || 'No bio yet — edit your profile to tell the community about yourself.'}
       </p>
 
       {/* Info items */}

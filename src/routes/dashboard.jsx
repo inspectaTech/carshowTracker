@@ -1,5 +1,6 @@
-import { createFileRoute, useLoaderData } from '@tanstack/react-router'
+import { createFileRoute, useLoaderData, useRouter } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
+import { requireAuth } from '#/lib/route-guard'
 import Sidebar from '#/components/dashboard/Sidebar'
 import TopSection, { TopActions } from '#/components/dashboard/TopSection'
 import AboutMe from '#/components/dashboard/AboutMe'
@@ -47,33 +48,51 @@ function getDashboardData() {
 }
 
 export const Route = createFileRoute('/dashboard')({
+  beforeLoad: requireAuth,
   component: DashboardPage,
   loader: async () => {
     console.log('[Dashboard] loader running on server')
     try {
+      // Fetch session + data entirely server-side
+      const { loadDashboardData } = await import('../server/session')
+      const result = await loadDashboardData()
+
+      // If logged in, use real user data from MongoDB
+      if (result?.data) {
+        return { data: result.data, error: null, userId: result.userId }
+      }
+
+      // If not authenticated, fall back to sample data
       const data = getDashboardData()
-      return { data, error: null }
+      return { data, error: result?.error ?? null, userId: null }
     } catch (err) {
       console.error('[Dashboard] loader error:', err)
-      return { data: null, error: err.message }
+      return { data: null, error: err.message, userId: null }
     }
   },
 })
 
 function DashboardPage() {
+  // useLoaderData is reactive: when router.invalidate() re-runs the loader,
+  // this returns fresh data and the component re-renders automatically.
   const loaderData = useLoaderData({ from: '/dashboard' })
-  const [data, setData] = useState(loaderData?.data ?? null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(loaderData?.error ?? null)
-  const [dataSourceInfo, setDataSourceInfo] = useState({ source: '', dbAvailable: false })
+  const data = loaderData?.data ?? null
+  const error = loaderData?.error ?? null
   const [showEditProfile, setShowEditProfile] = useState(false)
   const [showUpload, setShowUpload] = useState(false)
+
+  const router = useRouter()
 
   useEffect(() => {
     console.log('[Dashboard] mounted with loaderData:', !!loaderData)
   }, [])
 
-  if (loading) {
+  // Reload dashboard data after profile edits so About Me / profile updates show
+  const handleProfileSaved = () => {
+    router.invalidate()
+  }
+
+  if (!data && !error) {
     return (
       <div className="min-h-screen bg-[#04080b] flex items-center justify-center">
         <div className="text-center">
@@ -111,7 +130,7 @@ function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#04080b] flex">
-      <Sidebar profile={profile} activeNav="dashboard" dataSourceInfo={dataSourceInfo} />
+      <Sidebar profile={profile} activeNav="dashboard" />
 
       <main className="flex-1 flex flex-col gap-4 p-5 pt-16 lg:pt-5 overflow-y-auto relative">
         <TopActions />
@@ -135,6 +154,7 @@ function DashboardPage() {
           onClose={() => setShowEditProfile(false)}
           profile={profile}
           onUploadPhoto={() => { setShowEditProfile(false); setShowUpload(true) }}
+          onSaved={handleProfileSaved}
         />
         <UploadPhotoModal
           isOpen={showUpload}
