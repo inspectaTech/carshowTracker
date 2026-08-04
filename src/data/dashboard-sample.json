@@ -1,61 +1,61 @@
 {
   "profile": {
     "userId": "user_001",
-    "username": "Gearhead_23",
-    "handle": "@gearhead_23",
-    "bio": "Cars are my passion. Speed is my therapy. Built not bought.",
-    "avatarUrl": "/uploads/user_001/avatar.jpg",
-    "location": "Los Angeles, CA",
-    "joinedAt": "May 2022",
-    "socialLinks": ["Instagram", "YouTube", "TikTok"],
-    "aboutMe": "Car enthusiast since day one. I live for weekend drives, track days, and late night builds. JDM at heart. Always chasing the next build.",
-    "favoriteBrand": "Nissan",
-    "dreamCar": "Nissan GT-R R34",
-    "occupation": "Automotive Photographer",
-    "driveStyle": "Performance & Style",
+    "username": "Couch Potato",
+    "handle": "@couch_potato",
+    "bio": "Professional couch potato. My car gets me to the fridge and back. That is all I need.",
+    "avatarUrl": null,
+    "location": "My Couch, USA",
+    "joinedAt": "2026-08-04",
+    "socialLinks": ["Netflix", "DoorDash"],
+    "aboutMe": "I used to dream about cars. Now I dream about the perfect nap. My garage is where dreams go to die — and honestly, the lawnmower is the fastest thing in it. I've never changed a tire, but I once changed the channel with remarkable speed.",
+    "favoriteBrand": "Whatever is cheapest",
+    "dreamCar": "A car that starts on the first try",
+    "occupation": "Professional Napper",
+    "driveStyle": "0-60 in about a week",
     "stats": {
-      "totalPoints": { "value": "2.4K", "label": "Total Points" },
-      "badges": { "value": "47", "label": "Badges" },
-      "carsInGarage": { "value": "12", "label": "Cars in Garage" },
-      "followers": { "value": "1.8K", "label": "Followers" },
-      "following": { "value": "320", "label": "Following" }
+      "totalPoints": { "value": "12", "label": "Total Points" },
+      "badges": { "value": "1", "label": "Badges" },
+      "carsInGarage": { "value": "5", "label": "Cars in Garage" },
+      "followers": { "value": "3", "label": "Followers" },
+      "following": { "value": "0", "label": "Following" }
     }
   },
   "vehicles": [
-    { "name": "Nissan GT-R R34", "specs": "2000 | 600 HP | AWD" },
-    { "name": "Toyota Supra MK4", "specs": "1998 | 320 HP | RWD" },
-    { "name": "Honda Civic Type R", "specs": "2021 | 306 HP | FWD" },
-    { "name": "Mazda RX-7 FD", "specs": "1995 | 276 HP | RWD" }
+    { "name": "Yugo GV", "specs": "1989 | 55 HP | FWD" },
+    { "name": "Pontiac Aztek", "specs": "2003 | 185 HP | AWD" },
+    { "name": "Fiat Multipla", "specs": "2000 | 103 HP | FWD" },
+    { "name": "Reliant Robin", "specs": "2004 | 40 HP | RWD" },
+    { "name": "Suzuki X-90", "specs": "1996 | 95 HP | RWD" }
   ],
   "activities": [
     {
-      "type": "photo",
-      "action": "Posted a new photo",
-      "description": "Nissan GT-R R34 at Angeles Crest Hwy",
-      "imageUrl": "/uploads/user_001/photos/nissan-gtr-angle-crest.jpg",
+      "type": "show",
+      "action": "Skipped",
+      "description": "Another car show. Chose the couch instead.",
+      "imageUrl": null,
       "timestamp": "2h ago",
-      "likes": 128,
-      "comments": 16
-    }
-  ],
-  "images": [
-    {
-      "userId": "user_001",
-      "url": "/uploads/user_001/avatar.jpg",
-      "type": "avatar",
-      "originalName": "avatar.jpg",
-      "fileSize": 0,
-      "mimeType": "image/jpeg",
-      "uploadedAt": "2026-06-16T10:00:00Z"
+      "likes": 1,
+      "comments": 0
     },
     {
-      "userId": "user_001",
-      "url": "/uploads/user_001/photos/nissan-gtr-angle-crest.jpg",
-      "type": "activity_photo",
-      "originalName": "nissan-gtr-angle-crest.jpg",
-      "fileSize": 0,
-      "mimeType": "image/jpeg",
-      "uploadedAt": "2026-06-16T12:00:00Z"
+      "type": "award",
+      "action": "Won",
+      "description": "Most Likely to Fall Asleep at a Meet",
+      "imageUrl": null,
+      "timestamp": "1d ago",
+      "likes": 4,
+      "comments": 2
+    },
+    {
+      "type": "upload",
+      "action": "Declined",
+      "description": "14 car show invitations in one week. Nap preferred.",
+      "imageUrl": null,
+      "timestamp": "3d ago",
+      "likes": 0,
+      "comments": 1
     }
-  ]
+  ],
+  "images": []
 }
