@@ -58,10 +58,22 @@ export const auth = betterAuth({
           try {
             const { connectToDatabase } = await import('./db')
             const { db } = await connectToDatabase()
+
+            // Generate a unique @handle — base from the display name, then
+            // append _1, _2, ... if the base is already taken (unique index
+            // on profiles.handle would throw E11000 on a collision).
+            const base = (user.name || 'member').toLowerCase().replace(/[^a-z0-9_]/g, '').replace(/\s+/g, '_').slice(0, 30) || 'member'
+            let handle = `@${base}`
+            let suffix = 1
+            while (await db.collection('profiles').findOne({ handle })) {
+              handle = `@${base}_${suffix}`
+              suffix += 1
+            }
+
             await db.collection('profiles').insertOne({
               userId: user.id,
               username: user.name || 'New Member',
-              handle: `@${(user.name || 'member').toLowerCase().replace(/\s+/g, '_')}`,
+              handle,
               bio: '',
               avatarUrl: user.image || null,
               location: '',

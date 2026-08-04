@@ -1,5 +1,5 @@
 {
-  "version": "2.14",
+  "version": "2.15",
   "children": [
     {
       "type": "frame",
@@ -28,6 +28,7 @@
             "right": 1
           },
           "strokeAlignment": "inner",
+          "strokeLinejoin": "round",
           "layout": "vertical",
           "padding": [
             0,
@@ -676,7 +677,8 @@
                           "strokeWidth": {
                             "right": 4
                           },
-                          "strokeAlignment": "outer"
+                          "strokeAlignment": "outer",
+                          "strokeLinejoin": "round"
                         },
                         {
                           "type": "frame",
@@ -1642,6 +1644,7 @@
                               "strokeWidth": {
                                 "left": 2
                               },
+                              "strokeLinejoin": "round",
                               "layout": "vertical",
                               "gap": 2,
                               "padding": [
@@ -1699,6 +1702,7 @@
                               "strokeWidth": {
                                 "left": 2
                               },
+                              "strokeLinejoin": "round",
                               "layout": "vertical",
                               "gap": 2,
                               "padding": [
@@ -1756,6 +1760,7 @@
                               "strokeWidth": {
                                 "left": 2
                               },
+                              "strokeLinejoin": "round",
                               "layout": "vertical",
                               "gap": 2,
                               "padding": [
@@ -1813,6 +1818,7 @@
                               "strokeWidth": {
                                 "left": 2
                               },
+                              "strokeLinejoin": "round",
                               "layout": "vertical",
                               "gap": 2,
                               "padding": [
@@ -2110,15 +2116,15 @@
           "id": "loginCard",
           "layoutPosition": "absolute",
           "x": 480,
-          "y": 80,
+          "y": 20,
           "name": "LoginCard",
           "clip": true,
           "width": 480,
-          "height": 800,
+          "height": 920,
           "fill": "#0a0d12",
           "cornerRadius": 16,
           "layout": "vertical",
-          "gap": 20,
+          "gap": 18,
           "padding": [
             40,
             48
@@ -2161,128 +2167,183 @@
             },
             {
               "type": "frame",
-              "id": "e23a6dac69ad",
-              "name": "Spacer",
-              "width": "fill_container",
-              "height": 10,
-              "fill": "transparent"
-            },
-            {
-              "type": "frame",
-              "id": "emailField",
-              "name": "EmailField",
+              "id": "lgModeToggle",
+              "name": "ModeToggle",
               "clip": true,
               "width": "fill_container",
-              "height": 52,
+              "height": 44,
               "fill": "#04080b",
               "cornerRadius": 8,
-              "gap": 10,
-              "padding": [
-                0,
-                16
-              ],
+              "gap": 4,
+              "padding": 4,
               "alignItems": "center",
               "children": [
                 {
-                  "type": "text",
-                  "id": "emailIcon",
-                  "name": "Icon",
-                  "fill": "#888888",
-                  "content": "✉️",
-                  "fontFamily": "Inter",
-                  "fontSize": 16,
-                  "fontWeight": "normal"
+                  "type": "frame",
+                  "id": "lgModeToggleSignIn",
+                  "name": "Tab",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 36,
+                  "fill": "#0a0d12",
+                  "cornerRadius": 6,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "lgModeToggleSignInTxt",
+                      "name": "Label",
+                      "fill": "#FFFFFF",
+                      "content": "Sign In",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
                 },
                 {
-                  "type": "text",
-                  "id": "emailPlaceholder",
-                  "name": "Placeholder",
-                  "fill": "#555555",
-                  "content": "Email address",
-                  "fontFamily": "Inter",
-                  "fontSize": 16,
-                  "fontWeight": "normal"
+                  "type": "frame",
+                  "id": "lgModeToggleSignUp",
+                  "name": "Tab",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 36,
+                  "fill": "transparent",
+                  "cornerRadius": 6,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "lgModeToggleSignUpTxt",
+                      "name": "Label",
+                      "fill": "#666666",
+                      "content": "Sign Up",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
                 }
               ]
             },
             {
               "type": "frame",
-              "id": "passField",
-              "name": "PasswordField",
+              "id": "loginError",
+              "name": "ErrorBox",
               "clip": true,
               "width": "fill_container",
-              "height": 52,
-              "fill": "#04080b",
+              "height": 44,
+              "fill": "#1a0a0c",
               "cornerRadius": 8,
-              "gap": 10,
-              "padding": [
-                0,
-                16
-              ],
-              "alignItems": "center",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "passIcon",
-                  "name": "Icon",
-                  "fill": "#888888",
-                  "content": "🔒",
-                  "fontFamily": "Inter",
-                  "fontSize": 16,
-                  "fontWeight": "normal"
-                },
-                {
-                  "type": "text",
-                  "id": "passPlaceholder",
-                  "name": "Placeholder",
-                  "fill": "#555555",
-                  "content": "Password",
-                  "fontFamily": "Inter",
-                  "fontSize": 16,
-                  "fontWeight": "normal"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "forgotRow",
-              "name": "ForgotRow",
-              "width": "fill_container",
-              "fill": "transparent",
-              "children": [
-                {
-                  "type": "text",
-                  "id": "forgotLink",
-                  "name": "ForgotPassword",
-                  "fill": "#e10908",
-                  "content": "Forgot password?",
-                  "fontFamily": "Inter",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                }
-              ]
-            },
-            {
-              "type": "frame",
-              "id": "signInBtn",
-              "name": "SignInButton",
-              "clip": true,
-              "width": "fill_container",
-              "height": 52,
-              "fill": "#e10908",
-              "cornerRadius": 8,
+              "stroke": "#e10908",
+              "strokeWidth": 1,
               "justifyContent": "center",
               "alignItems": "center",
               "children": [
                 {
                   "type": "text",
-                  "id": "signInLabel",
-                  "name": "Label",
-                  "fill": "#FFFFFF",
-                  "content": "Sign In",
+                  "id": "loginErrorTxt",
+                  "name": "ErrorText",
+                  "fill": "#e10908",
+                  "content": "Invalid email or password",
                   "fontFamily": "Inter",
-                  "fontSize": 18,
+                  "fontSize": 13,
                   "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "oauthSection",
+              "name": "OAuthSection",
+              "width": "fill_container",
+              "fill": "transparent",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "googleBtn",
+                  "name": "GoogleButton",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#04080b",
+                  "cornerRadius": 8,
+                  "stroke": "#333333",
+                  "strokeWidth": 1,
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "googleIcon",
+                      "name": "Icon",
+                      "fill": "#FFFFFF",
+                      "content": "G",
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "bold"
+                    },
+                    {
+                      "type": "text",
+                      "id": "googleLabel",
+                      "name": "Label",
+                      "fill": "#FFFFFF",
+                      "content": "Continue with Google",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "githubBtn",
+                  "name": "GitHubButton",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#04080b",
+                  "cornerRadius": 8,
+                  "stroke": "#333333",
+                  "strokeWidth": 1,
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "githubIcon",
+                      "name": "Icon",
+                      "fill": "#FFFFFF",
+                      "content": "⬛",
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "bold"
+                    },
+                    {
+                      "type": "text",
+                      "id": "githubLabel",
+                      "name": "Label",
+                      "fill": "#FFFFFF",
+                      "content": "Continue with GitHub",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
                 }
               ]
             },
@@ -2325,93 +2386,185 @@
             },
             {
               "type": "frame",
-              "id": "googleBtn",
-              "name": "GoogleButton",
-              "clip": true,
+              "id": "formSection",
+              "name": "FormSection",
               "width": "fill_container",
-              "height": 48,
-              "fill": "#04080b",
-              "cornerRadius": 8,
-              "stroke": "#333333",
-              "strokeWidth": 1,
-              "gap": 10,
-              "padding": [
-                0,
-                20
-              ],
-              "justifyContent": "center",
-              "alignItems": "center",
+              "fill": "transparent",
+              "layout": "vertical",
+              "gap": 14,
               "children": [
                 {
-                  "type": "text",
-                  "id": "googleIcon",
-                  "name": "Icon",
-                  "fill": "#FFFFFF",
-                  "content": "G",
-                  "fontFamily": "Inter",
-                  "fontSize": 20,
-                  "fontWeight": "bold"
+                  "type": "frame",
+                  "id": "emailGroup",
+                  "name": "FieldGroup",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "emailGroupLabel",
+                      "name": "FieldLabel",
+                      "fill": "#FFFFFF",
+                      "content": "Email Address",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "emailField",
+                      "name": "EmailField",
+                      "clip": true,
+                      "width": "fill_container",
+                      "height": 52,
+                      "fill": "#04080b",
+                      "cornerRadius": 8,
+                      "gap": 10,
+                      "padding": [
+                        0,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "emailIcon",
+                          "name": "Icon",
+                          "fill": "#888888",
+                          "content": "✉️",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "emailPlaceholder",
+                          "name": "Placeholder",
+                          "fill": "#555555",
+                          "content": "Email address",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
                 },
                 {
-                  "type": "text",
-                  "id": "googleLabel",
-                  "name": "Label",
-                  "fill": "#FFFFFF",
-                  "content": "Continue with Google",
-                  "fontFamily": "Inter",
-                  "fontSize": 16,
-                  "fontWeight": "normal"
+                  "type": "frame",
+                  "id": "passGroup",
+                  "name": "FieldGroup",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "passGroupLabel",
+                      "name": "FieldLabel",
+                      "fill": "#FFFFFF",
+                      "content": "Password",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "passField",
+                      "name": "PasswordField",
+                      "clip": true,
+                      "width": "fill_container",
+                      "height": 52,
+                      "fill": "#04080b",
+                      "cornerRadius": 8,
+                      "gap": 10,
+                      "padding": [
+                        0,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "passIcon",
+                          "name": "Icon",
+                          "fill": "#888888",
+                          "content": "🔒",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "passPlaceholder",
+                          "name": "Placeholder",
+                          "fill": "#555555",
+                          "content": "Password",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "passEye",
+                          "name": "EyeToggle",
+                          "fill": "#555555",
+                          "content": "👁",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "forgotRow",
+                  "name": "ForgotRow",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "forgotLink",
+                      "name": "ForgotPassword",
+                      "fill": "#e10908",
+                      "content": "Forgot password?",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
                 }
               ]
             },
             {
               "type": "frame",
-              "id": "githubBtn",
-              "name": "GitHubButton",
+              "id": "signInBtn",
+              "name": "SignInButton",
               "clip": true,
               "width": "fill_container",
-              "height": 48,
-              "fill": "#04080b",
+              "height": 52,
+              "fill": "#e10908",
               "cornerRadius": 8,
-              "stroke": "#333333",
-              "strokeWidth": 1,
-              "gap": 10,
-              "padding": [
-                0,
-                20
-              ],
               "justifyContent": "center",
               "alignItems": "center",
               "children": [
                 {
                   "type": "text",
-                  "id": "githubIcon",
-                  "name": "Icon",
-                  "fill": "#FFFFFF",
-                  "content": "⬛",
-                  "fontFamily": "Inter",
-                  "fontSize": 20,
-                  "fontWeight": "bold"
-                },
-                {
-                  "type": "text",
-                  "id": "githubLabel",
+                  "id": "signInLabel",
                   "name": "Label",
                   "fill": "#FFFFFF",
-                  "content": "Continue with GitHub",
+                  "content": "Sign In",
                   "fontFamily": "Inter",
-                  "fontSize": 16,
+                  "fontSize": 18,
                   "fontWeight": "normal"
                 }
               ]
-            },
-            {
-              "type": "frame",
-              "id": "3687e79dee16",
-              "name": "Spacer",
-              "width": "fill_container",
-              "height": "fill_container",
-              "fill": "transparent"
             },
             {
               "type": "frame",
@@ -4023,7 +4176,7 @@
       "name": "EditProfile",
       "clip": true,
       "width": 1440,
-      "height": 960,
+      "height": 1328,
       "fill": "#04080b",
       "layout": "none",
       "children": [
@@ -4035,7 +4188,7 @@
           "name": "Overlay",
           "fill": "#00000080",
           "width": 1440,
-          "height": 960
+          "height": 1328
         },
         {
           "type": "frame",
@@ -4046,7 +4199,7 @@
           "name": "EditProfileModal",
           "clip": true,
           "width": 700,
-          "height": 840,
+          "height": 1180,
           "fill": "#0a0d12",
           "cornerRadius": 16,
           "layout": "vertical",
@@ -4105,7 +4258,7 @@
               "height": "fill_container",
               "fill": "transparent",
               "layout": "vertical",
-              "gap": 20,
+              "gap": 16,
               "padding": [
                 30,
                 24
@@ -4214,6 +4367,75 @@
                       "content": "Gearhead_23",
                       "fontFamily": "Inter",
                       "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "epFieldHandle",
+                  "name": "FieldLabel",
+                  "fill": "#FFFFFF",
+                  "content": "Handle",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "epInputHandle",
+                  "name": "InputField",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#04080b",
+                  "cornerRadius": 8,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "epInputHandlePrefix",
+                      "name": "Prefix",
+                      "fill": "#555555",
+                      "content": "@",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "epInputHandleVal",
+                      "name": "Value",
+                      "fill": "#FFFFFF",
+                      "content": "gearhead_23",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "epHandleStatus",
+                  "name": "StatusHint",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "epHandleStatusTxt",
+                      "name": "StatusText",
+                      "fill": "#4ade80",
+                      "content": "✓ Available",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
                       "fontWeight": "normal"
                     }
                   ]
@@ -4333,6 +4555,225 @@
                   ]
                 },
                 {
+                  "type": "rectangle",
+                  "id": "epDivider",
+                  "name": "Divider",
+                  "fill": "#333333",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "text",
+                  "id": "epAboutTitle",
+                  "name": "SectionTitle",
+                  "fill": "#FFFFFF",
+                  "content": "About Me",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "epAboutSub",
+                  "name": "SectionSubtitle",
+                  "fill": "#888888",
+                  "content": "Tell the community about yourself — your car preferences, style, and story.",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "epFieldAbout",
+                  "name": "FieldLabel",
+                  "fill": "#FFFFFF",
+                  "content": "About Me",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "epInputAbout",
+                  "name": "InputTextArea",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 80,
+                  "fill": "#04080b",
+                  "cornerRadius": 8,
+                  "padding": [
+                    12,
+                    14
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "epInputAboutVal",
+                      "name": "Value",
+                      "fill": "#FFFFFF",
+                      "textGrowth": "fixed-width-height",
+                      "width": 620,
+                      "height": 56,
+                      "content": "Professional napper. My car gets me to the fridge and back.",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "epFieldBrand",
+                  "name": "FieldLabel",
+                  "fill": "#FFFFFF",
+                  "content": "Favorite Brand",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "epInputBrand",
+                  "name": "InputField",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#04080b",
+                  "cornerRadius": 8,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "epInputBrandVal",
+                      "name": "Value",
+                      "fill": "#FFFFFF",
+                      "content": "e.g. Nissan",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "epFieldDream",
+                  "name": "FieldLabel",
+                  "fill": "#FFFFFF",
+                  "content": "Dream Car",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "epInputDream",
+                  "name": "InputField",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#04080b",
+                  "cornerRadius": 8,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "epInputDreamVal",
+                      "name": "Value",
+                      "fill": "#FFFFFF",
+                      "content": "e.g. Nissan GT-R R34",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "epFieldOcc",
+                  "name": "FieldLabel",
+                  "fill": "#FFFFFF",
+                  "content": "Occupation",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "epInputOcc",
+                  "name": "InputField",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#04080b",
+                  "cornerRadius": 8,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "epInputOccVal",
+                      "name": "Value",
+                      "fill": "#FFFFFF",
+                      "content": "e.g. Automotive Photographer",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "epFieldDrive",
+                  "name": "FieldLabel",
+                  "fill": "#FFFFFF",
+                  "content": "Drive Style",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "epInputDrive",
+                  "name": "InputField",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#04080b",
+                  "cornerRadius": 8,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "epInputDriveVal",
+                      "name": "Value",
+                      "fill": "#FFFFFF",
+                      "content": "e.g. Performance & Style",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
                   "type": "frame",
                   "id": "a4b91348c077",
                   "name": "Spacer",
@@ -4409,7 +4850,7 @@
     {
       "type": "frame",
       "id": "settingsRoot",
-      "x": 1566,
+      "x": 3139,
       "y": 2520,
       "name": "Settings",
       "clip": true,
@@ -5070,7 +5511,7 @@
       "type": "frame",
       "id": "addCarRoot",
       "x": 0,
-      "y": 3757,
+      "y": 4341,
       "name": "AddCar",
       "clip": true,
       "width": 1440,
@@ -5647,7 +6088,7 @@
       "type": "frame",
       "id": "uploadRoot",
       "x": 1566,
-      "y": 3757,
+      "y": 4341,
       "name": "UploadPhoto",
       "clip": true,
       "width": 1440,
@@ -6043,8 +6484,8 @@
     {
       "type": "frame",
       "id": "highwayRoot",
-      "x": 3139,
-      "y": 17,
+      "x": 4708,
+      "y": 1238,
       "name": "MyHighway",
       "clip": true,
       "width": 1440,
@@ -7496,7 +7937,7 @@
     {
       "type": "frame",
       "id": "myEventsRoot",
-      "x": 3139,
+      "x": 4708,
       "y": 2520,
       "name": "MyEvents",
       "clip": true,
@@ -8227,7 +8668,7 @@
       "type": "frame",
       "id": "createEventRoot",
       "x": 3139,
-      "y": 3780,
+      "y": 4341,
       "name": "CreateEvent",
       "clip": true,
       "width": 1440,
@@ -9084,6 +9525,973 @@
                       ]
                     }
                   ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "handleStatesRoot",
+      "x": 1566,
+      "y": 2520,
+      "name": "HandleStates",
+      "clip": true,
+      "width": 1440,
+      "height": 960,
+      "fill": "#04080b",
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "hsWrap",
+          "layoutPosition": "absolute",
+          "x": 70,
+          "y": 60,
+          "name": "Showcase",
+          "clip": true,
+          "width": 620,
+          "fill": "transparent",
+          "layout": "vertical",
+          "gap": 24,
+          "children": [
+            {
+              "type": "text",
+              "id": "hsTitle",
+              "name": "Title",
+              "fill": "#FFFFFF",
+              "content": "Handle field states",
+              "fontFamily": "Inter",
+              "fontSize": 26,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "hsChecking",
+              "name": "StateCard",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "#0a0d12",
+              "cornerRadius": 12,
+              "stroke": "#333333",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 10,
+              "padding": [
+                16,
+                18
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "hsCheckingTitle",
+                  "name": "FieldLabel",
+                  "fill": "#FFFFFF",
+                  "content": "Checking",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "hsCheckingInput",
+                  "name": "InputField",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#04080b",
+                  "cornerRadius": 8,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hsCheckingInputPrefix",
+                      "name": "Prefix",
+                      "fill": "#555555",
+                      "content": "@",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hsCheckingInputVal",
+                      "name": "Value",
+                      "fill": "#FFFFFF",
+                      "content": "gearhead_23",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hsCheckingStatus",
+                  "name": "StatusHint",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hsCheckingStatusTxt",
+                      "name": "StatusText",
+                      "fill": "#888888",
+                      "content": "Checking availability…",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "hsAvailable",
+              "name": "StateCard",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "#0a0d12",
+              "cornerRadius": 12,
+              "stroke": "#333333",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 10,
+              "padding": [
+                16,
+                18
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "hsAvailableTitle",
+                  "name": "FieldLabel",
+                  "fill": "#FFFFFF",
+                  "content": "Available",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "hsAvailableInput",
+                  "name": "InputField",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#04080b",
+                  "cornerRadius": 8,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hsAvailableInputPrefix",
+                      "name": "Prefix",
+                      "fill": "#555555",
+                      "content": "@",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hsAvailableInputVal",
+                      "name": "Value",
+                      "fill": "#FFFFFF",
+                      "content": "gearhead_23",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hsAvailableStatus",
+                  "name": "StatusHint",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hsAvailableStatusTxt",
+                      "name": "StatusText",
+                      "fill": "#4ade80",
+                      "content": "✓ Available",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "hsTaken",
+              "name": "StateCard",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "#0a0d12",
+              "cornerRadius": 12,
+              "stroke": "#333333",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 10,
+              "padding": [
+                16,
+                18
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "hsTakenTitle",
+                  "name": "FieldLabel",
+                  "fill": "#FFFFFF",
+                  "content": "Taken",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "hsTakenInput",
+                  "name": "InputField",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#04080b",
+                  "cornerRadius": 8,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hsTakenInputPrefix",
+                      "name": "Prefix",
+                      "fill": "#555555",
+                      "content": "@",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hsTakenInputVal",
+                      "name": "Value",
+                      "fill": "#FFFFFF",
+                      "content": "cardude",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hsTakenStatus",
+                  "name": "StatusHint",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hsTakenStatusTxt",
+                      "name": "StatusText",
+                      "fill": "#e10908",
+                      "content": "✕ That handle is already taken",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "hsInvalid",
+              "name": "StateCard",
+              "clip": true,
+              "width": "fill_container",
+              "fill": "#0a0d12",
+              "cornerRadius": 12,
+              "stroke": "#333333",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 10,
+              "padding": [
+                16,
+                18
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "hsInvalidTitle",
+                  "name": "FieldLabel",
+                  "fill": "#FFFFFF",
+                  "content": "Invalid",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "hsInvalidInput",
+                  "name": "InputField",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#04080b",
+                  "cornerRadius": 8,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hsInvalidInputPrefix",
+                      "name": "Prefix",
+                      "fill": "#555555",
+                      "content": "@",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "hsInvalidInputVal",
+                      "name": "Value",
+                      "fill": "#FFFFFF",
+                      "content": "ga rah_!",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "hsInvalidStatus",
+                  "name": "StatusHint",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hsInvalidStatusTxt",
+                      "name": "StatusText",
+                      "fill": "#e10908",
+                      "content": "✕ 2–30 chars: letters, numbers, underscores",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "loginSignUpRoot",
+      "x": 3139,
+      "y": 17,
+      "name": "LoginSignUp",
+      "clip": true,
+      "width": 1440,
+      "height": 960,
+      "fill": "#04080b",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "suBg",
+          "x": 0,
+          "y": 0,
+          "name": "Bg",
+          "fill": "#04080b",
+          "width": 1440,
+          "height": 960
+        },
+        {
+          "type": "frame",
+          "id": "suCard",
+          "layoutPosition": "absolute",
+          "x": 480,
+          "y": 20,
+          "name": "LoginCard",
+          "clip": true,
+          "width": 480,
+          "height": 920,
+          "fill": "#0a0d12",
+          "cornerRadius": 16,
+          "layout": "vertical",
+          "gap": 18,
+          "padding": [
+            40,
+            48
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "rectangle",
+              "cornerRadius": 8,
+              "id": "eM1Bh",
+              "name": "Logo",
+              "fill": {
+                "type": "image",
+                "enabled": true,
+                "url": "cst_logo.png",
+                "mode": "fill"
+              },
+              "width": 200,
+              "height": 82
+            },
+            {
+              "type": "text",
+              "id": "suTitle",
+              "name": "WelcomeTitle",
+              "fill": "#FFFFFF",
+              "content": "Create Account",
+              "fontFamily": "Inter",
+              "fontSize": 32,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "suSub",
+              "name": "WelcomeSubtitle",
+              "fill": "#888888",
+              "content": "Join the car show community",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "suModeToggle",
+              "name": "ModeToggle",
+              "clip": true,
+              "width": "fill_container",
+              "height": 44,
+              "fill": "#04080b",
+              "cornerRadius": 8,
+              "gap": 4,
+              "padding": 4,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "suModeToggleSignIn",
+                  "name": "Tab",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 36,
+                  "fill": "transparent",
+                  "cornerRadius": 6,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "suModeToggleSignInTxt",
+                      "name": "Label",
+                      "fill": "#666666",
+                      "content": "Sign In",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "suModeToggleSignUp",
+                  "name": "Tab",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 36,
+                  "fill": "#0a0d12",
+                  "cornerRadius": 6,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "suModeToggleSignUpTxt",
+                      "name": "Label",
+                      "fill": "#FFFFFF",
+                      "content": "Sign Up",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "suOAuth",
+              "name": "OAuthSection",
+              "width": "fill_container",
+              "fill": "transparent",
+              "layout": "vertical",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "H0eqq",
+                  "name": "GoogleButton",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#04080b",
+                  "cornerRadius": 8,
+                  "stroke": "#333333",
+                  "strokeWidth": 1,
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "vzU0H",
+                      "name": "Icon",
+                      "fill": "#FFFFFF",
+                      "content": "G",
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "bold"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Uaw76",
+                      "name": "Label",
+                      "fill": "#FFFFFF",
+                      "content": "Continue with Google",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "iAzFg",
+                  "name": "GitHubButton",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#04080b",
+                  "cornerRadius": 8,
+                  "stroke": "#333333",
+                  "strokeWidth": 1,
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hbCbh",
+                      "name": "Icon",
+                      "fill": "#FFFFFF",
+                      "content": "⬛",
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "bold"
+                    },
+                    {
+                      "type": "text",
+                      "id": "cqAlw",
+                      "name": "Label",
+                      "fill": "#FFFFFF",
+                      "content": "Continue with GitHub",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "suDivider",
+              "name": "Divider",
+              "width": "fill_container",
+              "fill": "transparent",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "U5268J",
+                  "name": "Line",
+                  "fill": "#333333",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "text",
+                  "id": "Fdtz7",
+                  "name": "Text",
+                  "fill": "#666666",
+                  "content": "or continue with",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "rectangle",
+                  "id": "GfrFe",
+                  "name": "Line",
+                  "fill": "#333333",
+                  "width": "fill_container",
+                  "height": 1
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "suForm",
+              "name": "FormSection",
+              "width": "fill_container",
+              "fill": "transparent",
+              "layout": "vertical",
+              "gap": 14,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "suNameGroup",
+                  "name": "FieldGroup",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "suNameGroupLabel",
+                      "name": "FieldLabel",
+                      "fill": "#FFFFFF",
+                      "content": "Full Name",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "suNameInput",
+                      "name": "InputField",
+                      "clip": true,
+                      "width": "fill_container",
+                      "height": 48,
+                      "fill": "#04080b",
+                      "cornerRadius": 8,
+                      "padding": [
+                        0,
+                        14
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "suNameInputVal",
+                          "name": "Value",
+                          "fill": "#FFFFFF",
+                          "content": "Gearhead_23",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "suNameInputIcon",
+                          "name": "Icon",
+                          "fill": "#555555",
+                          "content": "👤",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "suEmailGroup",
+                  "name": "FieldGroup",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "suEmailGroupLabel",
+                      "name": "FieldLabel",
+                      "fill": "#FFFFFF",
+                      "content": "Email Address",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "suEmailInput",
+                      "name": "InputField",
+                      "clip": true,
+                      "width": "fill_container",
+                      "height": 48,
+                      "fill": "#04080b",
+                      "cornerRadius": 8,
+                      "padding": [
+                        0,
+                        14
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "suEmailInputVal",
+                          "name": "Value",
+                          "fill": "#FFFFFF",
+                          "content": "you@example.com",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "suEmailInputIcon",
+                          "name": "Icon",
+                          "fill": "#555555",
+                          "content": "✉️",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "suPassGroup",
+                  "name": "FieldGroup",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "suPassGroupLabel",
+                      "name": "FieldLabel",
+                      "fill": "#FFFFFF",
+                      "content": "Password",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "suPassInput",
+                      "name": "InputField",
+                      "clip": true,
+                      "width": "fill_container",
+                      "height": 48,
+                      "fill": "#04080b",
+                      "cornerRadius": 8,
+                      "padding": [
+                        0,
+                        14
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "suPassInputVal",
+                          "name": "Value",
+                          "fill": "#FFFFFF",
+                          "content": "••••••••",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "suPassInputIcon",
+                          "name": "Icon",
+                          "fill": "#555555",
+                          "content": "🔒",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "suConfirmGroup",
+                  "name": "FieldGroup",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "suConfirmGroupLabel",
+                      "name": "FieldLabel",
+                      "fill": "#FFFFFF",
+                      "content": "Confirm Password",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "suConfirmInput",
+                      "name": "InputField",
+                      "clip": true,
+                      "width": "fill_container",
+                      "height": 48,
+                      "fill": "#04080b",
+                      "cornerRadius": 8,
+                      "padding": [
+                        0,
+                        14
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "suConfirmInputVal",
+                          "name": "Value",
+                          "fill": "#FFFFFF",
+                          "content": "••••••••",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "suConfirmInputIcon",
+                          "name": "Icon",
+                          "fill": "#555555",
+                          "content": "🔒",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "suCreateBtn",
+              "name": "SubmitButton",
+              "clip": true,
+              "width": "fill_container",
+              "height": 52,
+              "fill": "#e10908",
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "suCreateLabel",
+                  "name": "Label",
+                  "fill": "#FFFFFF",
+                  "content": "Create Account",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "suSignupRow",
+              "name": "SignUpRow",
+              "width": "fill_container",
+              "fill": "transparent",
+              "gap": 6,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "suHasAccount",
+                  "name": "HasAccountText",
+                  "fill": "#888888",
+                  "content": "Already have an account?",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "suSignInLink",
+                  "name": "SignInLink",
+                  "fill": "#e10908",
+                  "content": "Sign In",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
                 }
               ]
             }

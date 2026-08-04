@@ -1,10 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { X, Camera } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import TextField from '@mui/material/TextField'
-import { updateProfile } from '#/server/session'
+import InputAdornment from '@mui/material/InputAdornment'
+import { updateProfile, checkHandleAvailable } from '#/server/session'
+
+const HANDLE_REGEX = /^[a-zA-Z0-9_]{2,30}$/
 
 const EMPTY_STATE = {
+  handle: '',
   displayName: '',
   bio: '',
   location: '',
@@ -18,6 +22,7 @@ const EMPTY_STATE = {
 
 export default function EditProfileModal({ isOpen, onClose, profile, onUploadPhoto, onSaved }) {
   const [form, setForm] = useState({
+    handle: (profile?.handle || '').replace(/^@/, ''),
     displayName: profile?.username || EMPTY_STATE.displayName,
     bio: profile?.bio || EMPTY_STATE.bio,
     location: profile?.location || EMPTY_STATE.location,
@@ -30,6 +35,47 @@ export default function EditProfileModal({ isOpen, onClose, profile, onUploadPho
   })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [handleStatus, setHandleStatus] = useState({ state: 'idle', msg: '' })
+  const debounceRef = useRef(null)
+
+  // Debounced live availability check for the @handle field.
+  useEffect(() => {
+    const raw = (form.handle || '').trim().replace(/^@/, '')
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+
+    if (!raw) {
+      setHandleStatus({ state: 'idle', msg: 'Your unique @handle — letters, numbers, underscores' })
+      return
+    }
+    if (!HANDLE_REGEX.test(raw)) {
+      setHandleStatus({ state: 'invalid', msg: '2–30 chars: letters, numbers, underscores only' })
+      return
+    }
+
+    setHandleStatus({ state: 'checking', msg: 'Checking availability…' })
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await checkHandleAvailable({ data: { handle: raw } })
+        if (res?.available) {
+          setHandleStatus({
+            state: res.isOwn ? 'own' : 'available',
+            msg: res.isOwn ? "That's your current handle" : '✓ Available',
+          })
+        } else {
+          setHandleStatus({ state: 'taken', msg: res?.reason || 'That handle is already taken' })
+        }
+      } catch (err) {
+        setHandleStatus({ state: 'idle', msg: '' })
+      }
+    }, 400)
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+    }
+  }, [form.handle])
+
+  const handleError = handleStatus.state === 'invalid' || handleStatus.state === 'taken'
+  const handleBlocking = handleStatus.state === 'checking' || handleError
 
   const handleChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -121,6 +167,33 @@ export default function EditProfileModal({ isOpen, onClose, profile, onUploadPho
                   value={form.displayName}
                   onChange={(e) => handleChange('displayName', e.target.value)}
                   inputProps={{ 'data-part': 'input-display-name' }}
+                  fullWidth
+                  size="small"
+                />
+
+                {/* Handle */}
+                <TextField
+                  label="Handle"
+                  value={form.handle}
+                  onChange={(e) => handleChange('handle', e.target.value)}
+                  slotProps={{
+                    htmlInput: { 'data-part': 'input-handle' },
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start" sx={{ color: '#555555' }}>
+                          @
+                        </InputAdornment>
+                      ),
+                    },
+                    formHelperText: {
+                      style:
+                        handleStatus.state === 'available' || handleStatus.state === 'own'
+                          ? { color: '#4ade80' }
+                          : undefined,
+                    },
+                  }}
+                  error={handleError}
+                  helperText={handleStatus.msg}
                   fullWidth
                   size="small"
                 />
@@ -229,7 +302,7 @@ export default function EditProfileModal({ isOpen, onClose, profile, onUploadPho
                 <button
                   data-part="save-btn"
                   onClick={handleSave}
-                  disabled={saving}
+                  disabled={saving || handleBlocking}
                   className="px-6 py-2.5 bg-[#e10908] text-white rounded-lg text-[15px] font-medium hover:bg-[#c00807] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {saving ? 'Saving...' : 'Save Changes'}

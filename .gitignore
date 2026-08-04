@@ -17,6 +17,9 @@ dist-ssr/
 build/
 .tanstack/
 
+# Local backup snapshots (redundant with git history)
+backups/
+
 # Local env files
 .env
 .env.local
