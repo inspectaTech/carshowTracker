@@ -44,6 +44,7 @@ function toClientEvent(doc) {
     photoUrl: doc.photoUrl || null,
     creatorUserId: doc.creatorUserId || null,
     attending: doc.attending ?? 0,
+    links: Array.isArray(doc.links) ? doc.links : [],
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
   }
@@ -93,6 +94,7 @@ export const createEvent = createServerFn({ method: 'POST' })
         photoUrl: d.photoUrl || null,
         creatorUserId,
         attending: 0,
+        links: Array.isArray(d.links) ? d.links.map((l) => String(l).trim()).filter(Boolean) : [],
         createdAt: now,
         updatedAt: now,
       }
@@ -101,6 +103,63 @@ export const createEvent = createServerFn({ method: 'POST' })
       return { success: true, event: toClientEvent(doc) }
     } catch (err) {
       console.error('[createEvent] Failed:', err.message)
+      return { success: false, error: err.message }
+    }
+  })
+
+// Update an existing event (creator only). The slugId is preserved so the
+// shareable URL stays stable; editable fields are overwritten from the form.
+export const updateEvent = createServerFn({ method: 'POST' })
+  .handler(async ({ data }) => {
+    try {
+      const { connectToDatabase } = await import('../lib/db')
+      const { db } = await connectToDatabase()
+      const events = db.collection('events')
+
+      const d = data || {}
+      const slugId = (d.slugId || '').trim()
+      if (!slugId) return { success: false, error: 'Missing event id' }
+
+      const existing = await events.findOne({ slugId })
+      if (!existing) return { success: false, error: 'Event not found' }
+
+      // Only the creator may edit (unless it has no creator, e.g. seeded legacy).
+      let sessionUserId = existing.creatorUserId || null
+      try {
+        const sessionResult = await getSessionUser({ data: {} })
+        if (sessionResult?.userId) sessionUserId = sessionResult.userId
+      } catch (e) {
+        console.warn('[updateEvent] Could not resolve session user:', e.message)
+      }
+      if (existing.creatorUserId && sessionUserId && existing.creatorUserId !== sessionUserId) {
+        return { success: false, error: 'You can only edit events you created' }
+      }
+
+      const now = new Date()
+      const doc = {
+        ...existing,
+        title: (d.title || '').trim(),
+        date: d.date || existing.date,
+        startTime: d.startTime ?? existing.startTime,
+        endTime: d.endTime ?? existing.endTime,
+        location: d.location ?? existing.location,
+        lat: d.lat ?? existing.lat ?? null,
+        lng: d.lng ?? existing.lng ?? null,
+        zipCode: d.zipCode ?? existing.zipCode,
+        description: d.description ?? existing.description,
+        costType: d.costType ?? existing.costType,
+        price: d.price ?? existing.price,
+        category: d.category ?? existing.category,
+        photoUrl: d.photoUrl ?? existing.photoUrl,
+        links: Array.isArray(d.links) ? d.links.map((l) => String(l).trim()).filter(Boolean) : existing.links || [],
+        updatedAt: now,
+      }
+
+      await events.replaceOne({ _id: existing._id }, doc)
+      console.log('[updateEvent] Updated', slugId)
+      return { success: true, event: toClientEvent(doc) }
+    } catch (err) {
+      console.error('[updateEvent] Failed:', err.message)
       return { success: false, error: err.message }
     }
   })

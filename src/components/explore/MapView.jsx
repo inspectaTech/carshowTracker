@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { loadLeaflet } from '#/lib/leaflet-client'
 
 const CENTER = [34.0522, -118.2437] // Los Angeles
 const ZOOM = 10
@@ -14,27 +15,12 @@ export default function MapView() {
   const mapInstance = useRef(null)
 
   useEffect(() => {
-    // Dynamically import Leaflet CSS and JS to avoid SSR issues
+    // Dynamically load Leaflet to avoid SSR issues
     async function initMap() {
       if (mapInstance.current) return
 
       try {
-        // Load CSS
-        const link = document.createElement('link')
-        link.rel = 'stylesheet'
-        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
-        document.head.appendChild(link)
-
-        // Load L
-        const L = await import('leaflet')
-
-        // Fix Leaflet icon paths (broken with bundlers)
-        delete L.Icon.Default.prototype._getIconUrl
-        L.Icon.Default.mergeOptions({
-          iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-          iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-        })
+        const L = await loadLeaflet()
 
         const map = L.map(mapRef.current, {
           center: CENTER,

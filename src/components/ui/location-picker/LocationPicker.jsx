@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { loadLeaflet } from '#/lib/leaflet-client'
 
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org'
 const DEFAULT_CENTER = [34.0522, -118.2437] // Los Angeles
@@ -40,7 +41,7 @@ function dms(coord, type) {
   return `${deg}°${min}'${sec}"${dir}`
 }
 
-export default function LocationPicker({ onLocationSelect, onClear, onZipCode }) {
+export default function LocationPicker({ onLocationSelect, onClear, onZipCode, initialValue = null }) {
   // --- State ---
   const [query, setQuery] = useState('')
   const [suggestions, setSuggestions] = useState([])
@@ -58,6 +59,47 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode })
   const debounceTimer = useRef(null)
   const inputRef = useRef(null)
   const justSelected = useRef(false)
+  const initializedRef = useRef(null)
+  const programmaticQueryRef = useRef(null)
+  const pressTimerRef = useRef(null)
+  const pressStartRef = useRef(null)
+
+  // Long-press threshold (ms) before the pin is placed. Prevents accidental
+  // pin drops while scrolling/panning the map.
+  const LONG_PRESS_MS = 500
+  const PRESS_MOVE_TOLERANCE = 12 // px of finger/touch travel before cancel
+
+  // --- Populate from an initial value (edit mode) ---
+  // When the modal opens to edit an existing event, reflect its saved location
+  // in the input, the map marker, and the summary panel below the map.
+  useEffect(() => {
+    if (!initialValue) return
+    const { address, lat, lng } = initialValue
+    const key = `${address}|${lat}|${lng}`
+    if (initializedRef.current === key) return
+    initializedRef.current = key
+
+    setQuery(address || '')
+    // Suppress the autocomplete search for this programmatically-set address
+    programmaticQueryRef.current = address || ''
+
+    if (typeof lat === 'number' && typeof lng === 'number' && !Number.isNaN(lat) && !Number.isNaN(lng)) {
+      setSelectedLocation({ address: address || '', lat, lng })
+
+      // Place the marker once the map instance is ready (map init is async)
+      const tryPlace = () => {
+        if (mapInstance.current) {
+          placeMarker(lat, lng)
+        } else {
+          setTimeout(tryPlace, 50)
+        }
+      }
+      tryPlace()
+    } else {
+      setSelectedLocation(null)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialValue])
 
   // --- Helper: remove existing marker ---
   const clearMarker = useCallback(() => {
@@ -77,32 +119,28 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode })
     })
   }, [clearMarker])
 
-  // --- Notify parent of location change ---
+  // Keep the parent callbacks in refs so notifyLocation can stay stable. The
+  // modal passes new inline functions every render; if notifyLocation changed
+  // identity, the map-init effect below would re-run and DESTROY + rebuild the
+  // map (wiping the pin and resetting to the initial view) on every re-render.
+  const onLocationSelectRef = useRef(onLocationSelect)
+  const onZipCodeRef = useRef(onZipCode)
+  useEffect(() => { onLocationSelectRef.current = onLocationSelect }, [onLocationSelect])
+  useEffect(() => { onZipCodeRef.current = onZipCode }, [onZipCode])
+
+  // --- Notify parent of location change (stable identity) ---
   const notifyLocation = useCallback((loc, addrObj) => {
     setSelectedLocation(loc)
-    if (onLocationSelect) onLocationSelect(loc)
-    if (addrObj?.postcode && onZipCode) onZipCode(addrObj.postcode)
-  }, [onLocationSelect, onZipCode])
+    if (onLocationSelectRef.current) onLocationSelectRef.current(loc)
+    if (addrObj?.postcode && onZipCodeRef.current) onZipCodeRef.current(addrObj.postcode)
+  }, [])
 
   // --- Initialize Leaflet map ---
   useEffect(() => {
     if (mapInstance.current || !mapRef.current) return
 
     async function initMap() {
-      const link = document.createElement('link')
-      link.rel = 'stylesheet'
-      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
-      document.head.appendChild(link)
-
-      const L = await import('leaflet')
-
-      // Fix icon paths
-      delete L.Icon.Default.prototype._getIconUrl
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-      })
+      const L = await loadLeaflet()
 
       // Prevent double initialization
       if (mapRef.current._leaflet_map) return
@@ -110,20 +148,28 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode })
       const map = L.map(mapRef.current, {
         center: DEFAULT_CENTER,
         zoom: DEFAULT_ZOOM,
-        zoomControl: true,
+        zoomControl: false,
         attributionControl: false,
+        doubleClickZoom: false, // double-click zooms without moving the pin
       })
+
+      // Zoom controls bottom-right (avoids mobile sidebar/fullscreen clash)
+      L.control.zoom({ position: 'bottomright' }).addTo(map)
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="https://openstreetmap.org/copyright">OSM</a>',
       }).addTo(map)
 
-      // Click on map -> reverse geocode + place marker
-      map.on('click', async (e) => {
-        const { lat, lng } = e.latlng
+      // Long-press (hold ~LONG_PRESS_MS) to place a marker + reverse geocode.
+      // The pin is placed WHILE still holding (before release). A quick tap,
+      // drag, or scroll does NOT move the pin. Releasing/cancelling never
+      // removes an already-placed pin — it only clears a still-pending press.
+      // Uses Pointer Events (unified mouse/touch/pen) on the map container for
+      // reliable mobile behavior — Leaflet's synthetic mouse events are not
+      // dependable for touch long-press.
+      const placeAt = async (lat, lng) => {
         placeMarker(lat, lng)
-
         try {
           const res = await fetch(
             `${NOMINATIM_URL}/reverse?lat=${lat}&lon=${lng}&format=json`,
@@ -141,15 +187,85 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode })
           setQuery(`${lat.toFixed(6)}, ${lng.toFixed(6)}`)
           setShowSuggestions(false)
         }
-      })
+      }
+
+      const cancelPress = () => {
+        if (pressTimerRef.current) {
+          clearTimeout(pressTimerRef.current)
+          pressTimerRef.current = null
+        }
+        pressStartRef.current = null
+      }
+
+      // Resolve pointer coordinates -> lat/lng. Guarded so it can never throw —
+      // if the map pane isn't ready yet (first render inside the animated
+      // modal), returns null and the press is ignored rather than crashing.
+      const eventToLatLng = (e) => {
+        try {
+          const ll = map.mouseEventToLatLng(e)
+          if (ll) return ll
+        } catch { /* fall through */ }
+        try {
+          const rect = map.getContainer().getBoundingClientRect()
+          const point = L.point(e.clientX - rect.left, e.clientY - rect.top)
+          return map.containerPointToLatLng(point)
+        } catch {
+          return null
+        }
+      }
+
+      const startPress = (e) => {
+        // Ignore presses that begin on Leaflet controls (zoom buttons, etc.)
+        if (e.target?.closest?.('.leaflet-control, a, button')) return
+        cancelPress()
+        const latlng = eventToLatLng(e)
+        if (!latlng) return
+        pressStartRef.current = { lat: latlng.lat, lng: latlng.lng, x: e.clientX, y: e.clientY }
+        // Place the pin while still holding (before release).
+        pressTimerRef.current = setTimeout(() => {
+          const start = pressStartRef.current
+          pressTimerRef.current = null
+          if (start) placeAt(start.lat, start.lng)
+        }, LONG_PRESS_MS)
+      }
+
+      const movePress = (e) => {
+        if (!pressStartRef.current) return
+        const dx = Math.abs(e.clientX - pressStartRef.current.x)
+        const dy = Math.abs(e.clientY - pressStartRef.current.y)
+        if (dx + dy > PRESS_MOVE_TOLERANCE) {
+          cancelPress() // user is dragging/panning — don't place a pin
+        }
+      }
+
+      // Pointer Events unify mouse/touch/pen and give us pointercancel (fires
+      // when the browser takes over for scrolling/panning).
+      const container = map.getContainer()
+      container.addEventListener('pointerdown', startPress)
+      container.addEventListener('pointermove', movePress)
+      container.addEventListener('pointerup', cancelPress)
+      container.addEventListener('pointercancel', cancelPress)
+      container.addEventListener('pointerleave', cancelPress)
+      container.addEventListener('contextmenu', (e) => e.preventDefault())
 
       mapInstance.current = map
       mapRef.current._leaflet_map = true
+
+      // Fix first-render sizing: the map is inside an animating modal, so its
+      // pane position may not be ready for the very first pointer event.
+      setTimeout(() => {
+        if (mapInstance.current) mapInstance.current.invalidateSize()
+      }, 300)
     }
 
     initMap()
 
     return () => {
+      if (pressTimerRef.current) {
+        clearTimeout(pressTimerRef.current)
+        pressTimerRef.current = null
+      }
+      pressStartRef.current = null
       if (mapInstance.current) {
         mapInstance.current.remove()
         mapInstance.current = null
@@ -176,6 +292,13 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode })
     // Suppress search when query was set programmatically after selecting a suggestion
     if (justSelected.current) {
       justSelected.current = false
+      return
+    }
+    // Suppress search when the query still equals the programmatically-set
+    // initial address (edit mode prefill) — only search once the user types.
+    if (programmaticQueryRef.current && query === programmaticQueryRef.current) {
+      setSuggestions([])
+      setShowSuggestions(false)
       return
     }
 
@@ -257,7 +380,10 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode })
               ref={inputRef}
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                programmaticQueryRef.current = null
+                setQuery(e.target.value)
+              }}
               onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
               placeholder="Search for an address or click the map..."

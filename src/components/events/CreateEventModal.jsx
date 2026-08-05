@@ -7,7 +7,8 @@ import InputAdornment from '@mui/material/InputAdornment'
 import FlatpickrInput from '#/components/ui/FlatpickrInput'
 import LexicalEditor from '#/components/ui/lexical-editor'
 import LocationPicker from '#/components/ui/location-picker'
-import { createEvent } from '#/server/events'
+import LinksSection from '#/components/links/LinksSection'
+import { createEvent, updateEvent } from '#/server/events'
 
 const CATEGORIES = ['Meetup', 'JDM', 'Classic', 'Euro', 'Import']
 
@@ -24,6 +25,7 @@ const DEFAULT_VALUES = {
   costType: 'free',
   price: '',
   category: '',
+  links: [],
 }
 
 const SKIP_CLOSE_KEY = 'cst_skip_close_confirm'
@@ -33,7 +35,7 @@ function getSkipCloseConfirm() {
   return localStorage.getItem(SKIP_CLOSE_KEY) === 'true'
 }
 
-export default function CreateEventModal({ isOpen, onClose, onCreated }) {
+export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated, editingEvent }) {
   const { control, handleSubmit, formState: { isDirty, errors }, reset, setValue, watch } = useForm({
     defaultValues: DEFAULT_VALUES,
   })
@@ -44,15 +46,36 @@ export default function CreateEventModal({ isOpen, onClose, onCreated }) {
   const [skipConfirm, setSkipConfirm] = useState(getSkipCloseConfirm)
 
   const costType = watch('costType')
+  const isEdit = !!editingEvent
 
-  // Reset form when modal opens
+  // Reset form when modal opens — prefill when editing an event
   useEffect(() => {
     if (isOpen) {
-      reset(DEFAULT_VALUES)
-      setPhoto(null)
+      if (editingEvent) {
+        reset({
+          title: editingEvent.title || '',
+          date: editingEvent.date || null,
+          startTime: editingEvent.startTime || null,
+          endTime: editingEvent.endTime || null,
+          location: editingEvent.location || '',
+          lat: editingEvent.lat ?? null,
+          lng: editingEvent.lng ?? null,
+          zipCode: editingEvent.zipCode || '',
+          description: editingEvent.description || '',
+          costType: editingEvent.costType || 'free',
+          price: editingEvent.price ?? '',
+          category: editingEvent.category || '',
+          links: Array.isArray(editingEvent.links) ? editingEvent.links : [],
+        })
+        setPhoto(null)
+      } else {
+        reset(DEFAULT_VALUES)
+        setPhoto(null)
+      }
       setShowConfirmClose(false)
+      setError('')
     }
-  }, [isOpen, reset])
+  }, [isOpen, editingEvent, reset])
 
   // Intercept close — confirm if dirty and not skipped
   const handleRequestClose = useCallback(() => {
@@ -73,21 +96,32 @@ export default function CreateEventModal({ isOpen, onClose, onCreated }) {
     setSaving(true)
     setError('')
     try {
-      const result = await createEvent({ data: { ...data, photoUrl: photo ? photo.name : null } })
-      if (!result?.success) {
-        setError(result?.error || 'Could not create event')
-        return
+      if (isEdit && editingEvent?.slugId) {
+        const result = await updateEvent({
+          data: { ...data, slugId: editingEvent.slugId, photoUrl: photo ? photo.name : editingEvent.photoUrl },
+        })
+        if (!result?.success) {
+          setError(result?.error || 'Could not update event')
+          return
+        }
+        if (onUpdated) onUpdated(result.event)
+      } else {
+        const result = await createEvent({ data: { ...data, photoUrl: photo ? photo.name : null } })
+        if (!result?.success) {
+          setError(result?.error || 'Could not create event')
+          return
+        }
+        if (onCreated) onCreated(result.event)
       }
-      if (onCreated) onCreated(result.event)
       reset(DEFAULT_VALUES)
       setPhoto(null)
       onClose()
     } catch (err) {
-      setError(err.message || 'Could not create event')
+      setError(err.message || 'Something went wrong')
     } finally {
       setSaving(false)
     }
-  }, [onClose, photo, reset, onCreated])
+  }, [isEdit, editingEvent, onClose, photo, reset, onCreated, onUpdated])
 
   return (
     <AnimatePresence>
@@ -114,7 +148,7 @@ export default function CreateEventModal({ isOpen, onClose, onCreated }) {
           >
             {/* Header */}
             <div data-part="modal-header" className="flex items-center justify-between px-5 py-4 shrink-0">
-              <h2 className="text-white text-[22px] font-normal">Create Event</h2>
+              <h2 className="text-white text-[22px] font-normal">{isEdit ? 'Edit Event' : 'Create Event'}</h2>
               <button data-part="close-btn" onClick={handleRequestClose} className="text-[#888888] hover:text-white transition-colors">
                 <X size={22} />
               </button>
@@ -211,6 +245,15 @@ export default function CreateEventModal({ isOpen, onClose, onCreated }) {
                 <div data-part="field" className="space-y-1.5">
                   <label className="text-white text-[14px]">Location</label>
                   <LocationPicker
+                    initialValue={
+                      editingEvent?.location
+                        ? {
+                            address: editingEvent.location,
+                            lat: editingEvent.lat,
+                            lng: editingEvent.lng,
+                          }
+                        : null
+                    }
                     onLocationSelect={(loc) => {
                       setValue('location', loc.address, { shouldDirty: true })
                       setValue('lat', loc.lat, { shouldDirty: true })
@@ -238,6 +281,16 @@ export default function CreateEventModal({ isOpen, onClose, onCreated }) {
                         sx={{ width: 200 }}
                       />
                     )}
+                  />
+                </div>
+
+                {/* Links — shareable links (social + web) */}
+                <div data-part="field" className="space-y-1.5">
+                  <label className="text-white text-[14px]">Links</label>
+                  <LinksSection
+                    mode="edit"
+                    value={watch('links') || []}
+                    onChange={(links) => setValue('links', links, { shouldDirty: true })}
                   />
                 </div>
 
@@ -350,7 +403,7 @@ export default function CreateEventModal({ isOpen, onClose, onCreated }) {
                     disabled={!!errors.title || saving}
                     className="h-11 px-5 rounded-lg bg-[#e10908] hover:bg-[#c00807] disabled:bg-[#551111] disabled:text-[#888888] text-white text-[16px] transition-colors flex items-center gap-2"
                   >
-                    {saving ? 'Creating...' : 'Create Event'}
+                    {saving ? (isEdit ? 'Saving...' : 'Creating...') : (isEdit ? 'Save Changes' : 'Create Event')}
                   </button>
                 </div>
               </div>

@@ -1,31 +1,20 @@
 import { useState, useEffect } from 'react'
 import Sidebar from '#/components/dashboard/Sidebar'
-import { getDashboardData } from '#/server/db-actions'
+import { getDashboardData, listProfiles } from '#/server/db-actions'
 import { listEvents } from '#/server/events'
+import EventCard from '#/components/events/EventCard'
+import UserCard from './UserCard'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
-import { Search, Users, Calendar, MapPin } from 'lucide-react'
+import { Search, MapPin } from 'lucide-react'
 import MapView from './MapView'
 
-const POPULAR_USERS = [
-  { id: 'u1', name: 'Gearhead_23', cars: 12, followers: '1.8K' },
-  { id: 'u2', name: 'MuscleCarMike', cars: 8, followers: '942' },
-]
-
 const TABS = ['All', 'Shows', 'Users', 'Events']
-
-const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
-function formatEventDate(dateStr) {
-  if (!dateStr) return ''
-  const d = new Date(dateStr)
-  if (Number.isNaN(d.getTime())) return dateStr
-  return `${MONTHS_SHORT[d.getMonth()]} ${d.getDate()}`
-}
 
 export default function ExplorePage() {
   const [profile, setProfile] = useState(null)
   const [events, setEvents] = useState([])
+  const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
@@ -39,12 +28,16 @@ export default function ExplorePage() {
       } catch (err) {
         console.error('[Explore] Failed to load data:', err)
       }
-      // Explore shows ALL events in the DB.
+      // Explore shows ALL events + ALL users in the DB.
       try {
-        const result = await listEvents()
-        if (result?.events) setEvents(result.events)
+        const [evResult, userResult] = await Promise.all([
+          listEvents(),
+          listProfiles(),
+        ])
+        if (evResult?.events) setEvents(evResult.events)
+        if (userResult?.users) setUsers(userResult.users)
       } catch (err) {
-        console.error('[Explore] Failed to load events:', err)
+        console.error('[Explore] Failed to load explore data:', err)
       } finally {
         setLoading(false)
       }
@@ -52,9 +45,17 @@ export default function ExplorePage() {
     loadData()
   }, [])
 
-  const filteredEvents = events.filter((e) =>
-    e.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const q = searchQuery.trim().toLowerCase()
+  const filteredEvents = events.filter((e) => !q || e.title.toLowerCase().includes(q))
+  const filteredUsers = users.filter(
+    (u) => !q || (u.name && u.name.toLowerCase().includes(q)) || (u.handle && u.handle.toLowerCase().includes(q))
   )
+
+  // Tab → what to show. "All" shows events + all users.
+  const showEvents = activeTab === 'All' || activeTab === 'Events' || activeTab === 'Shows'
+  const showUsers = activeTab === 'All' || activeTab === 'Users'
+
+  const hasAny = (showEvents && filteredEvents.length > 0) || (showUsers && filteredUsers.length > 0)
 
   return (
     <div data-component="explore-page" className="min-h-screen bg-[#04080b] flex flex-col lg:flex-row">
@@ -136,80 +137,33 @@ export default function ExplorePage() {
             </div>
           ) : (
             <div className="flex flex-col lg:flex-row gap-5 h-full">
-              {/* Left column - Events */}
-              <div data-part="left-column" className="flex-1 flex flex-col gap-4">
-                {/* Featured card */}
-                {filteredEvents.length > 0 && (
-                  <div
-                    data-component="FeaturedEvent"
-                    className="bg-[#0a0d12] rounded-xl overflow-hidden"
-                  >
-                    <div className="h-[120px] bg-[#1a1d22] flex items-center justify-center">
-                      <Calendar className="h-10 w-10 text-[#333333]" />
-                    </div>
-                    <div className="p-4 space-y-2">
-                      <h3 className="text-white text-[18px] font-medium">
-                        {filteredEvents[0].title}
-                      </h3>
-                      <p className="text-[#888888] text-[13px]">
-                        📅 {formatEventDate(filteredEvents[0].date)} &bull; 📍 {filteredEvents[0].location} &bull; 👥 {filteredEvents[0].attending} attending
-                      </p>
-                    </div>
-                  </div>
-                )}
+              {/* Left column - unified Event + User cards */}
+              <div data-part="left-column" className="flex-1 flex flex-col gap-4 max-w-4xl">
+                {showEvents &&
+                  filteredEvents.map((event) => (
+                    <EventCard key={event.slugId || event.title} event={event} />
+                  ))}
 
-                {/* Result cards */}
-                {filteredEvents.slice(1).map((event) => (
-                  <div
-                    key={event.slugId || event.title}
-                    data-component="EventCard"
-                    className="bg-[#0a0d12] rounded-xl p-4 flex items-center gap-4 hover:bg-[#0e1116] transition-colors cursor-pointer"
-                  >
-                    <div className="w-[70px] h-[70px] bg-[#1a1d22] rounded-full shrink-0 flex items-center justify-center">
-                      <Calendar className="h-6 w-6 text-[#333333]" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-white text-[16px] font-medium truncate">{event.title}</h4>
-                      <p className="text-[#888888] text-[13px]">{formatEventDate(event.date)} &bull; {event.location} &bull; {event.attending} attending</p>
-                    </div>
-                  </div>
-                ))}
+                {showUsers &&
+                  filteredUsers.map((user) => (
+                    <UserCard key={user.id || user.handle || user.name} user={user} />
+                  ))}
 
-                {filteredEvents.length === 0 && (
+                {!hasAny && (
                   <div className="flex flex-col items-center justify-center h-64 text-center">
                     <Search className="h-12 w-12 text-[#333333] mb-3" />
-                    <p className="text-[#888888] text-[16px]">No events match your search</p>
+                    <p className="text-[#888888] text-[16px]">
+                      {q ? 'No results match your search' : `No ${activeTab.toLowerCase()} found`}
+                    </p>
                   </div>
                 )}
               </div>
 
-              {/* Right column - Map + Users */}
+              {/* Right column - Map */}
               <div data-part="right-column" className="w-full lg:w-[400px] flex flex-col gap-4">
-                {/* Leaflet Map */}
                 <div data-part="map-container" className="rounded-xl overflow-hidden h-[220px]">
                   <MapView />
                 </div>
-
-                {/* Popular users */}
-                <h3 data-part="section-title" className="text-white text-[18px] font-medium mt-2">
-                  Popular in Your Area
-                </h3>
-
-                {POPULAR_USERS.map((user) => (
-                  <div
-                    key={user.id}
-                    data-component="PopularUser"
-                    className="bg-[#0a0d12] rounded-xl p-4 flex items-center gap-3 hover:bg-[#0e1116] transition-colors cursor-pointer"
-                  >
-                    <div className="w-[44px] h-[44px] bg-[#1a1d22] rounded-full shrink-0 flex items-center justify-center">
-                      <Users className="h-5 w-5 text-[#333333]" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-white text-[15px] font-medium truncate">{user.name}</p>
-                      <p className="text-[#888888] text-[12px]">{user.cars} cars &bull; {user.followers} followers</p>
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
           )}

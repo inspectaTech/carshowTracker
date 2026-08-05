@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useLoaderData, useRouter, useNavigate, Link } from '@tanstack/react-router'
 import { Calendar, Clock, MapPin, Share2, ArrowLeft, Users } from 'lucide-react'
+import LinksSection from '#/components/links/LinksSection'
+import EventMap from './EventMap'
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
   'August', 'September', 'October', 'November', 'December']
@@ -155,12 +157,12 @@ export default function EventDetailPage() {
           {event.location && (
             <section data-part="section-location">
               <h2 className="text-white text-[18px] font-medium mb-4">Location</h2>
-              <div data-part="map" className="w-full h-[220px] bg-[#0a0d12] rounded-xl flex items-center justify-center border border-[#1a1d22]">
-                <div className="text-center">
-                  <MapPin size={40} className="text-[#e10908] mx-auto mb-2" />
-                  <p className="text-[#555555] text-[14px]">Map coming soon</p>
-                </div>
-              </div>
+              <EventMap
+                lat={event.lat}
+                lng={event.lng}
+                label={event.location}
+                height={220}
+              />
               <div className="bg-[#0a0d12] rounded-xl p-5 mt-4">
                 <div className="flex items-center gap-2.5 text-white text-[15px]">
                   <MapPin size={17} className="text-[#888888]" /> {event.location}
@@ -198,6 +200,16 @@ export default function EventDetailPage() {
               </span>
             </div>
           </section>
+
+          {/* Links — shareable links (social icons + hyperlinks) */}
+          {Array.isArray(event.links) && event.links.length > 0 && (
+            <section data-part="section-links">
+              <h2 className="text-white text-[18px] font-medium mb-4">Links</h2>
+              <div className="bg-[#0a0d12] rounded-xl p-5">
+                <LinksSection mode="display" value={event.links} />
+              </div>
+            </section>
+          )}
 
           {/* Category */}
           {event.category && (

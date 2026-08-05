@@ -20,6 +20,28 @@ export const getDataSourceStatus = createServerFn({ method: 'GET' })
     return await dataSource.getDataSourceStatus()
   })
 
+// Public: list all user profiles (for Explore — "All users" display).
+export const listProfiles = createServerFn({ method: 'GET' })
+  .handler(async () => {
+    try {
+      const { connectToDatabase } = await import('../lib/db')
+      const { db } = await connectToDatabase()
+      const docs = await db.collection('profiles').find({}).sort({ createdAt: 1 }).toArray()
+      const users = docs.map((p) => ({
+        id: p.userId || p._id,
+        name: p.username || p.handle || 'Car Enthusiast',
+        handle: p.handle || '',
+        avatarUrl: p.avatarUrl || null,
+        cars: p.stats?.carsInGarage ?? 0,
+        followers: p.stats?.followers ?? 0,
+      }))
+      return { users }
+    } catch (err) {
+      console.error('[listProfiles] Failed:', err.message)
+      return { users: [] }
+    }
+  })
+
 export const seedDashboardData = createServerFn({ method: 'POST' })
   .handler(async () => {
     console.log('[SEED_DASHBOARD] attempting seed');

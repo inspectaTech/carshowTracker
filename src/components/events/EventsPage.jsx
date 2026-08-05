@@ -1,27 +1,16 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { Calendar, Plus, ChevronRight, MapPin, Clock, Users } from 'lucide-react'
+import { Calendar, Plus } from 'lucide-react'
 import Sidebar from '#/components/dashboard/Sidebar'
 import { getDashboardData } from '#/server/db-actions'
 import { listEvents, getSessionUser } from '#/server/events'
 import CreateEventModal from './CreateEventModal'
+import EventCard from './EventCard'
 
 const TABS = ['Upcoming', 'Past', 'Created']
 
-const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
-
 function eventDate(ev) {
   return ev.date ? new Date(ev.date) : null
-}
-
-function formatRelativeTime(date) {
-  const now = new Date()
-  const diff = date - now
-  if (diff < 0) return 'Past'
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-  if (days === 0) return 'Today'
-  if (days === 1) return 'Tomorrow'
-  return `In ${days} days`
 }
 
 export default function EventsPage() {
@@ -31,6 +20,7 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('Upcoming')
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [editingEvent, setEditingEvent] = useState(null)
   const [dataSource, setDataSource] = useState('mock')
   const [debug, setDebug] = useState('waiting...')
 
@@ -76,6 +66,25 @@ export default function EventsPage() {
     navigate({ to: `/event/${event.slugId}` })
   }, [navigate])
 
+  const handleUpdated = useCallback((event) => {
+    setEvents((prev) => prev.map((e) => (e.slugId === event.slugId ? event : e)))
+  }, [])
+
+  const openCreate = useCallback(() => {
+    setEditingEvent(null)
+    setShowCreateModal(true)
+  }, [])
+
+  const openEdit = useCallback((event) => {
+    setEditingEvent(event)
+    setShowCreateModal(true)
+  }, [])
+
+  const closeModal = useCallback(() => {
+    setShowCreateModal(false)
+    setEditingEvent(null)
+  }, [])
+
   const now = new Date()
   const filtered = events.filter((ev) => {
     const d = eventDate(ev)
@@ -102,7 +111,7 @@ export default function EventsPage() {
           </div>
           <button
             data-part="create-event-btn"
-            onClick={() => setShowCreateModal(true)}
+            onClick={openCreate}
             className="flex items-center gap-2 px-4 sm:px-5 py-2.5 bg-[#e10908] hover:bg-[#c00807] text-white text-[14px] sm:text-[15px] font-medium rounded-lg transition-colors shrink-0"
           >
             <Plus className="h-4 w-4" />
@@ -151,7 +160,7 @@ export default function EventsPage() {
                 <>
                   <p className="text-[#888888] text-[16px]">No {activeTab.toLowerCase()} events</p>
                   <button
-                    onClick={() => setShowCreateModal(true)}
+                    onClick={openCreate}
                     className="mt-4 text-[#e10908] hover:underline text-[14px]"
                   >
                     Create your first event
@@ -161,53 +170,28 @@ export default function EventsPage() {
             </div>
           ) : (
             <div data-part="event-list" className="max-w-4xl space-y-3">
-              {filtered.map((ev) => {
-                const d = eventDate(ev)
-                const month = d ? MONTHS[d.getMonth()] : '—'
-                const day = d ? String(d.getDate()).padStart(2, '0') : '—'
-                return (
-                  <div
-                    key={ev.slugId || ev.title}
-                    data-component="EventCard"
-                    onClick={() => navigate({ to: `/event/${ev.slugId}` })}
-                    className="bg-[#0a0d12] rounded-xl px-4 sm:px-6 py-4 sm:py-5 flex items-center gap-4 sm:gap-5 hover:bg-[#0e1116] transition-colors border border-transparent hover:border-[#1a1d22] cursor-pointer group"
-                  >
-                    {/* Date badge */}
-                    <div data-part="date-badge" className="w-[70px] h-[80px] bg-[#04080b] rounded-lg flex flex-col items-center justify-center gap-0.5 shrink-0">
-                      <span className="text-[#e10908] text-[12px] font-bold uppercase leading-none">{month}</span>
-                      <span className="text-white text-[28px] font-bold leading-none mt-1">{day}</span>
-                    </div>
-
-                    {/* Event info */}
-                    <div data-part="event-info" className="flex-1 min-w-0 space-y-1">
-                      <h3 className="text-white text-[16px] sm:text-[18px] font-medium truncate">{ev.title}</h3>
-                      <p className="text-[#888888] text-[13px] sm:text-[14px] flex items-center gap-1.5 flex-wrap">
-                        <MapPin size={14} className="shrink-0" />
-                        {ev.location}
-                        <span className="mx-1 text-[#444]">•</span>
-                        <Clock size={14} className="shrink-0" />
-                        {ev.startTime || ev.endTime}
-                        <span className="mx-1 text-[#444]">•</span>
-                        <Users size={14} className="shrink-0" />
-                        {ev.attending} attending
-                      </p>
-                      <div data-part="status-row" className="flex items-center gap-2">
-                        <span className="text-[#e10908] text-[12px]">{ev.category}</span>
-                      </div>
-                    </div>
-
-                    {/* Arrow */}
-                    <ChevronRight className="h-5 w-5 text-[#555555] group-hover:text-white transition-colors shrink-0" />
-                  </div>
-                )
-              })}
+              {filtered.map((ev) => (
+                <EventCard
+                  key={ev.slugId || ev.title}
+                  event={ev}
+                  onNavigate={(event) => navigate({ to: `/event/${event.slugId}` })}
+                  editable
+                  onEdit={openEdit}
+                />
+              ))}
             </div>
           )}
         </div>
       </main>
 
-      {/* Create Event Modal */}
-      <CreateEventModal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} onCreated={handleCreated} />
+      {/* Create/Edit Event Modal */}
+      <CreateEventModal
+        isOpen={showCreateModal}
+        onClose={closeModal}
+        onCreated={handleCreated}
+        onUpdated={handleUpdated}
+        editingEvent={editingEvent}
+      />
     </div>
   )
 }
