@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { Calendar, Plus } from 'lucide-react'
 import Sidebar from '#/components/dashboard/Sidebar'
-import { getDashboardData } from '#/server/db-actions'
+import { loadDashboardData } from '#/server/session'
 import { listEvents, getSessionUser } from '#/server/events'
 import CreateEventModal from './CreateEventModal'
 import EventCard from './EventCard'
@@ -44,11 +44,11 @@ export default function EventsPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        setDebug('calling getDashboardData...')
-        const result = await getDashboardData({ data: { userId: 'user_001' } })
+        setDebug('calling loadDashboardData...')
+        const result = await loadDashboardData()
         setDebug('got result: ' + (result ? 'OK' : 'null'))
-        setProfile(result.profile)
-        if (result.dataSource) setDataSource(result.dataSource)
+        setProfile(result?.data?.profile || null)
+        if (result?.data?.dataSource) setDataSource(result.data.dataSource)
       } catch (err) {
         console.error('[Events] Failed to load data:', err)
         setDebug('ERROR: ' + (err.message || String(err)))

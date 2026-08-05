@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useLoaderData, useRouter, useNavigate, Link } from '@tanstack/react-router'
 import { Calendar, Clock, MapPin, Share2, ArrowLeft, Users } from 'lucide-react'
 import LinksSection from '#/components/links/LinksSection'
-import EventMap from './EventMap'
+import EventLocation from './EventLocation'
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
   'August', 'September', 'October', 'November', 'December']
@@ -157,22 +157,7 @@ export default function EventDetailPage() {
           {event.location && (
             <section data-part="section-location">
               <h2 className="text-white text-[18px] font-medium mb-4">Location</h2>
-              <EventMap
-                lat={event.lat}
-                lng={event.lng}
-                label={event.location}
-                height={220}
-              />
-              <div className="bg-[#0a0d12] rounded-xl p-5 mt-4">
-                <div className="flex items-center gap-2.5 text-white text-[15px]">
-                  <MapPin size={17} className="text-[#888888]" /> {event.location}
-                </div>
-                {event.zipCode && (
-                  <div className="flex items-center gap-2.5 text-white text-[15px] mt-2">
-                    <span className="text-[#888888] text-[17px] leading-none">#</span> Zip Code: {event.zipCode}
-                  </div>
-                )}
-              </div>
+              <EventLocation event={event} />
             </section>
           )}
 

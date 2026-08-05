@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Sidebar from '#/components/dashboard/Sidebar'
-import { getDashboardData, listProfiles } from '#/server/db-actions'
+import { loadDashboardData } from '#/server/session'
+import { listProfiles } from '#/server/db-actions'
 import { listEvents } from '#/server/events'
 import EventCard from '#/components/events/EventCard'
 import UserCard from './UserCard'
@@ -23,8 +24,8 @@ export default function ExplorePage() {
   useEffect(() => {
     async function loadData() {
       try {
-        const result = await getDashboardData({ data: { userId: 'user_001' } })
-        setProfile(result.profile)
+        const result = await loadDashboardData()
+        setProfile(result?.data?.profile || null)
       } catch (err) {
         console.error('[Explore] Failed to load data:', err)
       }

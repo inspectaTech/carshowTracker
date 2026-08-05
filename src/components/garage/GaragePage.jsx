@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Sidebar from '#/components/dashboard/Sidebar'
-import { getDashboardData } from '#/server/db-actions'
+import { loadDashboardData } from '#/server/session'
 import { Plus, Search, Car } from 'lucide-react'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -61,11 +61,11 @@ export default function GaragePage() {
   useEffect(() => {
     async function loadData() {
       try {
-        const result = await getDashboardData({ data: { userId: 'user_001' } })
-        setProfile(result.profile)
-        if (result.vehicles && result.vehicles.length > 0) {
+        const result = await loadDashboardData()
+        setProfile(result?.data?.profile || null)
+        if (result?.data?.vehicles && result.data.vehicles.length > 0) {
           // Normalize MongoDB vehicles: add _id as id, ensure tags array
-          const normalized = result.vehicles.map((v) => ({
+          const normalized = result.data.vehicles.map((v) => ({
             ...v,
             id: v._id || v.id,
             tags: v.tags || [],

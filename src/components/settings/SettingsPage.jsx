@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Sidebar from '#/components/dashboard/Sidebar'
-import { getDashboardData } from '#/server/db-actions'
+import { loadDashboardData } from '#/server/session'
 import { Settings as SettingsIcon, User, Bell, Lock, MapPin, Palette, Link as LinkIcon, Sliders } from 'lucide-react'
 import { getToolbarLayout, setToolbarLayout as saveToolbarLayout } from '#/lib/toolbar-layout'
 
@@ -37,8 +37,8 @@ export default function SettingsPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        const result = await getDashboardData({ data: { userId: 'user_001' } })
-        setProfile(result.profile)
+        const result = await loadDashboardData()
+        setProfile(result?.data?.profile || null)
       } catch (err) {
         console.error('[Settings] Failed to load data:', err)
       } finally {

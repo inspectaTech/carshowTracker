@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { loadLeaflet } from '#/lib/leaflet-client'
+import LocationSummary from './LocationSummary'
 
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org'
 const DEFAULT_CENTER = [34.0522, -118.2437] // Los Angeles
@@ -31,16 +32,6 @@ function formatCleanAddress(addr) {
   return parts.join(', ')
 }
 
-/** Convert decimal degrees to Degrees-Minutes-Seconds format */
-function dms(coord, type) {
-  const abs = Math.abs(coord)
-  const deg = Math.floor(abs)
-  const min = Math.floor((abs - deg) * 60)
-  const sec = ((abs - deg - min / 60) * 3600).toFixed(2)
-  const dir = type === 'lat' ? (coord >= 0 ? 'N' : 'S') : (coord >= 0 ? 'E' : 'W')
-  return `${deg}°${min}'${sec}"${dir}`
-}
-
 export default function LocationPicker({ onLocationSelect, onClear, onZipCode, initialValue = null }) {
   // --- State ---
   const [query, setQuery] = useState('')
@@ -49,7 +40,6 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode, i
   const [selectedLocation, setSelectedLocation] = useState(null)
   const [isSearching, setIsSearching] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const [copied, setCopied] = useState(false)
 
   // --- Refs ---
   const mapRef = useRef(null)
@@ -460,90 +450,12 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode, i
 
       {/* === Output Panel === */}
       {selectedLocation ? (
-        <div className="border border-[#333333] rounded-lg p-3 bg-[#0a0d12]">
-          <h3 className="text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">
-            Selected Location
-          </h3>
-          <div className="space-y-1.5 text-sm">
-            <div>
-              <span className="text-[#888888] text-xs">Address:</span>
-              <p className="text-white mt-0.5 text-[13px] leading-relaxed">{selectedLocation.address}</p>
-            </div>
-            <div className="flex gap-4">
-              <div>
-                <span className="text-[#888888] text-xs">Latitude:</span>
-                <p className="text-white mt-0.5 font-mono text-[12px]">{selectedLocation.lat.toFixed(6)}</p>
-              </div>
-              <div>
-                <span className="text-[#888888] text-xs">Longitude:</span>
-                <p className="text-white mt-0.5 font-mono text-[12px]">{selectedLocation.lng.toFixed(6)}</p>
-              </div>
-            </div>
-            <div>
-              <span className="text-[#888888] text-xs">DMS:</span>
-              <p className="text-white mt-0.5 font-mono text-[11px]">
-                {dms(selectedLocation.lat, 'lat')}, {dms(selectedLocation.lng, 'lng')}
-              </p>
-            </div>
-
-            {/* Open in maps apps + Copy + Share */}
-            <div className="pt-2 border-t border-[#333333] mt-2">
-              <span className="text-[#888888] text-[11px]">Open in:</span>
-              <div className="flex flex-wrap gap-1.5 mt-1.5">
-                <a
-                  href={`https://www.google.com/maps?q=${encodeURIComponent(selectedLocation.address)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-md bg-[#1a1d22] border border-[#333333] text-[#cccccc] hover:text-white hover:bg-[#2a2d32] transition-colors"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z"/></svg>
-                  Google Maps
-                </a>
-                <a
-                  href={`https://maps.apple.com/?q=${encodeURIComponent(selectedLocation.address)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-md bg-[#1a1d22] border border-[#333333] text-[#cccccc] hover:text-white hover:bg-[#2a2d32] transition-colors"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 20H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/><path d="M9 17l3 3 3-3"/><path d="M12 20V9"/></svg>
-                  Apple Maps
-                </a>
-                <a
-                  href={`https://waze.com/ul?q=${encodeURIComponent(selectedLocation.address)}&navigate=yes`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-md bg-[#1a1d22] border border-[#333333] text-[#cccccc] hover:text-white hover:bg-[#2a2d32] transition-colors"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                  Waze
-                </a>
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(selectedLocation.address)
-                    setCopied(true)
-                    setTimeout(() => setCopied(false), 2000)
-                  }}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-md bg-[#1a1d22] border border-[#333333] text-[#cccccc] hover:text-white hover:bg-[#2a2d32] transition-colors"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                  {copied ? 'Copied!' : 'Copy'}
-                </button>
-                <button
-                  onClick={() => {
-                    navigator.share?.({
-                      title: 'Location',
-                      text: selectedLocation.address,
-                    })
-                  }}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-md bg-[#1a1d22] border border-[#333333] text-[#cccccc] hover:text-white hover:bg-[#2a2d32] transition-colors"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>
-                  Share
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <LocationSummary
+          address={selectedLocation.address}
+          lat={selectedLocation.lat}
+          lng={selectedLocation.lng}
+          title="Selected Location"
+        />
       ) : (
         <div className="border border-dashed border-[#333333] rounded-lg p-4 text-center text-sm text-[#555555]">
           No location selected yet. Type an address or click on the map.

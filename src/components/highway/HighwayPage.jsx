@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Sidebar from '#/components/dashboard/Sidebar'
-import { getDashboardData } from '#/server/db-actions'
+import { loadDashboardData } from '#/server/session'
 import { Heart, MessageCircle, MoreHorizontal, Upload, Route, LayoutList, Grid3X3 } from 'lucide-react'
 import UserImage from '#/components/ui/UserImage'
 
@@ -25,10 +25,10 @@ export default function HighwayPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        const result = await getDashboardData({ data: { userId: 'user_001' } })
-        setProfile(result.profile)
-        if (result.activities && result.activities.length > 0) {
-          setActivities(result.activities.map((a) => ({
+        const result = await loadDashboardData()
+        setProfile(result?.data?.profile || null)
+        if (result?.data?.activities && result.data.activities.length > 0) {
+          setActivities(result.data.activities.map((a) => ({
             ...a,
             id: a._id || a.id,
             timestamp: formatRelativeTime(new Date(a.timestamp)),
