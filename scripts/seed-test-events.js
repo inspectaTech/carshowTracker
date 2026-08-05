@@ -166,35 +166,59 @@ async function main() {
   const inspectaUserId = inspectaUser ? String(inspectaUser._id) : INSPECTA_ID
   console.log('Inspecta Tech user id:', inspectaUserId)
 
-  // 2) Consolidate profiles -> exactly 2.
-  //    Repoint the legacy @gearhead_23 profile to the test user's real id.
-  //    (Update by handle, NOT upsert on userId — avoids E11000 duplicate key
-  //    on the unique_handle index and prevents a 3rd profile.)
+  // 2) Upsert exactly 2 profiles (works on both a fresh DB and a dev DB).
+  //    Upsert by handle (NOT by userId) — avoids E11000 on the unique_handle
+  //    index and prevents a 3rd profile.
+  const gearheadDoc = {
+    userId: testUserId,
+    username: TEST_NAME,
+    handle: '@gearhead_23',
+    bio: 'Cars are my passion. Speed is my therapy. Built not bought.',
+    location: 'Los Angeles, CA',
+    socialLinks: ['Instagram', 'YouTube', 'TikTok'],
+    aboutMe:
+      'Car enthusiast since day one. I live for weekend drives, track days, and late night builds. JDM at heart. Always chasing the next build.',
+    favoriteBrand: 'Nissan',
+    dreamCar: 'Nissan GT-R R34',
+    occupation: 'Automotive Photographer',
+    driveStyle: 'Performance & Style',
+    email: TEST_EMAIL,
+    stats: { totalPoints: 0, badges: 0, carsInGarage: 0, followers: 0, following: 0 },
+    updatedAt: new Date(),
+  }
   await db.collection('profiles').updateOne(
     { handle: '@gearhead_23' },
-    {
-      $set: {
-        userId: testUserId,
-        username: TEST_NAME,
-        handle: '@gearhead_23',
-        bio: 'Cars are my passion. Speed is my therapy. Built not bought.',
-        location: 'Los Angeles, CA',
-        socialLinks: ['Instagram', 'YouTube', 'TikTok'],
-        aboutMe:
-          'Car enthusiast since day one. I live for weekend drives, track days, and late night builds. JDM at heart. Always chasing the next build.',
-        favoriteBrand: 'Nissan',
-        dreamCar: 'Nissan GT-R R34',
-        occupation: 'Automotive Photographer',
-        driveStyle: 'Performance & Style',
-        email: TEST_EMAIL,
-        updatedAt: new Date(),
-      },
-    }
+    { $set: gearheadDoc, $setOnInsert: { createdAt: new Date() } },
+    { upsert: true }
   )
-  console.log('Consolidated @gearhead_23 -> test user', testUserId)
+  console.log('Upserted @gearhead_23 -> test user', testUserId)
 
-  // Cleanup: drop any other profile still pointing at the legacy "user_001" id,
-  // and any profile owned by the test user that ISN'T @gearhead_23.
+  const inspectaDoc = {
+    userId: inspectaUserId,
+    username: 'Inspecta Tech',
+    handle: '@inspecta_tech',
+    bio: 'Tech-first automotive photographer & enthusiast.',
+    location: 'Los Angeles, CA',
+    socialLinks: ['Instagram', 'YouTube'],
+    aboutMe:
+      'Focused on the intersection of tech and cars. Documenting builds, shows, and everything on wheels.',
+    favoriteBrand: 'Tesla',
+    dreamCar: 'Tesla Roadster',
+    occupation: 'Software Engineer',
+    driveStyle: 'Tech & Comfort',
+    email: INSPECTA_EMAIL,
+    stats: { totalPoints: 0, badges: 0, carsInGarage: 0, followers: 0, following: 0 },
+    updatedAt: new Date(),
+  }
+  await db.collection('profiles').updateOne(
+    { handle: '@inspecta_tech' },
+    { $set: inspectaDoc, $setOnInsert: { createdAt: new Date() } },
+    { upsert: true }
+  )
+  console.log('Upserted @inspecta_tech ->', inspectaUserId)
+
+  // Cleanup: drop any profile still pointing at the legacy "user_001" id, and
+  // any profile owned by the test user that ISN'T @gearhead_23.
   await db.collection('profiles').deleteMany({ userId: 'user_001', handle: { $ne: '@gearhead_23' } })
   await db.collection('profiles').deleteMany({ userId: testUserId, handle: { $ne: '@gearhead_23' } })
 

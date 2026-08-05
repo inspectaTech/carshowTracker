@@ -56,7 +56,7 @@ export const auth = betterAuth({
           // Auto-create a matching `profiles` document so the dashboard
           // can show real user data immediately after sign-up.
           try {
-            const { connectToDatabase } = await import('./db')
+            const { connectToDatabase } = await import('./db.js')
             const { db } = await connectToDatabase()
 
             // Generate a unique @handle — base from the display name, then
