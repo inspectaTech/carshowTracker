@@ -1,37 +1,11 @@
 import { useState, useEffect } from 'react'
 import Sidebar from '#/components/dashboard/Sidebar'
 import { getDashboardData } from '#/server/db-actions'
+import { listEvents } from '#/server/events'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import { Search, Users, Calendar, MapPin } from 'lucide-react'
 import MapView from './MapView'
-
-const FEATURED_EVENTS = [
-  {
-    id: 'e1',
-    title: 'SoCal JDM Meet 2026',
-    date: 'Jul 15',
-    location: 'Los Angeles, CA',
-    attending: 234,
-    image: null,
-  },
-  {
-    id: 'e2',
-    title: 'JDM Legends Show',
-    date: 'Aug 3',
-    location: 'San Diego, CA',
-    attending: 89,
-    image: null,
-  },
-  {
-    id: 'e3',
-    title: 'Euro Night Cruise',
-    date: 'Jul 22',
-    location: 'Santa Monica, CA',
-    attending: 56,
-    image: null,
-  },
-]
 
 const POPULAR_USERS = [
   { id: 'u1', name: 'Gearhead_23', cars: 12, followers: '1.8K' },
@@ -40,8 +14,18 @@ const POPULAR_USERS = [
 
 const TABS = ['All', 'Shows', 'Users', 'Events']
 
+const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+function formatEventDate(dateStr) {
+  if (!dateStr) return ''
+  const d = new Date(dateStr)
+  if (Number.isNaN(d.getTime())) return dateStr
+  return `${MONTHS_SHORT[d.getMonth()]} ${d.getDate()}`
+}
+
 export default function ExplorePage() {
   const [profile, setProfile] = useState(null)
+  const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
@@ -54,6 +38,13 @@ export default function ExplorePage() {
         setProfile(result.profile)
       } catch (err) {
         console.error('[Explore] Failed to load data:', err)
+      }
+      // Explore shows ALL events in the DB.
+      try {
+        const result = await listEvents()
+        if (result?.events) setEvents(result.events)
+      } catch (err) {
+        console.error('[Explore] Failed to load events:', err)
       } finally {
         setLoading(false)
       }
@@ -61,7 +52,7 @@ export default function ExplorePage() {
     loadData()
   }, [])
 
-  const filteredEvents = FEATURED_EVENTS.filter((e) =>
+  const filteredEvents = events.filter((e) =>
     e.title.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
@@ -107,8 +98,10 @@ export default function ExplorePage() {
               placeholder="Search car shows, users, events..."
               size="small"
               fullWidth
-              InputProps={{
-                startAdornment: <InputAdornment position="start"><Search className="h-5 w-5 text-[#555555]" /></InputAdornment>,
+              slotProps={{
+                input: {
+                  startAdornment: <InputAdornment position="start"><Search className="h-5 w-5 text-[#555555]" /></InputAdornment>,
+                },
               }}
             />
           </div>
@@ -159,7 +152,7 @@ export default function ExplorePage() {
                         {filteredEvents[0].title}
                       </h3>
                       <p className="text-[#888888] text-[13px]">
-                        📅 {filteredEvents[0].date} &bull; 📍 {filteredEvents[0].location} &bull; 👥 {filteredEvents[0].attending} attending
+                        📅 {formatEventDate(filteredEvents[0].date)} &bull; 📍 {filteredEvents[0].location} &bull; 👥 {filteredEvents[0].attending} attending
                       </p>
                     </div>
                   </div>
@@ -168,7 +161,7 @@ export default function ExplorePage() {
                 {/* Result cards */}
                 {filteredEvents.slice(1).map((event) => (
                   <div
-                    key={event.id}
+                    key={event.slugId || event.title}
                     data-component="EventCard"
                     className="bg-[#0a0d12] rounded-xl p-4 flex items-center gap-4 hover:bg-[#0e1116] transition-colors cursor-pointer"
                   >
@@ -177,7 +170,7 @@ export default function ExplorePage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="text-white text-[16px] font-medium truncate">{event.title}</h4>
-                      <p className="text-[#888888] text-[13px]">{event.date} &bull; {event.location} &bull; {event.attending} attending</p>
+                      <p className="text-[#888888] text-[13px]">{formatEventDate(event.date)} &bull; {event.location} &bull; {event.attending} attending</p>
                     </div>
                   </div>
                 ))}

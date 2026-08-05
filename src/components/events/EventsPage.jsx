@@ -1,91 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import { Calendar, Plus, ChevronRight, MapPin, Clock, Users } from 'lucide-react'
 import Sidebar from '#/components/dashboard/Sidebar'
 import { getDashboardData } from '#/server/db-actions'
+import { listEvents, getSessionUser } from '#/server/events'
 import CreateEventModal from './CreateEventModal'
 
-const MOCK_EVENTS = [
-  {
-    id: 'ev1',
-    title: 'SoCal JDM Meet 2026',
-    month: 'JUL',
-    day: '15',
-    location: 'Los Angeles, CA',
-    time: '7:00 PM',
-    attending: 234,
-    rsvp: 'Going',
-    rsvpColor: '#4ade80',
-    category: 'JDM',
-    date: new Date('2026-07-15'),
-  },
-  {
-    id: 'ev2',
-    title: 'JDM Legends Show',
-    month: 'AUG',
-    day: '3',
-    location: 'San Diego, CA',
-    time: '10:00 AM',
-    attending: 89,
-    rsvp: 'Maybe',
-    rsvpColor: '#facc15',
-    category: 'Classic',
-    date: new Date('2026-08-03'),
-  },
-  {
-    id: 'ev3',
-    title: 'Euro Night Cruise',
-    month: 'AUG',
-    day: '22',
-    location: 'Santa Monica, CA',
-    time: '8:00 PM',
-    attending: 56,
-    rsvp: 'Declined',
-    rsvpColor: '#ef4444',
-    category: 'Euro',
-    date: new Date('2026-08-22'),
-  },
-  {
-    id: 'ev4',
-    title: 'Cars & Coffee Monthly',
-    month: 'SEP',
-    day: '12',
-    location: 'Orange County, CA',
-    time: '6:00 AM',
-    attending: 312,
-    rsvp: 'Going',
-    rsvpColor: '#4ade80',
-    category: 'Meetup',
-    date: new Date('2026-09-12'),
-  },
-  {
-    id: 'ev5',
-    title: 'Supercar Sunday',
-    month: 'OCT',
-    day: '5',
-    location: 'Beverly Hills, CA',
-    time: '9:00 AM',
-    attending: 178,
-    rsvp: 'Going',
-    rsvpColor: '#4ade80',
-    category: 'Import',
-    date: new Date('2026-10-05'),
-  },
-  {
-    id: 'ev6',
-    title: 'Classic Muscle Showdown',
-    month: 'NOV',
-    day: '14',
-    location: 'Long Beach, CA',
-    time: '11:00 AM',
-    attending: 45,
-    rsvp: null,
-    rsvpColor: null,
-    category: 'Classic',
-    date: new Date('2026-11-14'),
-  },
-]
-
 const TABS = ['Upcoming', 'Past', 'Created']
+
+const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+
+function eventDate(ev) {
+  return ev.date ? new Date(ev.date) : null
+}
 
 function formatRelativeTime(date) {
   const now = new Date()
@@ -98,13 +25,31 @@ function formatRelativeTime(date) {
 }
 
 export default function EventsPage() {
+  const navigate = useNavigate()
   const [profile, setProfile] = useState(null)
-  const [events, setEvents] = useState(MOCK_EVENTS)
+  const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('Upcoming')
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [dataSource, setDataSource] = useState('mock')
   const [debug, setDebug] = useState('waiting...')
+
+  const loadEvents = useCallback(async () => {
+    try {
+      // My Events shows ONLY the logged-in user's own events.
+      const session = await getSessionUser()
+      const myUserId = session?.userId || null
+      if (!myUserId) {
+        setEvents([])
+        setDataSource('no-session')
+        return
+      }
+      const result = await listEvents({ data: { creatorUserId: myUserId } })
+      if (result?.events) setEvents(result.events)
+    } catch (err) {
+      console.error('[Events] Failed to load events:', err)
+    }
+  }, [])
 
   useEffect(() => {
     async function loadData() {
@@ -123,12 +68,19 @@ export default function EventsPage() {
       }
     }
     loadData()
-  }, [])
+    loadEvents()
+  }, [loadEvents])
+
+  const handleCreated = useCallback((event) => {
+    setEvents((prev) => [event, ...prev])
+    navigate({ to: `/event/${event.slugId}` })
+  }, [navigate])
 
   const now = new Date()
   const filtered = events.filter((ev) => {
-    if (activeTab === 'Upcoming') return ev.date >= now
-    if (activeTab === 'Past') return ev.date < now
+    const d = eventDate(ev)
+    if (activeTab === 'Upcoming') return d && d >= now
+    if (activeTab === 'Past') return d && d < now
     return true // Created tab shows all
   })
 
@@ -185,66 +137,77 @@ export default function EventsPage() {
           ) : filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-center">
               <Calendar className="h-12 w-12 text-[#333333] mb-3" />
-              <p className="text-[#888888] text-[16px]">No {activeTab.toLowerCase()} events</p>
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className="mt-4 text-[#e10908] hover:underline text-[14px]"
-              >
-                Create your first event
-              </button>
+              {dataSource === 'no-session' ? (
+                <>
+                  <p className="text-[#888888] text-[16px]">Log in to see your events</p>
+                  <button
+                    onClick={() => navigate({ to: '/login' })}
+                    className="mt-4 text-[#e10908] hover:underline text-[14px]"
+                  >
+                    Go to login
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="text-[#888888] text-[16px]">No {activeTab.toLowerCase()} events</p>
+                  <button
+                    onClick={() => setShowCreateModal(true)}
+                    className="mt-4 text-[#e10908] hover:underline text-[14px]"
+                  >
+                    Create your first event
+                  </button>
+                </>
+              )}
             </div>
           ) : (
             <div data-part="event-list" className="max-w-4xl space-y-3">
-              {filtered.map((ev) => (
-                <div
-                  key={ev.id}
-                  data-component="EventCard"
-                  className="bg-[#0a0d12] rounded-xl px-4 sm:px-6 py-4 sm:py-5 flex items-center gap-4 sm:gap-5 hover:bg-[#0e1116] transition-colors border border-transparent hover:border-[#1a1d22] cursor-pointer group"
-                >
-                  {/* Date badge */}
-                  <div data-part="date-badge" className="w-[70px] h-[80px] bg-[#04080b] rounded-lg flex flex-col items-center justify-center gap-0.5 shrink-0">
-                    <span className="text-[#e10908] text-[12px] font-bold uppercase leading-none">{ev.month}</span>
-                    <span className="text-white text-[28px] font-bold leading-none mt-1">{ev.day}</span>
-                  </div>
-
-                  {/* Event info */}
-                  <div data-part="event-info" className="flex-1 min-w-0 space-y-1">
-                    <h3 className="text-white text-[16px] sm:text-[18px] font-medium truncate">{ev.title}</h3>
-                    <p className="text-[#888888] text-[13px] sm:text-[14px] flex items-center gap-1.5 flex-wrap">
-                      <MapPin size={14} className="shrink-0" />
-                      {ev.location}
-                      <span className="mx-1 text-[#444]">•</span>
-                      <Clock size={14} className="shrink-0" />
-                      {ev.time}
-                      <span className="mx-1 text-[#444]">•</span>
-                      <Users size={14} className="shrink-0" />
-                      {ev.attending} attending
-                    </p>
-                    <div data-part="status-row" className="flex items-center gap-2">
-                      {ev.rsvp && (
-                        <span
-                          data-part="rsvp-badge"
-                          className="inline-flex items-center px-2 py-0.5 rounded text-[12px] font-medium bg-[#1a1d22]"
-                          style={{ color: ev.rsvpColor }}
-                        >
-                          {ev.rsvp}
-                        </span>
-                      )}
-                      <span className="text-[#e10908] text-[12px]">{ev.category}</span>
+              {filtered.map((ev) => {
+                const d = eventDate(ev)
+                const month = d ? MONTHS[d.getMonth()] : '—'
+                const day = d ? String(d.getDate()).padStart(2, '0') : '—'
+                return (
+                  <div
+                    key={ev.slugId || ev.title}
+                    data-component="EventCard"
+                    onClick={() => navigate({ to: `/event/${ev.slugId}` })}
+                    className="bg-[#0a0d12] rounded-xl px-4 sm:px-6 py-4 sm:py-5 flex items-center gap-4 sm:gap-5 hover:bg-[#0e1116] transition-colors border border-transparent hover:border-[#1a1d22] cursor-pointer group"
+                  >
+                    {/* Date badge */}
+                    <div data-part="date-badge" className="w-[70px] h-[80px] bg-[#04080b] rounded-lg flex flex-col items-center justify-center gap-0.5 shrink-0">
+                      <span className="text-[#e10908] text-[12px] font-bold uppercase leading-none">{month}</span>
+                      <span className="text-white text-[28px] font-bold leading-none mt-1">{day}</span>
                     </div>
-                  </div>
 
-                  {/* Arrow */}
-                  <ChevronRight className="h-5 w-5 text-[#555555] group-hover:text-white transition-colors shrink-0" />
-                </div>
-              ))}
+                    {/* Event info */}
+                    <div data-part="event-info" className="flex-1 min-w-0 space-y-1">
+                      <h3 className="text-white text-[16px] sm:text-[18px] font-medium truncate">{ev.title}</h3>
+                      <p className="text-[#888888] text-[13px] sm:text-[14px] flex items-center gap-1.5 flex-wrap">
+                        <MapPin size={14} className="shrink-0" />
+                        {ev.location}
+                        <span className="mx-1 text-[#444]">•</span>
+                        <Clock size={14} className="shrink-0" />
+                        {ev.startTime || ev.endTime}
+                        <span className="mx-1 text-[#444]">•</span>
+                        <Users size={14} className="shrink-0" />
+                        {ev.attending} attending
+                      </p>
+                      <div data-part="status-row" className="flex items-center gap-2">
+                        <span className="text-[#e10908] text-[12px]">{ev.category}</span>
+                      </div>
+                    </div>
+
+                    {/* Arrow */}
+                    <ChevronRight className="h-5 w-5 text-[#555555] group-hover:text-white transition-colors shrink-0" />
+                  </div>
+                )
+              })}
             </div>
           )}
         </div>
       </main>
 
       {/* Create Event Modal */}
-      <CreateEventModal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} />
+      <CreateEventModal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} onCreated={handleCreated} />
     </div>
   )
 }

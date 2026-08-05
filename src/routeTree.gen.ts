@@ -21,6 +21,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as Dash2RouteImport } from './routes/dash2'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EventSlugIdRouteImport } from './routes/event.$slugId'
 import { Route as ApiUploadRouteImport } from './routes/api.upload'
 import { Route as ApiSeedRouteImport } from './routes/api.seed'
 import { Route as ApiImagesRouteImport } from './routes/api.images'
@@ -88,6 +89,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventSlugIdRoute = EventSlugIdRouteImport.update({
+  id: '/event/$slugId',
+  path: '/event/$slugId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiUploadRoute = ApiUploadRouteImport.update({
   id: '/api/upload',
   path: '/api/upload',
@@ -136,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/api/images': typeof ApiImagesRouteWithChildren
   '/api/seed': typeof ApiSeedRoute
   '/api/upload': typeof ApiUploadRoute
+  '/event/$slugId': typeof EventSlugIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/images/$id': typeof ApiImagesIdRoute
 }
@@ -156,6 +163,7 @@ export interface FileRoutesByTo {
   '/api/images': typeof ApiImagesRouteWithChildren
   '/api/seed': typeof ApiSeedRoute
   '/api/upload': typeof ApiUploadRoute
+  '/event/$slugId': typeof EventSlugIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/images/$id': typeof ApiImagesIdRoute
 }
@@ -177,6 +185,7 @@ export interface FileRoutesById {
   '/api/images': typeof ApiImagesRouteWithChildren
   '/api/seed': typeof ApiSeedRoute
   '/api/upload': typeof ApiUploadRoute
+  '/event/$slugId': typeof EventSlugIdRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/images/$id': typeof ApiImagesIdRoute
 }
@@ -199,6 +208,7 @@ export interface FileRouteTypes {
     | '/api/images'
     | '/api/seed'
     | '/api/upload'
+    | '/event/$slugId'
     | '/api/auth/$'
     | '/api/images/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -219,6 +229,7 @@ export interface FileRouteTypes {
     | '/api/images'
     | '/api/seed'
     | '/api/upload'
+    | '/event/$slugId'
     | '/api/auth/$'
     | '/api/images/$id'
   id:
@@ -239,6 +250,7 @@ export interface FileRouteTypes {
     | '/api/images'
     | '/api/seed'
     | '/api/upload'
+    | '/event/$slugId'
     | '/api/auth/$'
     | '/api/images/$id'
   fileRoutesById: FileRoutesById
@@ -260,6 +272,7 @@ export interface RootRouteChildren {
   ApiImagesRoute: typeof ApiImagesRouteWithChildren
   ApiSeedRoute: typeof ApiSeedRoute
   ApiUploadRoute: typeof ApiUploadRoute
+  EventSlugIdRoute: typeof EventSlugIdRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -349,6 +362,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/event/$slugId': {
+      id: '/event/$slugId'
+      path: '/event/$slugId'
+      fullPath: '/event/$slugId'
+      preLoaderRoute: typeof EventSlugIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/upload': {
       id: '/api/upload'
       path: '/api/upload'
@@ -423,6 +443,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiImagesRoute: ApiImagesRouteWithChildren,
   ApiSeedRoute: ApiSeedRoute,
   ApiUploadRoute: ApiUploadRoute,
+  EventSlugIdRoute: EventSlugIdRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

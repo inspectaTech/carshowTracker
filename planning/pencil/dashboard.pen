@@ -10498,6 +10498,1037 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "eventsRoot",
+      "x": 4708,
+      "y": 4341,
+      "name": "Events",
+      "clip": true,
+      "width": 1440,
+      "height": 1730,
+      "fill": "#04080b",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "evHeroImg",
+          "name": "HeroImage",
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "satellite.jpeg",
+            "mode": "fill"
+          },
+          "width": "fill_container",
+          "height": 260
+        },
+        {
+          "type": "frame",
+          "id": "evTitleBar",
+          "name": "TitleBar",
+          "clip": true,
+          "width": "fill_container",
+          "height": 150,
+          "fill": "#0a0d12",
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            24,
+            40
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "evTopRow",
+              "name": "TopRow",
+              "width": "fill_container",
+              "fill": "transparent",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "evBackBtn",
+                  "name": "BackButton",
+                  "clip": true,
+                  "width": 160,
+                  "height": 36,
+                  "fill": "#04080b",
+                  "cornerRadius": 8,
+                  "stroke": "#333333",
+                  "strokeWidth": 1,
+                  "gap": 8,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "evBackIcon",
+                      "name": "Icon",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "arrow-left",
+                      "library": "lucide",
+                      "fill": "#888888"
+                    },
+                    {
+                      "type": "text",
+                      "id": "evBackLabel",
+                      "name": "Label",
+                      "fill": "#AAAAAA",
+                      "content": "← Back to events",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "evShareTopBtn",
+                  "name": "ShareButton",
+                  "clip": true,
+                  "width": 110,
+                  "height": 36,
+                  "fill": "#04080b",
+                  "cornerRadius": 8,
+                  "stroke": "#333333",
+                  "strokeWidth": 1,
+                  "gap": 8,
+                  "padding": [
+                    0,
+                    14
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "evShareTopIcon",
+                      "name": "Icon",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "share-2",
+                      "library": "lucide",
+                      "fill": "#888888"
+                    },
+                    {
+                      "type": "text",
+                      "id": "evShareTopLabel",
+                      "name": "Label",
+                      "fill": "#AAAAAA",
+                      "content": "Share",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "k2wQm",
+              "name": "Title",
+              "fill": "#FFFFFF",
+              "content": "SoCal JDM Meet 2026",
+              "fontFamily": "Inter",
+              "fontSize": 32,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "evMetaRow",
+              "name": "MetaRow",
+              "width": "fill_container",
+              "fill": "transparent",
+              "gap": 20,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "evMetaDate",
+                  "name": "MetaItem",
+                  "fill": "transparent",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "evMetaDateIcon",
+                      "name": "Icon",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "calendar",
+                      "library": "lucide",
+                      "fill": "#888888"
+                    },
+                    {
+                      "type": "text",
+                      "id": "evMetaDateTxt",
+                      "name": "Text",
+                      "fill": "#AAAAAA",
+                      "content": "Sat, Jul 15, 2026",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "evMetaTime",
+                  "name": "MetaItem",
+                  "fill": "transparent",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "evMetaTimeIcon",
+                      "name": "Icon",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "clock",
+                      "library": "lucide",
+                      "fill": "#888888"
+                    },
+                    {
+                      "type": "text",
+                      "id": "evMetaTimeTxt",
+                      "name": "Text",
+                      "fill": "#AAAAAA",
+                      "content": "6:00 PM – 10:00 PM",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "evMetaLoc",
+                  "name": "MetaItem",
+                  "fill": "transparent",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "evMetaLocIcon",
+                      "name": "Icon",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "map-pin",
+                      "library": "lucide",
+                      "fill": "#888888"
+                    },
+                    {
+                      "type": "text",
+                      "id": "evMetaLocTxt",
+                      "name": "Text",
+                      "fill": "#AAAAAA",
+                      "content": "Los Angeles, CA",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "evBody",
+          "name": "Body",
+          "clip": true,
+          "width": "fill_container",
+          "height": 1316,
+          "fill": "#04080b",
+          "gap": 30,
+          "padding": [
+            40,
+            30
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "evLeftCol",
+              "name": "LeftColumn",
+              "width": 920,
+              "height": "fill_container",
+              "fill": "transparent",
+              "layout": "vertical",
+              "gap": 22,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "evSecDateTime",
+                  "name": "SectionTitle",
+                  "fill": "#FFFFFF",
+                  "content": "Date & Time",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "evDateTimeRow",
+                  "name": "DateTimeRow",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "gap": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "evDtDate",
+                      "name": "StatCard",
+                      "clip": true,
+                      "width": "fill_container",
+                      "height": 96,
+                      "fill": "#0a0d12",
+                      "cornerRadius": 10,
+                      "gap": 10,
+                      "padding": 16,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "evDtDateIcon",
+                          "name": "Icon",
+                          "width": 24,
+                          "height": 24,
+                          "icon": "calendar",
+                          "library": "lucide",
+                          "fill": "#e10908"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "evDtDateTxt",
+                          "name": "TextBlock",
+                          "width": "fill_container",
+                          "fill": "transparent",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "evDtDateVal",
+                              "name": "Value",
+                              "fill": "#FFFFFF",
+                              "content": "Jul 15, 2026",
+                              "fontFamily": "Inter",
+                              "fontSize": 16,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "evDtDateLbl",
+                              "name": "Label",
+                              "fill": "#888888",
+                              "content": "Date",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "evDtStart",
+                      "name": "StatCard",
+                      "clip": true,
+                      "width": "fill_container",
+                      "height": 96,
+                      "fill": "#0a0d12",
+                      "cornerRadius": 10,
+                      "gap": 10,
+                      "padding": 16,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "evDtStartIcon",
+                          "name": "Icon",
+                          "width": 24,
+                          "height": 24,
+                          "icon": "clock",
+                          "library": "lucide",
+                          "fill": "#e10908"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "evDtStartTxt",
+                          "name": "TextBlock",
+                          "width": "fill_container",
+                          "fill": "transparent",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "evDtStartVal",
+                              "name": "Value",
+                              "fill": "#FFFFFF",
+                              "content": "6:00 PM",
+                              "fontFamily": "Inter",
+                              "fontSize": 16,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "evDtStartLbl",
+                              "name": "Label",
+                              "fill": "#888888",
+                              "content": "Start Time",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "evDtEnd",
+                      "name": "StatCard",
+                      "clip": true,
+                      "width": "fill_container",
+                      "height": 96,
+                      "fill": "#0a0d12",
+                      "cornerRadius": 10,
+                      "gap": 10,
+                      "padding": 16,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "evDtEndIcon",
+                          "name": "Icon",
+                          "width": 24,
+                          "height": 24,
+                          "icon": "clock-4",
+                          "library": "lucide",
+                          "fill": "#e10908"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "evDtEndTxt",
+                          "name": "TextBlock",
+                          "width": "fill_container",
+                          "fill": "transparent",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "evDtEndVal",
+                              "name": "Value",
+                              "fill": "#FFFFFF",
+                              "content": "10:00 PM",
+                              "fontFamily": "Inter",
+                              "fontSize": 16,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "evDtEndLbl",
+                              "name": "Label",
+                              "fill": "#888888",
+                              "content": "End Time",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "evSecLoc",
+                  "name": "SectionTitle",
+                  "fill": "#FFFFFF",
+                  "content": "Location",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "evMap",
+                  "name": "EventMap",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 240,
+                  "fill": "#0a0d12",
+                  "cornerRadius": 12,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "evMapInner",
+                      "name": "MapInner",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "fill": "#1a1d22",
+                      "cornerRadius": 12,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "evMapPin",
+                          "name": "MapPin",
+                          "width": 44,
+                          "height": 44,
+                          "icon": "map-pin",
+                          "library": "lucide",
+                          "fill": "#e10908"
+                        },
+                        {
+                          "type": "text",
+                          "id": "evMapText",
+                          "name": "MapText",
+                          "fill": "#555555",
+                          "content": "Interactive map",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "evLocInfo",
+                  "name": "LocationInfo",
+                  "width": "fill_container",
+                  "fill": "#0a0d12",
+                  "cornerRadius": 12,
+                  "layout": "vertical",
+                  "gap": 10,
+                  "padding": 20,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "evLocLabel",
+                      "name": "FieldLabel",
+                      "fill": "#FFFFFF",
+                      "content": "Location",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "evLocRow",
+                      "name": "LocationRow",
+                      "width": "fill_container",
+                      "fill": "transparent",
+                      "gap": 10,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "evLocIcon",
+                          "name": "Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "map-pin",
+                          "library": "lucide",
+                          "fill": "#888888"
+                        },
+                        {
+                          "type": "text",
+                          "id": "evLocAddr",
+                          "name": "Address",
+                          "fill": "#FFFFFF",
+                          "content": "1200 Fairplex Dr, Pomona, CA",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "evZipRow",
+                      "name": "ZipRow",
+                      "width": "fill_container",
+                      "fill": "transparent",
+                      "gap": 10,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "evZipIcon",
+                          "name": "Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "hash",
+                          "library": "lucide",
+                          "fill": "#888888"
+                        },
+                        {
+                          "type": "text",
+                          "id": "evZipText",
+                          "name": "ZipCode",
+                          "fill": "#FFFFFF",
+                          "content": "Zip Code: 91768",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "evSecDesc",
+                  "name": "SectionTitle",
+                  "fill": "#FFFFFF",
+                  "content": "About this event",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "evDescBody",
+                  "name": "DescriptionBody",
+                  "width": "fill_container",
+                  "fill": "#0a0d12",
+                  "cornerRadius": 12,
+                  "layout": "vertical",
+                  "gap": 10,
+                  "padding": 20,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "evDescP1",
+                      "name": "Paragraph",
+                      "fill": "#AAAAAA",
+                      "textGrowth": "fixed-width-height",
+                      "width": 880,
+                      "height": 48,
+                      "content": "Join us for the biggest JDM meet of the summer! Hundreds of Japanese classics, imports, and modern JDM icons will fill the Fairplex grounds.",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "evDescP2",
+                      "name": "Paragraph",
+                      "fill": "#AAAAAA",
+                      "textGrowth": "fixed-width-height",
+                      "width": 880,
+                      "height": 26,
+                      "content": "Featuring live drifting demos, a vendor village, food trucks, and awards for Best in Show across 12 categories.",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "evDescP3",
+                      "name": "Paragraph",
+                      "fill": "#AAAAAA",
+                      "textGrowth": "fixed-width-height",
+                      "width": 880,
+                      "height": 30,
+                      "content": "Gates open at 6:00 PM. Rain or shine. All makes and models welcome — you do not need a JDM car to attend.",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "evSecCost",
+                  "name": "SectionTitle",
+                  "fill": "#FFFFFF",
+                  "content": "Cost",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "evCostCard",
+                  "name": "CostCard",
+                  "width": "fill_container",
+                  "fill": "#0a0d12",
+                  "cornerRadius": 12,
+                  "gap": 16,
+                  "padding": 20,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "evCostChip",
+                      "name": "CostChip",
+                      "clip": true,
+                      "width": 90,
+                      "height": 40,
+                      "fill": "#e10908",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "evCostChipTxt",
+                          "name": "Label",
+                          "fill": "#FFFFFF",
+                          "content": "Free",
+                          "fontFamily": "Inter",
+                          "fontSize": 15,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "evCostNote",
+                      "name": "Note",
+                      "fill": "#888888",
+                      "content": "Free entry • Parking $10",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "evSecCat",
+                  "name": "SectionTitle",
+                  "fill": "#FFFFFF",
+                  "content": "Category",
+                  "fontFamily": "Inter",
+                  "fontSize": 18,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "evCatRow",
+                  "name": "CategoryRow",
+                  "width": "fill_container",
+                  "fill": "transparent",
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "evCatTag1",
+                      "name": "Tag",
+                      "clip": true,
+                      "fill": "#1a1d22",
+                      "cornerRadius": 6,
+                      "padding": [
+                        6,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "evCatTag1Txt",
+                          "name": "T",
+                          "fill": "#e10908",
+                          "content": "JDM",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "evCatTag2",
+                      "name": "Tag",
+                      "clip": true,
+                      "fill": "#1a1d22",
+                      "cornerRadius": 6,
+                      "padding": [
+                        6,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "evCatTag2Txt",
+                          "name": "T",
+                          "fill": "#e10908",
+                          "content": "Import",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "evCatTag3",
+                      "name": "Tag",
+                      "clip": true,
+                      "fill": "#1a1d22",
+                      "cornerRadius": 6,
+                      "padding": [
+                        6,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "evCatTag3Txt",
+                          "name": "T",
+                          "fill": "#e10908",
+                          "content": "Meetup",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "evRightCol",
+              "name": "RightColumn",
+              "width": 420,
+              "height": "fill_container",
+              "fill": "transparent",
+              "layout": "vertical",
+              "gap": 20,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "evRsvpBtn",
+                  "name": "RsvpButton",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 64,
+                  "fill": "#e10908",
+                  "cornerRadius": 10,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "evRsvpLabel",
+                      "name": "Label",
+                      "fill": "#FFFFFF",
+                      "content": "Get Tickets",
+                      "fontFamily": "Inter",
+                      "fontSize": 20,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "evAttendCard",
+                  "name": "AttendeeCard",
+                  "clip": true,
+                  "width": "fill_container",
+                  "fill": "#0a0d12",
+                  "cornerRadius": 12,
+                  "layout": "vertical",
+                  "gap": 14,
+                  "padding": 20,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "evAttendCount",
+                      "name": "Count",
+                      "fill": "#FFFFFF",
+                      "content": "234 attending",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "evAttendRow",
+                      "name": "AvatarStack",
+                      "width": "fill_container",
+                      "fill": "transparent",
+                      "gap": 10,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 16,
+                          "id": "evAv1",
+                          "name": "Avatar",
+                          "fill": "#e10908",
+                          "width": 32,
+                          "height": 32
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 16,
+                          "id": "evAv2",
+                          "name": "Avatar",
+                          "fill": "#1a1d22",
+                          "width": 32,
+                          "height": 32
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 16,
+                          "id": "evAv3",
+                          "name": "Avatar",
+                          "fill": "#333333",
+                          "width": 32,
+                          "height": 32
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 16,
+                          "id": "evAv4",
+                          "name": "Avatar",
+                          "fill": "#555555",
+                          "width": 32,
+                          "height": 32
+                        },
+                        {
+                          "type": "text",
+                          "id": "evAttendMore",
+                          "name": "More",
+                          "fill": "#888888",
+                          "content": "+230",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "evAttendSub",
+                      "name": "Subtext",
+                      "fill": "#888888",
+                      "content": "Join 234 car enthusiasts going",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "evShareBtn",
+                  "name": "ShareButton",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 48,
+                  "fill": "#04080b",
+                  "cornerRadius": 10,
+                  "stroke": "#333333",
+                  "strokeWidth": 1,
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "evShareIcon",
+                      "name": "Icon",
+                      "width": 20,
+                      "height": 20,
+                      "icon": "share-2",
+                      "library": "lucide",
+                      "fill": "#FFFFFF"
+                    },
+                    {
+                      "type": "text",
+                      "id": "evShareLabel",
+                      "name": "Label",
+                      "fill": "#FFFFFF",
+                      "content": "Share this event",
+                      "fontFamily": "Inter",
+                      "fontSize": 16,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "l0oy8",
+      "x": 0,
+      "y": -353,
+      "name": "version",
+      "clip": true,
+      "width": 381,
+      "height": 148,
+      "fill": "#04080b",
+      "layout": "none",
+      "children": [
+        {
+          "type": "text",
+          "id": "m9aAh",
+          "x": 38,
+          "y": 31,
+          "fill": "#ffffff",
+          "textGrowth": "fixed-width-height",
+          "width": 306,
+          "height": 51,
+          "content": "V2.4.7",
+          "textAlign": "center",
+          "fontFamily": "Inter",
+          "fontSize": 40,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "T6rZF",
+          "x": 38,
+          "y": 86,
+          "name": "Stamp",
+          "fill": "#888888",
+          "textGrowth": "fixed-width-height",
+          "width": 306,
+          "height": 30,
+          "content": "2026-08-05 09:12",
+          "textAlign": "center",
+          "textAlignVertical": "middle",
+          "fontFamily": "Inter",
+          "fontSize": 20,
+          "fontWeight": "normal"
+        }
+      ]
     }
   ],
   "fileToken": "981cbaeb-8557-4bc7-b600-2b709f22ac59"

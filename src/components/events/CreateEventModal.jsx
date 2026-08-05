@@ -7,6 +7,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import FlatpickrInput from '#/components/ui/FlatpickrInput'
 import LexicalEditor from '#/components/ui/lexical-editor'
 import LocationPicker from '#/components/ui/location-picker'
+import { createEvent } from '#/server/events'
 
 const CATEGORIES = ['Meetup', 'JDM', 'Classic', 'Euro', 'Import']
 
@@ -32,11 +33,13 @@ function getSkipCloseConfirm() {
   return localStorage.getItem(SKIP_CLOSE_KEY) === 'true'
 }
 
-export default function CreateEventModal({ isOpen, onClose }) {
+export default function CreateEventModal({ isOpen, onClose, onCreated }) {
   const { control, handleSubmit, formState: { isDirty, errors }, reset, setValue, watch } = useForm({
     defaultValues: DEFAULT_VALUES,
   })
   const [photo, setPhoto] = useState(null)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
   const [showConfirmClose, setShowConfirmClose] = useState(false)
   const [skipConfirm, setSkipConfirm] = useState(getSkipCloseConfirm)
 
@@ -67,10 +70,24 @@ export default function CreateEventModal({ isOpen, onClose }) {
   }, [skipConfirm, onClose])
 
   const onSubmit = useCallback(async (data) => {
-    await new Promise((r) => setTimeout(r, 800))
-    console.log('[CreateEvent] Submitted:', { ...data, photo })
-    onClose()
-  }, [onClose, photo])
+    setSaving(true)
+    setError('')
+    try {
+      const result = await createEvent({ data: { ...data, photoUrl: photo ? photo.name : null } })
+      if (!result?.success) {
+        setError(result?.error || 'Could not create event')
+        return
+      }
+      if (onCreated) onCreated(result.event)
+      reset(DEFAULT_VALUES)
+      setPhoto(null)
+      onClose()
+    } catch (err) {
+      setError(err.message || 'Could not create event')
+    } finally {
+      setSaving(false)
+    }
+  }, [onClose, photo, reset, onCreated])
 
   return (
     <AnimatePresence>
@@ -307,6 +324,15 @@ export default function CreateEventModal({ isOpen, onClose }) {
                 <div className="h-4" />
               </div>
 
+              {/* Submit error */}
+              {error && (
+                <div data-part="submit-error" className="px-6 pb-2">
+                  <p className="px-4 py-2.5 bg-red-900/20 border border-red-900/30 text-[#e10908] text-[14px] rounded-lg">
+                    {error}
+                  </p>
+                </div>
+              )}
+
               {/* Button Row */}
               <div className="shrink-0 px-6 py-4 border-t border-[#333333]">
                 <div data-part="button-row" className="flex items-center justify-end gap-3">
@@ -321,10 +347,10 @@ export default function CreateEventModal({ isOpen, onClose }) {
                   <button
                     type="submit"
                     data-part="create-btn"
-                    disabled={!!errors.title}
+                    disabled={!!errors.title || saving}
                     className="h-11 px-5 rounded-lg bg-[#e10908] hover:bg-[#c00807] disabled:bg-[#551111] disabled:text-[#888888] text-white text-[16px] transition-colors flex items-center gap-2"
                   >
-                    Create Event
+                    {saving ? 'Creating...' : 'Create Event'}
                   </button>
                 </div>
               </div>
