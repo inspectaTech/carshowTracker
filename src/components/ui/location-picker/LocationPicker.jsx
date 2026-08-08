@@ -32,7 +32,7 @@ function formatCleanAddress(addr) {
   return parts.join(', ')
 }
 
-export default function LocationPicker({ onLocationSelect, onClear, onZipCode, initialValue = null, error = false, errorText = '' }) {
+export default function LocationPicker({ onLocationSelect, onClear, onZipCode, onQueryChange, initialValue = null, error = false, errorText = '' }) {
   // --- State ---
   const [query, setQuery] = useState('')
   const [suggestions, setSuggestions] = useState([])
@@ -373,6 +373,9 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode, i
               onChange={(e) => {
                 programmaticQueryRef.current = null
                 setQuery(e.target.value)
+                // Mirror typed text up so the form's `location` field is never
+                // "empty" while the address box visibly has content.
+                if (onQueryChange) onQueryChange(e.target.value)
               }}
               onKeyDown={(e) => {
                 // Enter in the address field must NOT submit the surrounding

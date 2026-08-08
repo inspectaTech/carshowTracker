@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ImagePlus, DollarSign } from 'lucide-react'
@@ -38,12 +38,21 @@ function getSkipCloseConfirm() {
 export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated, editingEvent }) {
   const { control, handleSubmit, formState: { isDirty, errors }, reset, setValue, watch } = useForm({
     defaultValues: DEFAULT_VALUES,
+    // After a failed submit, re-validate fields live (onChange) so errors clear
+    // as the user fixes each one — prevents "stuck" warnings and a permanently
+    // disabled submit button after the first Enter-submit attempt.
+    reValidateMode: 'onChange',
   })
   const [photo, setPhoto] = useState(null)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [showConfirmClose, setShowConfirmClose] = useState(false)
   const [skipConfirm, setSkipConfirm] = useState(getSkipCloseConfirm)
+  // Enter-submit confirmation: pressing Enter in a text field submits the form
+  // natively; instead of creating immediately, show a "Create Event?" dialog.
+  const [showConfirmCreate, setShowConfirmCreate] = useState(false)
+  const [pendingEvent, setPendingEvent] = useState(null)
+  const enterSubmitRef = useRef(false)
 
   const costType = watch('costType')
   const isEdit = !!editingEvent
@@ -73,6 +82,8 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
         setPhoto(null)
       }
       setShowConfirmClose(false)
+      setShowConfirmCreate(false)
+      setPendingEvent(null)
       setError('')
     }
   }, [isOpen, editingEvent, reset])
@@ -91,6 +102,25 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
     setShowConfirmClose(false)
     onClose()
   }, [skipConfirm, onClose])
+
+  // Pressing Enter in a non-textarea input natively submits the form. Flag it so
+  // the submit handler can show a "Create Event?" confirmation instead of
+  // creating immediately. Textareas, buttons, and rich-text editors are skipped
+  // (there Enter means newline / activate).
+  const handleFormKeyDown = useCallback((e) => {
+    if (e.key !== 'Enter') return
+    // Enter inside the flatpickr popup is the picker's own concern — don't let
+    // it bubble to the form (prevents an accidental submit / create-confirm
+    // when the user presses Enter to confirm a time).
+    if (e.target.closest && e.target.closest('.flatpickr-calendar')) {
+      e.preventDefault()
+      e.stopPropagation()
+      return
+    }
+    const tag = e.target.tagName
+    if (tag === 'TEXTAREA' || tag === 'BUTTON' || e.target.isContentEditable) return
+    enterSubmitRef.current = true
+  }, [])
 
   const onSubmit = useCallback(async (data) => {
     setSaving(true)
@@ -122,6 +152,18 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
       setSaving(false)
     }
   }, [isEdit, editingEvent, onClose, photo, reset, onCreated, onUpdated])
+
+  // Confirmed the Enter-submit dialog → actually create the event.
+  const confirmCreateEvent = useCallback(() => {
+    setShowConfirmCreate(false)
+    if (pendingEvent) onSubmit(pendingEvent)
+    setPendingEvent(null)
+  }, [pendingEvent, onSubmit])
+
+  const cancelCreateConfirm = useCallback(() => {
+    setShowConfirmCreate(false)
+    setPendingEvent(null)
+  }, [])
 
   return (
     <AnimatePresence>
@@ -157,7 +199,23 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
             <div className="h-px bg-[#333333] shrink-0" />
 
             {/* Form */}
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 overflow-hidden">
+            <form
+              onSubmit={(e) => {
+                if (enterSubmitRef.current) {
+                  // Enter-submit: validate, then confirm before creating
+                  enterSubmitRef.current = false
+                  handleSubmit((data) => {
+                    setPendingEvent(data)
+                    setShowConfirmCreate(true)
+                  })(e)
+                } else {
+                  enterSubmitRef.current = false
+                  handleSubmit(onSubmit)(e)
+                }
+              }}
+              onKeyDown={handleFormKeyDown}
+              className="flex flex-col flex-1 overflow-hidden"
+            >
               <div className="flex-1 overflow-y-auto p-6 space-y-5">
                 {/* Photo area */}
                 <div
@@ -271,11 +329,17 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
                             : null
                         }
                         onLocationSelect={(loc) => {
-                          setValue('location', loc.address, { shouldDirty: true })
+                          setValue('location', loc.address, { shouldDirty: true, shouldValidate: true })
                           setValue('lat', loc.lat, { shouldDirty: true })
                           setValue('lng', loc.lng, { shouldDirty: true })
                           locField.onChange(loc.address)
                         }}
+                        // Keep the RHF `location` value in sync with whatever is in the
+                        // address box, so a typed-but-not-yet-verified address is never
+                        // flagged as "missing" after a submit attempt.
+                        onQueryChange={(text) =>
+                          setValue('location', text, { shouldDirty: true, shouldValidate: true })
+                        }
                         onZipCode={(zip) => setValue('zipCode', zip, { shouldDirty: true })}
                         onClear={() => {
                           setValue('location', '', { shouldDirty: false })
@@ -389,7 +453,7 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
                               type="button"
                               key={cat}
                               data-part={`tag-${cat.toLowerCase()}`}
-                              onClick={() => setValue('category', cat, { shouldDirty: true })}
+                              onClick={() => setValue('category', cat, { shouldDirty: true, shouldValidate: true })}
                               className={`h-9 px-3.5 rounded-md text-[14px] font-normal transition-colors ${
                                 watch('category') === cat
                                   ? 'bg-[#e10908] text-white'
@@ -492,6 +556,53 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
                   className="h-10 px-4 rounded-lg bg-[#e10908] hover:bg-[#c00807] text-white text-[14px] transition-colors"
                 >
                   Discard Changes
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Confirm Create (Enter-submit) Modal */}
+      <AnimatePresence>
+        {showConfirmCreate && (
+          <motion.div
+            key="confirm-create-modal"
+            data-component="confirm-create-modal"
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          >
+            <div className="absolute inset-0 bg-black/60" onClick={cancelCreateConfirm} />
+            <motion.div
+              data-part="confirm-create-card"
+              className="relative bg-[#0a0d12] rounded-xl w-full max-w-[380px] p-6 shadow-2xl border border-[#333333]"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.15 }}
+            >
+              <h3 className="text-white text-[18px] font-medium mb-2">Create this event?</h3>
+              <p className="text-[#888888] text-[14px] mb-5 leading-relaxed">
+                You pressed Enter to submit. Review your details, then confirm to create the
+                event — or Keep Editing to make changes first.
+              </p>
+              <div className="flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={cancelCreateConfirm}
+                  className="h-10 px-4 rounded-lg text-white text-[14px] border border-[#333333] hover:bg-[#1a1d22] transition-colors"
+                >
+                  Keep Editing
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmCreateEvent}
+                  className="h-10 px-4 rounded-lg bg-[#e10908] hover:bg-[#c00807] text-white text-[14px] transition-colors"
+                >
+                  Create Event
                 </button>
               </div>
             </motion.div>

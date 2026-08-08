@@ -1,5 +1,8 @@
 import { useRef, useEffect } from 'react'
 import TextField from '@mui/material/TextField'
+import InputAdornment from '@mui/material/InputAdornment'
+import IconButton from '@mui/material/IconButton'
+import { X } from 'lucide-react'
 import flatpickr from 'flatpickr'
 import 'flatpickr/dist/themes/dark.css'
 
@@ -34,9 +37,18 @@ export default function FlatpickrInput({
 }) {
   const inputRef = useRef(null)
   const fpRef = useRef(null)
+  // Keep the latest onChange in a ref so the picker never calls a stale closure
+  // if the parent re-renders with a new handler.
+  const onChangeRef = useRef(onChange)
+  useEffect(() => { onChangeRef.current = onChange }, [onChange])
 
+  // Create (or rebuild) the picker whenever its configuration changes.
   useEffect(() => {
     if (!inputRef.current) return
+    if (fpRef.current) {
+      fpRef.current.destroy()
+      fpRef.current = null
+    }
 
     const fp = flatpickr(inputRef.current, {
       enableTime,
@@ -46,20 +58,21 @@ export default function FlatpickrInput({
       defaultDate: value || undefined,
       allowInput: true,
       disableMobile: true,
+      closeOnSelect: true,
       onChange: (selectedDates) => {
-        if (onChange && selectedDates.length > 0) {
-          // Emit a STRING, never a raw Date — a Date object in form state can
-          // end up rendered by React and crash with "[object Date] is not valid
-          // as a React child". Use the same display format for consistency.
-          onChange(formatDate(selectedDates[0], dateFormat))
+        // Always emit a STRING, never a raw Date — a Date in form state can
+        // render as "[object Date] is not valid as a React child". Also emit ''
+        // when the field is cleared so the form state is actually emptied
+        // (previously a cleared field kept its stale value).
+        if (onChangeRef.current) {
+          onChangeRef.current(selectedDates.length > 0 ? formatDate(selectedDates[0], dateFormat) : '')
         }
       },
       onClose: (selectedDates) => {
-        if (selectedDates.length > 0) {
-          const formatted = formatDate(selectedDates[0], dateFormat)
-          if (inputRef.current) {
-            inputRef.current.value = formatted
-          }
+        // Reflect the picker's state back into the visible input, including
+        // clearing it when the user empties the field.
+        if (inputRef.current) {
+          inputRef.current.value = selectedDates.length > 0 ? formatDate(selectedDates[0], dateFormat) : ''
         }
       },
     })
@@ -70,19 +83,30 @@ export default function FlatpickrInput({
       fp.destroy()
       fpRef.current = null
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enableTime, noCalendar, dateFormat, time_24hr])
 
-  // Sync external value changes
+  // Sync external value changes (prefill / reset / programmatic clear)
   useEffect(() => {
-    if (fpRef.current && value) {
+    if (!fpRef.current) return
+    if (value) {
       try {
-        const date = new Date(value)
-        if (!isNaN(date.getTime())) {
-          fpRef.current.setDate(date, false)
-        }
+        // Let flatpickr parse using its configured dateFormat (handles our
+        // display strings AND ISO values).
+        fpRef.current.setDate(value, false)
       } catch {
-        // ignore invalid dates
+        try {
+          const date = new Date(value)
+          if (!isNaN(date.getTime())) fpRef.current.setDate(date, false)
+        } catch {
+          // ignore invalid dates
+        }
       }
+    } else {
+      // External clear — reset the picker so a cleared form doesn't keep a
+      // stale selected date.
+      fpRef.current.clear()
+      if (inputRef.current) inputRef.current.value = ''
     }
   }, [value])
 
@@ -110,6 +134,15 @@ export default function FlatpickrInput({
 
   const displayValue = value ? (typeof value === 'string' ? value : formatDate(new Date(value), dateFormat)) : ''
 
+  // Reliable clear: keyboard-deleting a React-controlled flatpickr input never
+  // reports an empty selection (the field snaps back to the stale value), so
+  // give users an explicit × that empties BOTH the picker and the form state.
+  const handleClear = () => {
+    if (fpRef.current) fpRef.current.clear()
+    if (inputRef.current) inputRef.current.value = ''
+    if (onChangeRef.current) onChangeRef.current('')
+  }
+
   return (
     <TextField
       inputRef={inputRef}
@@ -124,7 +157,25 @@ export default function FlatpickrInput({
       autoComplete="off"
       className={className}
       slotProps={{
-        input: { readOnly: false },
+        input: {
+          readOnly: false,
+          endAdornment: displayValue ? (
+            <InputAdornment position="end">
+              <IconButton
+                type="button"
+                tabIndex={-1}
+                size="small"
+                edge="end"
+                aria-label={`Clear ${label || 'field'}`}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={handleClear}
+                sx={{ color: '#888888', '&:hover': { color: '#ffffff' } }}
+              >
+                <X size={15} />
+              </IconButton>
+            </InputAdornment>
+          ) : null,
+        },
       }}
       {...rest}
     />
