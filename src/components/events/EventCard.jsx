@@ -7,6 +7,20 @@ function eventDate(ev) {
   return ev.date ? new Date(ev.date) : null
 }
 
+// Safe string coercion — guards against a raw Date object (which React cannot
+// render directly and would throw "[object Date] is not valid as a React child").
+function timeStr(v) {
+  if (v == null || v === '') return ''
+  if (v instanceof Date) {
+    let h = v.getHours()
+    const m = String(v.getMinutes()).padStart(2, '0')
+    const ampm = h >= 12 ? 'PM' : 'AM'
+    h = h % 12 || 12
+    return `${h}:${m} ${ampm}`
+  }
+  return String(v)
+}
+
 /**
  * Shared site-wide event card — the "My Events" display (big calendar date badge).
  * Used by both My Events and Explore so events render identically everywhere.
@@ -53,7 +67,7 @@ export default function EventCard({ event, onNavigate, editable, onEdit }) {
           {event.location}
           <span className="mx-1 text-[#444]">•</span>
           <Clock size={14} className="shrink-0" />
-          {event.startTime || event.endTime}
+          {timeStr(event.startTime) || timeStr(event.endTime) || '—'}
           <span className="mx-1 text-[#444]">•</span>
           <Users size={14} className="shrink-0" />
           {event.attending} attending

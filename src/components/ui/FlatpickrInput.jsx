@@ -48,7 +48,10 @@ export default function FlatpickrInput({
       disableMobile: true,
       onChange: (selectedDates) => {
         if (onChange && selectedDates.length > 0) {
-          onChange(selectedDates[0])
+          // Emit a STRING, never a raw Date — a Date object in form state can
+          // end up rendered by React and crash with "[object Date] is not valid
+          // as a React child". Use the same display format for consistency.
+          onChange(formatDate(selectedDates[0], dateFormat))
         }
       },
       onClose: (selectedDates) => {

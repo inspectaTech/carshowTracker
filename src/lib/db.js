@@ -1,8 +1,6 @@
 import { MongoClient } from 'mongodb'
 import { createConnection } from 'net'
-
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017'
-const DB_NAME = 'carshow_tracker'
+import { MONGO_URI as MONGODB_URI, DB_NAME } from './mongo-config'
 
 let client
 let clientPromise
@@ -61,8 +59,13 @@ export async function getUsersCollection() {
 export async function checkDatabaseConnection() {
   console.log('[CKDBConn] attempting check');
 
-  // Fast path: check if port is open before attempting a full MongoClient handshake
-  const portOpen = await isPortReachable('127.0.0.1', 27017, 1000)
+  // Fast path: check the configured Mongo host:port before a full handshake.
+  // Derived from MONGO_URI so remote fleet DBs (e.g. sunz-admin via the VPC)
+  // are checked instead of assuming a local mongod on 127.0.0.1:27017.
+  const parsedUri = new URL(MONGODB_URI)
+  const mongoHost = parsedUri.hostname
+  const mongoPort = parseInt(parsedUri.port || '27017', 10)
+  const portOpen = await isPortReachable(mongoHost, mongoPort, 1000)
   if (!portOpen) {
     return {
       success: false,

@@ -6,6 +6,7 @@ import { loadDashboardData } from '#/server/session'
 import { listEvents, getSessionUser } from '#/server/events'
 import CreateEventModal from './CreateEventModal'
 import EventCard from './EventCard'
+import ErrorBoundary from '#/components/ui/ErrorBoundary'
 
 const TABS = ['Upcoming', 'Past', 'Created']
 
@@ -171,13 +172,14 @@ export default function EventsPage() {
           ) : (
             <div data-part="event-list" className="max-w-4xl space-y-3">
               {filtered.map((ev) => (
-                <EventCard
-                  key={ev.slugId || ev.title}
-                  event={ev}
-                  onNavigate={(event) => navigate({ to: `/event/${event.slugId}` })}
-                  editable
-                  onEdit={openEdit}
-                />
+                <ErrorBoundary key={ev.slugId || ev.title} resetKey={ev.slugId || ev.title}>
+                  <EventCard
+                    event={ev}
+                    onNavigate={(event) => navigate({ to: `/event/${event.slugId}` })}
+                    editable
+                    onEdit={openEdit}
+                  />
+                </ErrorBoundary>
               ))}
             </div>
           )}

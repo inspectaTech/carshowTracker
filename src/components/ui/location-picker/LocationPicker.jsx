@@ -32,7 +32,7 @@ function formatCleanAddress(addr) {
   return parts.join(', ')
 }
 
-export default function LocationPicker({ onLocationSelect, onClear, onZipCode, initialValue = null }) {
+export default function LocationPicker({ onLocationSelect, onClear, onZipCode, initialValue = null, error = false, errorText = '' }) {
   // --- State ---
   const [query, setQuery] = useState('')
   const [suggestions, setSuggestions] = useState([])
@@ -374,11 +374,32 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode, i
                 programmaticQueryRef.current = null
                 setQuery(e.target.value)
               }}
+              onKeyDown={(e) => {
+                // Enter in the address field must NOT submit the surrounding
+                // form (that's how a user accidentally created a partial event).
+                // Instead, if a suggestion is showing, select the top one; if a
+                // location is already chosen, keep it. Only "verified" locations
+                // (picked from the dropdown or the map) are accepted on submit.
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  if (suggestions.length > 0) {
+                    handleSelectSuggestion(suggestions[0])
+                  }
+                }
+              }}
               onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
               placeholder="Search for an address or click the map..."
-              className="w-full px-3.5 py-2.5 bg-[#0a0d12] border border-[#333333] rounded-lg text-white text-[14px] placeholder-[#555555] focus:outline-none focus:border-[#e10908] transition-colors"
+              className={`w-full px-3.5 py-2.5 bg-[#0a0d12] border rounded-lg text-white text-[14px] placeholder-[#555555] focus:outline-none transition-colors ${
+                error
+                  ? 'border-[#e10908] focus:border-[#e10908]'
+                  : 'border-[#333333] focus:border-[#e10908]'
+              }`}
             />
+            {error && errorText && (
+              <span className="mt-1 block text-[#e10908] text-[12px]">{errorText}</span>
+            )}
             {isSearching && (
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#555555]">
                 searching...

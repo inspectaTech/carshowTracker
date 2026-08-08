@@ -4,15 +4,15 @@ import { betterAuth } from 'better-auth'
 import { mongodbAdapter } from 'better-auth/adapters/mongodb'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 import { MongoClient } from 'mongodb'
+import { MONGO_URI as MONGODB_URI, DB_NAME } from './mongo-config'
 
 // MongoDB connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017'
 const client = new MongoClient(MONGODB_URI, {
   serverSelectionTimeoutMS: 3000,
 })
 
 export const auth = betterAuth({
-  database: mongodbAdapter(client.db('carshow_tracker'), {
+  database: mongodbAdapter(client.db(DB_NAME), {
     // Local standalone MongoDB doesn't support transactions
     transaction: false,
   }),

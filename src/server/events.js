@@ -26,13 +26,35 @@ function genShortId(len = 6) {
   return out
 }
 
+// Normalize a date value to a string. Flatpickr passes raw Date objects which,
+// if rendered directly by React (e.g. `{event.startTime}`), throw
+// "Objects are not valid as a React child (found: [object Date])". Always
+// coerce to an ISO string at the server boundary so every consumer is safe.
+function toDateString(v) {
+  if (v == null || v === '') return v ?? null
+  return v instanceof Date ? v.toISOString() : String(v)
+}
+
+// Normalize a time-of-day value to a display string ("6:00 PM").
+function toTimeString(v) {
+  if (v == null || v === '') return v ?? ''
+  if (v instanceof Date) {
+    let h = v.getHours()
+    const m = String(v.getMinutes()).padStart(2, '0')
+    const ampm = h >= 12 ? 'PM' : 'AM'
+    h = h % 12 || 12
+    return `${h}:${m} ${ampm}`
+  }
+  return String(v)
+}
+
 function toClientEvent(doc) {
   return {
     slugId: doc.slugId,
     title: doc.title,
-    date: doc.date,
-    startTime: doc.startTime,
-    endTime: doc.endTime,
+    date: toDateString(doc.date),
+    startTime: toTimeString(doc.startTime),
+    endTime: toTimeString(doc.endTime),
     location: doc.location,
     lat: doc.lat ?? null,
     lng: doc.lng ?? null,
@@ -80,9 +102,9 @@ export const createEvent = createServerFn({ method: 'POST' })
       const doc = {
         slugId,
         title: (d.title || '').trim(),
-        date: d.date || null,
-        startTime: d.startTime || '',
-        endTime: d.endTime || '',
+        date: toDateString(d.date),
+        startTime: toTimeString(d.startTime),
+        endTime: toTimeString(d.endTime),
         location: d.location || '',
         lat: d.lat ?? null,
         lng: d.lng ?? null,
@@ -139,9 +161,9 @@ export const updateEvent = createServerFn({ method: 'POST' })
       const doc = {
         ...existing,
         title: (d.title || '').trim(),
-        date: d.date || existing.date,
-        startTime: d.startTime ?? existing.startTime,
-        endTime: d.endTime ?? existing.endTime,
+        date: toDateString(d.date ?? existing.date),
+        startTime: toTimeString(d.startTime ?? existing.startTime),
+        endTime: toTimeString(d.endTime ?? existing.endTime),
         location: d.location ?? existing.location,
         lat: d.lat ?? existing.lat ?? null,
         lng: d.lng ?? existing.lng ?? null,

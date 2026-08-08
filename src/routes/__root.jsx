@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import { ThemeProvider } from '@mui/material/styles'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import ErrorBoundary from '../components/ui/ErrorBoundary'
 import muiTheme from '../lib/mui-theme'
 
 import appCss from '../styles/global.css?url'
@@ -138,7 +139,36 @@ document.addEventListener('DOMContentLoaded', function() {
         <ThemeProvider theme={muiTheme}>
           {!hideRootShell && <Header />}
           <main className="min-h-screen">
-            {children}
+            <ErrorBoundary
+              name="AppShell"
+              resetKey={location.pathname}
+              onError={(err) => {
+                // Surface the crash so it's impossible to miss in dev/prod
+                if (typeof window !== 'undefined' && window.__DEBUG_MODE) {
+                  // eslint-disable-next-line no-console
+                  console.error('[AppShell] Page crashed while rendering:', err)
+                }
+              }}
+              fallback={
+                <div className="min-h-[60vh] bg-[#04080b] flex flex-col items-center justify-center p-8">
+                  <h1 className="text-white text-[24px] font-medium mb-2">Something went wrong</h1>
+                  <p className="text-[#888888] text-[15px] mb-6">This page hit an unexpected error. Try reloading, or head back to the dashboard.</p>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => window.location.reload()}
+                      className="h-11 px-5 rounded-lg bg-[#e10908] hover:bg-[#c00807] text-white text-[16px] transition-colors"
+                    >
+                      Reload Page
+                    </button>
+                    <a href="/dashboard" className="h-11 px-5 rounded-lg border border-[#333333] text-white text-[16px] flex items-center hover:bg-[#1a1d22] transition-colors">
+                      Go to Dashboard
+                    </a>
+                  </div>
+                </div>
+              }
+            >
+              {children}
+            </ErrorBoundary>
           </main>
           {!hideRootShell && <Footer />}
         </ThemeProvider>

@@ -5,6 +5,7 @@ import { listProfiles } from '#/server/db-actions'
 import { listEvents } from '#/server/events'
 import EventCard from '#/components/events/EventCard'
 import UserCard from './UserCard'
+import ErrorBoundary from '#/components/ui/ErrorBoundary'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import { Search, MapPin } from 'lucide-react'
@@ -142,12 +143,16 @@ export default function ExplorePage() {
               <div data-part="left-column" className="flex-1 flex flex-col gap-4 max-w-4xl">
                 {showEvents &&
                   filteredEvents.map((event) => (
-                    <EventCard key={event.slugId || event.title} event={event} />
+                    <ErrorBoundary key={event.slugId || event.title} resetKey={event.slugId || event.title}>
+                      <EventCard event={event} />
+                    </ErrorBoundary>
                   ))}
 
                 {showUsers &&
                   filteredUsers.map((user) => (
-                    <UserCard key={user.id || user.handle || user.name} user={user} />
+                    <ErrorBoundary key={user.id || user.handle || user.name} resetKey={user.id || user.handle || user.name}>
+                      <UserCard user={user} />
+                    </ErrorBoundary>
                   ))}
 
                 {!hasAny && (

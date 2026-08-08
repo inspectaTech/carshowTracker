@@ -195,12 +195,15 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
                     <Controller
                       name="date"
                       control={control}
-                      render={({ field }) => (
+                      rules={{ required: 'Date is required' }}
+                      render={({ field, fieldState }) => (
                         <FlatpickrInput
                           label="Date"
                           value={field.value}
                           onChange={field.onChange}
                           dateFormat="D, M d, Y"
+                          error={!!fieldState.error}
+                          helperText={fieldState.error?.message}
                         />
                       )}
                     />
@@ -209,7 +212,8 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
                     <Controller
                       name="startTime"
                       control={control}
-                      render={({ field }) => (
+                      rules={{ required: 'Start time is required' }}
+                      render={({ field, fieldState }) => (
                         <FlatpickrInput
                           label="Start Time"
                           value={field.value}
@@ -218,6 +222,8 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
                           noCalendar
                           dateFormat="h:i K"
                           placeholder="6:00 PM"
+                          error={!!fieldState.error}
+                          helperText={fieldState.error?.message}
                         />
                       )}
                     />
@@ -226,7 +232,8 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
                     <Controller
                       name="endTime"
                       control={control}
-                      render={({ field }) => (
+                      rules={{ required: 'End time is required' }}
+                      render={({ field, fieldState }) => (
                         <FlatpickrInput
                           label="End Time"
                           value={field.value}
@@ -235,6 +242,8 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
                           noCalendar
                           dateFormat="h:i K"
                           placeholder="10:00 PM"
+                          error={!!fieldState.error}
+                          helperText={fieldState.error?.message}
                         />
                       )}
                     />
@@ -244,28 +253,39 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
                 {/* Location Picker */}
                 <div data-part="field" className="space-y-1.5">
                   <label className="text-white text-[14px]">Location</label>
-                  <LocationPicker
-                    initialValue={
-                      editingEvent?.location
-                        ? {
-                            address: editingEvent.location,
-                            lat: editingEvent.lat,
-                            lng: editingEvent.lng,
-                          }
-                        : null
-                    }
-                    onLocationSelect={(loc) => {
-                      setValue('location', loc.address, { shouldDirty: true })
-                      setValue('lat', loc.lat, { shouldDirty: true })
-                      setValue('lng', loc.lng, { shouldDirty: true })
-                    }}
-                    onZipCode={(zip) => setValue('zipCode', zip, { shouldDirty: true })}
-                    onClear={() => {
-                      setValue('location', '', { shouldDirty: false })
-                      setValue('lat', null, { shouldDirty: false })
-                      setValue('lng', null, { shouldDirty: false })
-                      setValue('zipCode', '', { shouldDirty: false })
-                    }}
+                  <Controller
+                    name="location"
+                    control={control}
+                    rules={{ required: 'Please select a location' }}
+                    render={({ field: locField, fieldState: locState }) => (
+                      <LocationPicker
+                        error={!!locState.error}
+                        errorText={locState.error?.message}
+                        initialValue={
+                          editingEvent?.location
+                            ? {
+                                address: editingEvent.location,
+                                lat: editingEvent.lat,
+                                lng: editingEvent.lng,
+                              }
+                            : null
+                        }
+                        onLocationSelect={(loc) => {
+                          setValue('location', loc.address, { shouldDirty: true })
+                          setValue('lat', loc.lat, { shouldDirty: true })
+                          setValue('lng', loc.lng, { shouldDirty: true })
+                          locField.onChange(loc.address)
+                        }}
+                        onZipCode={(zip) => setValue('zipCode', zip, { shouldDirty: true })}
+                        onClear={() => {
+                          setValue('location', '', { shouldDirty: false })
+                          setValue('lat', null, { shouldDirty: false })
+                          setValue('lng', null, { shouldDirty: false })
+                          setValue('zipCode', '', { shouldDirty: false })
+                          locField.onChange('')
+                        }}
+                      />
+                    )}
                   />
 
                   {/* Zip Code — auto-filled from address, editable */}
@@ -357,21 +377,33 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
                 {/* Category Tags */}
                 <div data-part="field" className="space-y-1.5">
                   <label className="text-white text-[14px]">Category</label>
-                  <div data-part="tag-row" className="flex items-center gap-2.5 flex-wrap">
-                    {CATEGORIES.map((cat) => (
-                      <button
-                        type="button"
-                        key={cat}
-                        data-part={`tag-${cat.toLowerCase()}`}
-                        onClick={() => setValue('category', cat, { shouldDirty: true })}
-                        className={`h-9 px-3.5 rounded-md text-[14px] font-normal transition-colors ${
-                          watch('category') === cat
-                            ? 'bg-[#e10908] text-white'
-                            : 'bg-[#1a1d22] text-white hover:bg-[#2a2d32]'
-                        }`}
-                      >{cat}</button>
-                    ))}
-                  </div>
+                  <Controller
+                    name="category"
+                    control={control}
+                    rules={{ required: 'Please choose a category' }}
+                    render={({ fieldState }) => (
+                      <>
+                        <div data-part="tag-row" className="flex items-center gap-2.5 flex-wrap">
+                          {CATEGORIES.map((cat) => (
+                            <button
+                              type="button"
+                              key={cat}
+                              data-part={`tag-${cat.toLowerCase()}`}
+                              onClick={() => setValue('category', cat, { shouldDirty: true })}
+                              className={`h-9 px-3.5 rounded-md text-[14px] font-normal transition-colors ${
+                                watch('category') === cat
+                                  ? 'bg-[#e10908] text-white'
+                                  : 'bg-[#1a1d22] text-white hover:bg-[#2a2d32]'
+                              }`}
+                            >{cat}</button>
+                          ))}
+                        </div>
+                        {fieldState.error && (
+                          <p className="mt-1 text-[#e10908] text-[12px]">{fieldState.error.message}</p>
+                        )}
+                      </>
+                    )}
+                  />
                 </div>
 
                 <div className="h-4" />
@@ -400,7 +432,7 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
                   <button
                     type="submit"
                     data-part="create-btn"
-                    disabled={!!errors.title || saving}
+                    disabled={saving || Object.keys(errors).length > 0}
                     className="h-11 px-5 rounded-lg bg-[#e10908] hover:bg-[#c00807] disabled:bg-[#551111] disabled:text-[#888888] text-white text-[16px] transition-colors flex items-center gap-2"
                   >
                     {saving ? (isEdit ? 'Saving...' : 'Creating...') : (isEdit ? 'Save Changes' : 'Create Event')}

@@ -164,7 +164,22 @@ function SidebarContent({ profile, activeNav, onNavClick, dataSourceInfo }) {
 
 export default function Sidebar({ profile, activeNav = 'dashboard', onNavClick, dataSourceInfo }) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [fetchedDataSource, setFetchedDataSource] = useState(null)
   const navigate = useNavigate()
+
+  // When the parent doesn't pass dataSourceInfo, fetch the live DB status so the
+  // "Data:" badge reflects MongoDB vs JSON fallback correctly on every page.
+  useEffect(() => {
+    if (dataSourceInfo) return
+    let cancelled = false
+    import('#/server/db-actions')
+      .then(({ getDataSourceStatus }) => getDataSourceStatus())
+      .then((status) => { if (!cancelled) setFetchedDataSource(status) })
+      .catch(() => { /* leave as undefined → JSON fallback shown */ })
+    return () => { cancelled = true }
+  }, [dataSourceInfo])
+
+  const dataSourceInfoResolved = dataSourceInfo || fetchedDataSource
 
   const handleNavClick = async (id) => {
     if (onNavClick) onNavClick(id)
@@ -211,7 +226,7 @@ export default function Sidebar({ profile, activeNav = 'dashboard', onNavClick, 
           profile={profile}
           activeNav={activeNav}
           onNavClick={handleNavClick}
-          dataSourceInfo={dataSourceInfo}
+          dataSourceInfo={dataSourceInfoResolved}
         />
       </aside>
 
@@ -257,7 +272,7 @@ export default function Sidebar({ profile, activeNav = 'dashboard', onNavClick, 
                 profile={profile}
                 activeNav={activeNav}
                 onNavClick={handleNavClick}
-                dataSourceInfo={dataSourceInfo}
+                dataSourceInfo={dataSourceInfoResolved}
               />
             </motion.aside>
           </>
