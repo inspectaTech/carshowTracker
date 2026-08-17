@@ -5,8 +5,7 @@ import Sidebar from '#/components/dashboard/Sidebar'
 import { loadDashboardData } from '#/server/session'
 import { listEvents, getSessionUser } from '#/server/events'
 import CreateEventModal from './CreateEventModal'
-import EventCard from './EventCard'
-import ErrorBoundary from '#/components/ui/ErrorBoundary'
+import VirtualizedEventList from '#/components/explore/VirtualizedEventList'
 
 const TABS = ['Upcoming', 'Past', 'Created']
 
@@ -139,7 +138,7 @@ export default function EventsPage() {
         </div>
 
         {/* Content */}
-        <div data-part="content" className="flex-1 p-4 sm:p-8 overflow-y-auto">
+        <div data-part="content" className="flex-1 min-h-0 flex flex-col p-4 sm:p-8">
           {loading ? (
             <div className="flex items-center justify-center h-64">
               <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#e10908] border-t-transparent" />
@@ -170,30 +169,30 @@ export default function EventsPage() {
               )}
             </div>
           ) : (
-            <div data-part="event-list" className="max-w-4xl space-y-3">
-              {filtered.map((ev) => (
-                <ErrorBoundary key={ev.slugId || ev.title} resetKey={ev.slugId || ev.title}>
-                  <EventCard
-                    event={ev}
-                    onNavigate={(event) => navigate({ to: `/event/${event.slugId}` })}
-                    editable
-                    onEdit={openEdit}
-                  />
-                </ErrorBoundary>
-              ))}
+            <div data-part="event-list" className="flex-1 min-h-0 flex flex-col max-w-4xl w-full">
+              <VirtualizedEventList
+                events={filtered}
+                editable
+                onEdit={openEdit}
+                onNavigate={(event) => navigate({ to: `/event/${event.slugId}` })}
+              />
             </div>
           )}
         </div>
       </main>
 
-      {/* Create/Edit Event Modal */}
-      <CreateEventModal
-        isOpen={showCreateModal}
-        onClose={closeModal}
-        onCreated={handleCreated}
-        onUpdated={handleUpdated}
-        editingEvent={editingEvent}
-      />
+      {/* Create/Edit Event Modal — only mounted while open (closed mounting
+          rendered <AnimatePresence>{false}</AnimatePresence>, triggering a
+          duplicate-key warning from framer-motion) */}
+      {showCreateModal && (
+        <CreateEventModal
+          isOpen={showCreateModal}
+          onClose={closeModal}
+          onCreated={handleCreated}
+          onUpdated={handleUpdated}
+          editingEvent={editingEvent}
+        />
+      )}
     </div>
   )
 }

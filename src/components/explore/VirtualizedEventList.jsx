@@ -13,8 +13,18 @@ const ROW_GAP = 12 // matches the space between cards in the non-virtual list
  * lists scroll smoothly. Uses react-window v2 `List`, which measures its own height
  * (ResizeObserver) and supports variable row heights via `rowHeight(index)`.
  * Place it inside a flex-1 min-h-0 container.
+ *
+ * Extra EventCard props (editable / onEdit / onNavigate) pass through so the same
+ * component drives both Explore (read-only) and My Events (editable).
  */
-export default function VirtualizedEventList({ events = [], users = [], gap = ROW_GAP }) {
+export default function VirtualizedEventList({
+  events = [],
+  users = [],
+  gap = ROW_GAP,
+  editable = false,
+  onEdit,
+  onNavigate,
+}) {
   const rows = []
   events.forEach((e) => rows.push({ kind: 'event', item: e, key: e.slugId || e.title }))
   users.forEach((u) => rows.push({ kind: 'user', item: u, key: u.id || u.handle || u.name }))
@@ -26,7 +36,11 @@ export default function VirtualizedEventList({ events = [], users = [], gap = RO
   const RowComponent = ({ index, style, rows: r, gap: g }) => {
     const row = r[index]
     const node =
-      row.kind === 'event' ? <EventCard event={row.item} /> : <UserCard user={row.item} />
+      row.kind === 'event' ? (
+        <EventCard event={row.item} editable={editable} onEdit={onEdit} onNavigate={onNavigate} />
+      ) : (
+        <UserCard user={row.item} />
+      )
     return (
       <div style={{ ...style, paddingBottom: g }}>
         <ErrorBoundary key={row.key} resetKey={row.key}>

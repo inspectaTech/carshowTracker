@@ -21,6 +21,22 @@ function timeStr(v) {
   return String(v)
 }
 
+// Shorten a location string to just "City, State" for the card — the full
+// address stays on the event page. Handles "City, State" and
+// "Street, City, State zip" formats; strips a trailing postal code.
+function shortLocation(location) {
+  if (!location) return ''
+  const parts = location
+    .split(',')
+    .map((p) => p.trim())
+    .filter(Boolean)
+  if (parts.length === 0) return ''
+  if (parts.length === 1) return parts[0]
+  const city = parts[parts.length - 2]
+  const state = parts[parts.length - 1].replace(/[\d-]+/g, '').trim()
+  return [city, state].filter(Boolean).join(', ')
+}
+
 /**
  * Shared site-wide event card — the "My Events" display (big calendar date badge).
  * Used by both My Events and Explore so events render identically everywhere.
@@ -64,7 +80,7 @@ export default function EventCard({ event, onNavigate, editable, onEdit }) {
         <h3 className="text-white text-[16px] sm:text-[18px] font-medium truncate">{event.title}</h3>
         <p className="text-[#888888] text-[13px] sm:text-[14px] flex items-center gap-1.5 flex-wrap">
           <MapPin size={14} className="shrink-0" />
-          {event.location}
+          <span title={event.location}>{shortLocation(event.location)}</span>
           <span className="mx-1 text-[#444]">•</span>
           <Clock size={14} className="shrink-0" />
           {timeStr(event.startTime) || timeStr(event.endTime) || '—'}

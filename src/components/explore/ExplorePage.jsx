@@ -293,7 +293,7 @@ export default function ExplorePage() {
 
       <main
         data-part="main-content"
-        className="flex-1 flex flex-col min-h-screen lg:min-h-0 overflow-y-auto"
+        className={`flex-1 flex flex-col min-h-screen lg:min-h-0 ${nearModalOpen ? 'overflow-y-hidden' : 'overflow-y-auto'}`}
       >
         {/* Header */}
         <header

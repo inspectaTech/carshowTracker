@@ -165,8 +165,13 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
     setPendingEvent(null)
   }, [])
 
+  // When closed, render nothing. Rendering <AnimatePresence>{false}</AnimatePresence>
+  // (the previous behavior) triggers a React "two children with the same key `''`"
+  // warning from framer-motion on every parent render.
+  if (!isOpen) return null
+
   return (
-    <AnimatePresence>
+    <>
       {isOpen && (
         <motion.div
           key="create-event-modal"
@@ -509,8 +514,8 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
       )}
 
       {/* Confirm Close Modal */}
-      <AnimatePresence>
-        {showConfirmClose && (
+      {showConfirmClose && (
+        <AnimatePresence>
           <motion.div
             key="confirm-close-modal"
             data-component="confirm-close-modal"
@@ -560,12 +565,12 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
               </div>
             </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </AnimatePresence>
+      )}
 
       {/* Confirm Create (Enter-submit) Modal */}
-      <AnimatePresence>
-        {showConfirmCreate && (
+      {showConfirmCreate && (
+        <AnimatePresence>
           <motion.div
             key="confirm-create-modal"
             data-component="confirm-create-modal"
@@ -607,8 +612,8 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
               </div>
             </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
-    </AnimatePresence>
+        </AnimatePresence>
+      )}
+    </>
   )
 }
