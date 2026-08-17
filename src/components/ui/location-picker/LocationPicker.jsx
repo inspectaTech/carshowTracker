@@ -32,7 +32,7 @@ function formatCleanAddress(addr) {
   return parts.join(', ')
 }
 
-export default function LocationPicker({ onLocationSelect, onClear, onZipCode, onQueryChange, initialValue = null, error = false, errorText = '' }) {
+export default function LocationPicker({ onLocationSelect, onClear, onZipCode, onQueryChange, initialValue = null, reloadToken = 0, error = false, errorText = '' }) {
   // --- State ---
   const [query, setQuery] = useState('')
   const [suggestions, setSuggestions] = useState([])
@@ -50,6 +50,7 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode, o
   const inputRef = useRef(null)
   const justSelected = useRef(false)
   const initializedRef = useRef(null)
+  const appliedTokenRef = useRef(0)
   const programmaticQueryRef = useRef(null)
   const pressTimerRef = useRef(null)
   const pressStartRef = useRef(null)
@@ -62,11 +63,14 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode, o
   // --- Populate from an initial value (edit mode) ---
   // When the modal opens to edit an existing event, reflect its saved location
   // in the input, the map marker, and the summary panel below the map.
+  // `reloadToken` lets callers force a re-apply (e.g., a "load this onto the
+  // map" button) even when the value is identical to the last applied one.
   useEffect(() => {
     if (!initialValue) return
     const { address, lat, lng } = initialValue
     const key = `${address}|${lat}|${lng}`
-    if (initializedRef.current === key) return
+    if (reloadToken === appliedTokenRef.current && initializedRef.current === key) return
+    appliedTokenRef.current = reloadToken
     initializedRef.current = key
 
     setQuery(address || '')
@@ -89,7 +93,7 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode, o
       setSelectedLocation(null)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialValue])
+  }, [initialValue, reloadToken])
 
   // --- Helper: remove existing marker ---
   const clearMarker = useCallback(() => {

@@ -1,15 +1,17 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Sidebar from '#/components/dashboard/Sidebar'
 import { loadDashboardData, updateHomeLocation } from '#/server/session'
 import { listProfiles } from '#/server/db-actions'
 import { listEvents, listEventsNearby } from '#/server/events'
 import VirtualizedEventList from './VirtualizedEventList'
 import VicinityMenu from './VicinityMenu'
+import NearLocationModal from './NearLocationModal'
+import ToastStack from '#/components/ui/ToastStack'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import { Search, MapPin } from 'lucide-react'
 
-const TABS = ['All', 'Shows', 'Users', 'Events']
+const TABS = ['All', 'Users', 'Events']
 
 export default function ExplorePage() {
   const [profile, setProfile] = useState(null)
@@ -24,9 +26,28 @@ export default function ExplorePage() {
   const [vicinityStatus, setVicinityStatus] = useState('idle') // idle | detecting | ready | error | missing-home
   const [vicinityLabel, setVicinityLabel] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [savedHome, setSavedHome] = useState(false)
+  const [nearModalOpen, setNearModalOpen] = useState(false)
+  const [nearModalInitial, setNearModalInitial] = useState(null)
+  const [toasts, setToasts] = useState([])
+  const pendingRevertRef = useRef(null)
+
+  const dismissToast = useCallback((id) => setToasts((t) => t.filter((x) => x.id !== id)), [])
+  const pushToast = useCallback((type, message) => {
+    const id = Date.now() + Math.random()
+    setToasts((t) => [...t.slice(-2), { id, type, message }])
+    setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 3500)
+  }, [])
 
   const homeLocation = profile?.homeLocation || null
+
+  // True when the active vicinity point matches the saved Home (drives the
+  // "Saved as Home" state in the dropdown).
+  const isCurrentHome = !!(
+    homeLocation &&
+    vicinityPoint &&
+    homeLocation.lat === vicinityPoint.lat &&
+    homeLocation.lng === vicinityPoint.lng
+  )
 
   // Profile + all users, once.
   useEffect(() => {
@@ -128,41 +149,120 @@ export default function ExplorePage() {
         setVicinityStatus('ready')
       } else {
         setVicinityPoint(null)
+        setVicinityLabel(null)
         setVicinityStatus('missing-home')
       }
       return
     }
-    // near — wait for an address pick
-    setVicinityPoint(null)
-    setVicinityStatus('idle')
-  }
-
-  const handleNearPicked = (point) => {
-    setVicinityPoint({ lat: point.lat, lng: point.lng })
-    setVicinityLabel(point.label)
-    setVicinityStatus('ready')
-    setSavedHome(false)
-    setMenuOpen(false)
+    // near — open the modal (search + map) to pick a point. Re-selecting near
+    // keeps the current pick (Change behavior); switching from another mode
+    // captures the current filter as the revert target, then starts fresh.
+    if (locationMode === 'near') {
+      openNearModal(vicinityPoint, null)
+    } else {
+      const revertTo = { mode: locationMode, point: vicinityPoint, label: vicinityLabel, status: vicinityStatus }
+      setVicinityPoint(null)
+      setVicinityLabel(null)
+      setVicinityStatus('idle')
+      openNearModal(null, revertTo)
+    }
   }
 
   const handleRadiusChange = (r) => setRadius(r)
 
-  // Persist the currently-picked vicinity location as the user's Home.
-  const handleSetAsHome = async () => {
-    if (!vicinityPoint) return
-    const home = {
-      address: vicinityLabel || 'Home',
-      lat: vicinityPoint.lat,
-      lng: vicinityPoint.lng,
+  // Open the near-location modal, pre-filled with an optional starting point
+  // (the current pick, or the saved Home when editing it). `revertTo` is the
+  // filter state to restore if the user cancels without applying.
+  const openNearModal = (initial = null, revertTo = null) => {
+    pendingRevertRef.current = revertTo
+    const hasPoint = initial && typeof initial.lat === 'number'
+    setNearModalInitial(
+      hasPoint
+        ? { address: initial.label || initial.address || '', lat: initial.lat, lng: initial.lng }
+        : null
+    )
+    setNearModalOpen(true)
+    setMenuOpen(false)
+  }
+
+  // Cancelling the modal (without "Use this location") restores the last known
+  // good filter — whatever was active before "Near a location" was chosen
+  // (everywhere, home, or a previous current-vicinity point).
+  const handleCancelNearModal = () => {
+    setNearModalOpen(false)
+    const prev = pendingRevertRef.current
+    pendingRevertRef.current = null
+    if (prev) {
+      setLocationMode(prev.mode)
+      setVicinityPoint(prev.point)
+      setVicinityLabel(prev.label)
+      setVicinityStatus(prev.status)
     }
+  }
+
+  // Apply a picked point as the active "Near a location" filter. The label is
+  // kept on the point too so reopening the modal (Change) can pre-fill the
+  // address field. This is the ONLY action that exits the modal with a location
+  // applied — closing otherwise leaves the previous filter untouched.
+  const applyNear = (loc) => {
+    pendingRevertRef.current = null
+    setVicinityPoint({ lat: loc.lat, lng: loc.lng, label: loc.address || 'Near a location' })
+    setVicinityLabel(loc.address || 'Near a location')
+    setVicinityStatus('ready')
+    setNearModalOpen(false)
+    setMenuOpen(false)
+    pushToast('success', `Showing events near “${loc.address || 'this location'}”`)
+  }
+
+  // Save a picked point as the user's Home. Stays in the modal (the indicator
+  // below the picker updates) — the user presses "Use this location" to apply
+  // it as a filter and exit.
+  const setHomeFromLoc = async (loc) => {
+    const home = { address: loc.address || 'Home', lat: loc.lat, lng: loc.lng }
     try {
       const res = await updateHomeLocation({ data: { homeLocation: home } })
       if (res?.success) {
         setProfile((p) => ({ ...(p || {}), homeLocation: home }))
-        setSavedHome(true)
+        pushToast('success', `Home set to “${home.address}”`)
+      } else {
+        pushToast(
+          'error',
+          res?.error === 'Not authenticated'
+            ? "Couldn't set home — please sign in."
+            : `Couldn't set home: ${res?.error || 'unknown error'}`
+        )
+        console.error('[Explore] Failed to set home:', res?.error)
       }
     } catch (err) {
+      pushToast('error', "Couldn't set home — network error.")
       console.error('[Explore] Failed to save home:', err)
+    }
+  }
+
+  // Unset the user's Home location.
+  const clearHome = async () => {
+    try {
+      const res = await updateHomeLocation({ data: { homeLocation: null } })
+      if (res?.success) {
+        setProfile((p) => ({ ...(p || {}), homeLocation: null }))
+        pushToast('success', 'Home removed')
+        if (locationMode === 'home') {
+          setVicinityPoint(null)
+          setVicinityLabel(null)
+          setVicinityStatus('missing-home')
+        }
+      } else {
+        pushToast(
+          'error',
+          res?.error === 'Not authenticated'
+            ? "Couldn't clear home — please sign in."
+            : `Couldn't clear home: ${res?.error || 'unknown error'}`
+        )
+        console.error('[Explore] Failed to clear home:', res?.error)
+      }
+    } catch (err) {
+      pushToast('error', "Couldn't clear home — network error.")
+      console.error('[Explore] Failed to clear home:', err)
     }
   }
 
@@ -173,7 +273,7 @@ export default function ExplorePage() {
   )
 
   // Tab → what to show. "All" shows events + all users.
-  const showEvents = activeTab === 'All' || activeTab === 'Events' || activeTab === 'Shows'
+  const showEvents = activeTab === 'All' || activeTab === 'Events'
   const showUsers = activeTab === 'All' || activeTab === 'Users'
 
   const hasAny = (showEvents && filteredEvents.length > 0) || (showUsers && filteredUsers.length > 0)
@@ -223,14 +323,23 @@ export default function ExplorePage() {
                 <VicinityMenu
                   mode={locationMode}
                   radius={radius}
-                  homeLocation={homeLocation}
                   vicinityStatus={vicinityStatus}
                   vicinityLabel={vicinityLabel}
-                  savedHome={savedHome}
+                  savedHome={isCurrentHome}
                   onModeChange={handleModeChange}
                   onRadiusChange={handleRadiusChange}
-                  onNearPicked={handleNearPicked}
-                  onSetAsHome={handleSetAsHome}
+                  onSetAsHome={() => {
+                    if (vicinityPoint) {
+                      setHomeFromLoc({
+                        address: vicinityLabel || 'Home',
+                        lat: vicinityPoint.lat,
+                        lng: vicinityPoint.lng,
+                      })
+                    }
+                  }}
+                  onOpenNearModal={() => openNearModal(vicinityPoint)}
+                  onEditHome={() => openNearModal(homeLocation)}
+                  onClearHome={clearHome}
                 />
               </>
             )}
@@ -307,6 +416,18 @@ export default function ExplorePage() {
           )}
         </div>
       </main>
+
+      <NearLocationModal
+        isOpen={nearModalOpen}
+        onClose={handleCancelNearModal}
+        initialValue={nearModalInitial}
+        homeLocation={homeLocation}
+        onApply={applyNear}
+        onSetHome={setHomeFromLoc}
+        onClearHome={clearHome}
+      />
+
+      <ToastStack toasts={toasts} onDismiss={dismissToast} />
     </div>
   )
 }

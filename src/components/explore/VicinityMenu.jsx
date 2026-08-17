@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { Globe, Navigation, Home as HomeIcon, MapPin, Loader2 } from 'lucide-react'
+import { Globe, Navigation, Home as HomeIcon, MapPin, Loader2, Pencil, X, Search } from 'lucide-react'
 
 const MODES = [
   { id: 'everywhere', label: 'Everywhere', icon: Globe },
@@ -8,71 +7,25 @@ const MODES = [
   { id: 'near', label: 'Near a location…', icon: MapPin },
 ]
 const RADII = [10, 25, 50, 100]
-const NOMINATIM_URL = 'https://nominatim.openstreetmap.org'
 
 /**
  * Dropdown for the Explore "Current Vicinity" chip — pick a location mode +
- * radius. "Near a location…" embeds a Nominatim address search.
+ * radius. "Near a location…" opens a full modal (LocationPicker map + search)
+ * via onOpenNearModal; Home has edit (pencil) and unset (X) controls.
  */
 export default function VicinityMenu({
   mode,
   radius,
-  homeLocation,
   vicinityStatus,
   vicinityLabel,
   savedHome,
   onModeChange,
   onRadiusChange,
-  onNearPicked,
   onSetAsHome,
+  onOpenNearModal,
+  onEditHome,
+  onClearHome,
 }) {
-  const [query, setQuery] = useState('')
-  const [suggestions, setSuggestions] = useState([])
-  const [searching, setSearching] = useState(false)
-  const debounce = useRef(null)
-
-  // Reset the search input whenever the menu is (re)opened.
-  useEffect(() => {
-    if (mode !== 'near') {
-      setQuery('')
-      setSuggestions([])
-    }
-  }, [mode])
-
-  const search = useCallback(async (q) => {
-    if (!q || q.trim().length < 3) {
-      setSuggestions([])
-      return
-    }
-    setSearching(true)
-    try {
-      const res = await fetch(
-        `${NOMINATIM_URL}/search?q=${encodeURIComponent(q.trim())}&format=json&limit=5`,
-        { headers: { 'User-Agent': 'CarshowTracker/1.0' } }
-      )
-      const data = await res.json()
-      setSuggestions(Array.isArray(data) ? data : [])
-    } catch {
-      setSuggestions([])
-    } finally {
-      setSearching(false)
-    }
-  }, [])
-
-  const onQueryChange = (val) => {
-    setQuery(val)
-    if (debounce.current) clearTimeout(debounce.current)
-    debounce.current = setTimeout(() => search(val), 400)
-  }
-
-  const pickSuggestion = (s) => {
-    const lat = parseFloat(s.lat)
-    const lng = parseFloat(s.lon)
-    onNearPicked({ lat, lng, label: s.display_name })
-    setSuggestions([])
-    setQuery('')
-  }
-
   const isProximity = mode === 'current' || mode === 'home' || mode === 'near'
 
   return (
@@ -134,12 +87,39 @@ export default function VicinityMenu({
             </p>
           )}
           {mode === 'home' && vicinityStatus === 'missing-home' && (
-            <p className="text-[#e10908] text-[13px] mt-3">
-              No home set yet. Pick “Near a location…” to set one.
-            </p>
+            <div className="mt-3">
+              <p className="text-[#e10908] text-[13px]">No home set yet.</p>
+              <button
+                type="button"
+                onClick={() => onOpenNearModal()}
+                className="mt-2 w-full flex items-center justify-center gap-2 h-9 rounded-lg text-[13px] bg-[#1a1d22] text-white hover:bg-[#2a2d32] transition-colors"
+              >
+                <HomeIcon size={14} /> Set home location
+              </button>
+            </div>
           )}
           {mode === 'home' && vicinityStatus === 'ready' && (
-            <p className="text-[#888888] text-[13px] mt-3 truncate">📍 {vicinityLabel || 'Home'}</p>
+            <div className="mt-3 flex items-center gap-2">
+              <p className="flex-1 text-[#888888] text-[13px] truncate" title={vicinityLabel}>
+                📍 {vicinityLabel || 'Home'}
+              </p>
+              <button
+                type="button"
+                onClick={() => onEditHome()}
+                title="Edit home location"
+                className="w-8 h-8 flex items-center justify-center text-[#888888] hover:text-white hover:bg-[#1a1d22] rounded-md transition-colors shrink-0"
+              >
+                <Pencil size={14} />
+              </button>
+              <button
+                type="button"
+                onClick={onClearHome}
+                title="Remove home location"
+                className="w-8 h-8 flex items-center justify-center text-[#888888] hover:text-[#e10908] hover:bg-[#1a1d22] rounded-md transition-colors shrink-0"
+              >
+                <X size={16} />
+              </button>
+            </div>
           )}
           {mode === 'current' && vicinityStatus === 'ready' && (
             <p className="text-[#888888] text-[13px] mt-3 truncate">📍 {vicinityLabel || 'Current location'}</p>
@@ -150,37 +130,11 @@ export default function VicinityMenu({
             </p>
           )}
 
-          {/* Near a location search */}
+          {/* Near a location — opens the full modal (LocationPicker map + search) */}
           {mode === 'near' && (
-            <div className="relative mt-3">
-              <input
-                value={query}
-                onChange={(e) => onQueryChange(e.target.value)}
-                placeholder="Search an address…"
-                className="w-full px-3 py-2 bg-[#04080b] border border-[#333333] rounded-lg text-white text-[14px] placeholder-[#555555] focus:outline-none focus:border-[#e10908]"
-              />
-              {searching && (
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-[#555555]">
-                  searching…
-                </span>
-              )}
-              {suggestions.length > 0 && (
-                <ul className="absolute left-0 right-0 top-full mt-1 bg-[#0a0d12] border border-[#333333] rounded-lg shadow-lg max-h-52 overflow-auto z-10">
-                  {suggestions.map((s, i) => (
-                    <li
-                      key={i}
-                      onMouseDown={() => pickSuggestion(s)}
-                      className="px-3 py-2 text-[13px] text-[#cccccc] hover:bg-[#1a1d22] hover:text-white cursor-pointer"
-                    >
-                      {s.display_name}
-                    </li>
-                  ))}
-                </ul>
-              )}
-
-              {/* Picked location → save as Home */}
-              {vicinityStatus === 'ready' && vicinityLabel && (
-                <div className="mt-3 pt-3 border-t border-[#1a1d22] flex items-center gap-2">
+            <div className="mt-3">
+              {vicinityStatus === 'ready' && vicinityLabel ? (
+                <div className="flex items-center gap-2">
                   <p className="flex-1 text-[#888888] text-[13px] truncate" title={vicinityLabel}>
                     📍 {vicinityLabel}
                   </p>
@@ -197,7 +151,24 @@ export default function VicinityMenu({
                     <HomeIcon size={14} />
                     {savedHome ? 'Saved as Home' : 'Set as Home'}
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => onOpenNearModal()}
+                    title="Change location"
+                    className="w-8 h-8 flex items-center justify-center text-[#888888] hover:text-white hover:bg-[#1a1d22] rounded-md transition-colors shrink-0"
+                  >
+                    <Pencil size={14} />
+                  </button>
                 </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => onOpenNearModal()}
+                  className="w-full flex items-center justify-center gap-2 h-10 rounded-lg text-[13px] text-[#AAAAAA] bg-[#1a1d22] hover:bg-[#2a2d32] hover:text-white transition-colors"
+                >
+                  <Search size={14} />
+                  Search an address or place a pin on the map
+                </button>
               )}
             </div>
           )}
