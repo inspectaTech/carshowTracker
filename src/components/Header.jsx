@@ -32,7 +32,7 @@ export default function Header({ variant = 'full' }) {
               </div>
 
               {!isDash2 && (
-                <nav className="hidden md:flex items-center space-x-6">
+                <nav className="hidden lg:flex items-center space-x-6">
                   <Link to="/" className="text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors" activeProps={{ className: 'text-blue-600 dark:text-blue-400 font-semibold' }}>Home</Link>
                   <Link to="/test" className="text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors" activeProps={{ className: 'text-blue-600 dark:text-blue-400 font-semibold' }}>Test</Link>
                   <Link to="/dashboard" className="text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 transition-colors" activeProps={{ className: 'text-blue-600 dark:text-blue-400 font-semibold' }}>Dashboard</Link>
@@ -47,7 +47,7 @@ export default function Header({ variant = 'full' }) {
               )}
 
               <button
-                className={`text-gray-700 dark:text-gray-300 ${isDash2 ? '' : 'md:hidden'}`}
+                className={`text-gray-700 dark:text-gray-300 ${isDash2 ? '' : 'lg:hidden'}`}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 aria-label="Toggle navigation menu"
               >

@@ -9,7 +9,6 @@ import ErrorBoundary from '#/components/ui/ErrorBoundary'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import { Search, MapPin } from 'lucide-react'
-import MapView from './MapView'
 
 const TABS = ['All', 'Shows', 'Users', 'Events']
 
@@ -138,10 +137,9 @@ export default function ExplorePage() {
               <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#e10908] border-t-transparent" />
             </div>
           ) : (
-            <div className="flex flex-col lg:flex-row gap-5 h-full">
-              {/* Left column - unified Event + User cards */}
-              <div data-part="left-column" className="flex-1 flex flex-col gap-4 max-w-4xl">
-                {showEvents &&
+            <div data-part="single-column" className="flex flex-col gap-4 max-w-4xl">
+              {/* One-column list — same design as My Events; card clicks open the event page */}
+              {showEvents &&
                   filteredEvents.map((event) => (
                     <ErrorBoundary key={event.slugId || event.title} resetKey={event.slugId || event.title}>
                       <EventCard event={event} />
@@ -163,14 +161,6 @@ export default function ExplorePage() {
                     </p>
                   </div>
                 )}
-              </div>
-
-              {/* Right column - Map */}
-              <div data-part="right-column" className="w-full lg:w-[400px] flex flex-col gap-4">
-                <div data-part="map-container" className="rounded-xl overflow-hidden h-[220px]">
-                  <MapView />
-                </div>
-              </div>
             </div>
           )}
         </div>
