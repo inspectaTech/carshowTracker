@@ -45,7 +45,7 @@ export async function getDataSourceStatus() {
 
 function getDashboardDataFromJSON() {
   return {
-    profile: { ...sampleData.profile },
+    profile: { ...sampleData.profile, homeLocation: null },
     vehicles: [...sampleData.vehicles],
     activities: [...sampleData.activities],
     images: [...sampleData.images],
@@ -82,6 +82,7 @@ async function getDashboardDataFromDB(userId) {
       dreamCar: profileDoc.dreamCar,
       occupation: profileDoc.occupation,
       driveStyle: profileDoc.driveStyle,
+      homeLocation: profileDoc.homeLocation || null,
       stats: {
         totalPoints: { value: formatStat(profileDoc.stats.totalPoints), label: 'Total Points' },
         badges: { value: String(profileDoc.stats.badges), label: 'Badges' },

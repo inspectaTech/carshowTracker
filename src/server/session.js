@@ -152,3 +152,46 @@ export const updateProfile = createServerFn({ method: 'POST' })
       return { success: false, error: err.message }
     }
   })
+
+// Sets (or clears) the current user's Home location on their profile.
+// Dedicated fn so a partial update never clobbers bio/location/etc.
+// Expected shape: { homeLocation: { address, lat, lng } | null }
+export const updateHomeLocation = createServerFn({ method: 'POST' })
+  .handler(async ({ data }) => {
+    try {
+      const request = getRequest()
+      const { auth } = await import('../lib/auth')
+      const session = await auth.api.getSession({ headers: request?.headers })
+
+      if (!session?.user?.id) {
+        return { success: false, error: 'Not authenticated' }
+      }
+
+      const userId = session.user.id
+      const home = data?.homeLocation ?? null
+      const valid =
+        home == null ||
+        (home &&
+          typeof home.address === 'string' &&
+          typeof home.lat === 'number' &&
+          typeof home.lng === 'number')
+      if (!valid) {
+        return { success: false, error: 'Invalid home location' }
+      }
+
+      const { connectToDatabase } = await import('../lib/db')
+      const { db } = await connectToDatabase()
+
+      await db.collection('profiles').updateOne(
+        { userId },
+        { $set: { homeLocation: home, updatedAt: new Date() } },
+        { upsert: true }
+      )
+
+      console.log('[updateHomeLocation] Saved home for', userId)
+      return { success: true, homeLocation: home }
+    } catch (err) {
+      console.error('[updateHomeLocation] Failed:', err.message)
+      return { success: false, error: err.message }
+    }
+  })

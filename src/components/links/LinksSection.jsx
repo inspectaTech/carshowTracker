@@ -90,7 +90,7 @@ export default function LinksSection({ mode = 'display', value = [], onChange })
     return (
       <div data-component="links-section" className="space-y-4">
         {socialLinks.length > 0 && (
-          <div data-part="social-icons" className="flex items-center gap-3 flex-wrap">
+          <div data-part="social-icons" className="flex items-center justify-center gap-3 flex-wrap">
             {socialLinks.map((link, i) => (
               <span
                 key={`${link}-${i}`}

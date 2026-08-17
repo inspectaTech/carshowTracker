@@ -47,6 +47,7 @@
     "react-hook-form": "^7.82.0",
     "react-leaflet": "^5.0.0",
     "react-social-icons": "^6.26.0",
+    "react-window": "^2.3.0",
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {

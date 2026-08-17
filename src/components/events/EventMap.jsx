@@ -89,7 +89,7 @@ export default function EventMap({ lat, lng, label, height = 220 }) {
     <div
       ref={mapRef}
       data-part="event-map"
-      className="w-full h-full rounded-xl overflow-hidden border border-[#1a1d22]"
+      className="relative z-0 w-full h-full rounded-xl overflow-hidden border border-[#1a1d22]"
       style={{ background: '#0a0d12', height }}
     />
   )

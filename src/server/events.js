@@ -26,6 +26,38 @@ function genShortId(len = 6) {
   return out
 }
 
+// GeoJSON Point for the `geo` 2dsphere field — coordinates are [lng, lat].
+function toGeo(lat, lng) {
+  const l = Number(lat)
+  const n = Number(lng)
+  if (!Number.isFinite(l) || !Number.isFinite(n)) return null
+  return { type: 'Point', coordinates: [n, l] }
+}
+
+// Best-effort forward geocode of a location string via Nominatim (free OSM API).
+// Used to guarantee coords when an event is saved with only an address.
+// Returns { lat, lng } or null. Throttled by callers (Nominatim = 1 req/sec).
+async function geocodeLocation(location) {
+  if (!location || typeof location !== 'string' || !location.trim()) return null
+  try {
+    const q = encodeURIComponent(location.trim())
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
+      headers: { 'User-Agent': 'CarshowTracker/1.0' },
+    })
+    if (!res.ok) return null
+    const data = await res.json()
+    const hit = Array.isArray(data) ? data[0] : null
+    if (!hit) return null
+    const lat = parseFloat(hit.lat)
+    const lng = parseFloat(hit.lon)
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null
+    return { lat, lng }
+  } catch (err) {
+    console.warn('[geocodeLocation] failed:', err.message)
+    return null
+  }
+}
+
 // Normalize a date value to a string. Flatpickr passes raw Date objects which,
 // if rendered directly by React (e.g. `{event.startTime}`), throw
 // "Objects are not valid as a React child (found: [object Date])". Always
@@ -99,6 +131,14 @@ export const createEvent = createServerFn({ method: 'POST' })
       }
 
       const now = new Date()
+      let lat = d.lat ?? null
+      let lng = d.lng ?? null
+      // Coords completeness: if a location string is set but no coordinates were
+      // provided, best-effort geocode so the event participates in proximity search.
+      if ((lat == null || lng == null) && (d.location || '').trim()) {
+        const resolved = await geocodeLocation(d.location)
+        if (resolved) { lat = resolved.lat; lng = resolved.lng }
+      }
       const doc = {
         slugId,
         title: (d.title || '').trim(),
@@ -106,8 +146,9 @@ export const createEvent = createServerFn({ method: 'POST' })
         startTime: toTimeString(d.startTime),
         endTime: toTimeString(d.endTime),
         location: d.location || '',
-        lat: d.lat ?? null,
-        lng: d.lng ?? null,
+        lat,
+        lng,
+        geo: toGeo(lat, lng),
         zipCode: d.zipCode || '',
         description: d.description || '',
         costType: d.costType || 'free',
@@ -158,6 +199,13 @@ export const updateEvent = createServerFn({ method: 'POST' })
       }
 
       const now = new Date()
+      let lat = d.lat ?? existing.lat ?? null
+      let lng = d.lng ?? existing.lng ?? null
+      // Coords completeness: geocode when still missing and we have a location.
+      if ((lat == null || lng == null) && (d.location || existing.location)) {
+        const resolved = await geocodeLocation(d.location || existing.location)
+        if (resolved) { lat = resolved.lat; lng = resolved.lng }
+      }
       const doc = {
         ...existing,
         title: (d.title || '').trim(),
@@ -165,8 +213,9 @@ export const updateEvent = createServerFn({ method: 'POST' })
         startTime: toTimeString(d.startTime ?? existing.startTime),
         endTime: toTimeString(d.endTime ?? existing.endTime),
         location: d.location ?? existing.location,
-        lat: d.lat ?? existing.lat ?? null,
-        lng: d.lng ?? existing.lng ?? null,
+        lat,
+        lng,
+        geo: toGeo(lat, lng),
         zipCode: d.zipCode ?? existing.zipCode,
         description: d.description ?? existing.description,
         costType: d.costType ?? existing.costType,
@@ -216,6 +265,51 @@ export const listEvents = createServerFn({ method: 'GET' })
     } catch (err) {
       console.error('[listEvents] Failed:', err.message)
       return { events: [] }
+    }
+  })
+
+// Public: list events within a radius of a point, nearest-first — server-side
+// geo via MongoDB $geoNear on the `geo` (2dsphere) field. Each event carries a
+// `distanceMiles` so the client can show proximity without any math. On failure
+// (e.g. the 2dsphere index is missing) returns success:false so the client can
+// fall back to the unfiltered list.
+export const listEventsNearby = createServerFn({ method: 'GET' })
+  .handler(async ({ data }) => {
+    try {
+      const { connectToDatabase } = await import('../lib/db')
+      const { db } = await connectToDatabase()
+      const events = db.collection('events')
+
+      const lat = Number(data?.lat)
+      const lng = Number(data?.lng)
+      const radiusMiles = Number(data?.radiusMiles) || 25
+      if (!Number.isFinite(lat) || !Number.isFinite(lng) || radiusMiles <= 0) {
+        return { success: false, error: 'Invalid location or radius' }
+      }
+
+      const docs = await events
+        .aggregate([
+          {
+            $geoNear: {
+              near: { type: 'Point', coordinates: [lng, lat] },
+              distanceField: 'distanceMeters',
+              maxDistance: radiusMiles * 1609.344, // miles → meters
+              spherical: true,
+            },
+          },
+        ])
+        .toArray()
+
+      const evs = docs.map((doc) => {
+        const e = toClientEvent(doc)
+        const miles = doc.distanceMeters != null ? doc.distanceMeters / 1609.344 : null
+        e.distanceMiles = miles != null ? Math.round(miles * 10) / 10 : null
+        return e
+      })
+      return { success: true, events: evs }
+    } catch (err) {
+      console.error('[listEventsNearby] Failed:', err.message)
+      return { success: false, error: err.message }
     }
   })
 

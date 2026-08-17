@@ -12,6 +12,11 @@ export default defineConfig({
     tailwindcss(),
     viteReact(),
   ],
+  optimizeDeps: {
+    // react-window is CJS; pre-bundle it explicitly so the namespace import
+    // resolves cleanly in dev.
+    include: ['react-window'],
+  },
   resolve: {
     alias: {
       // better-auth requires zod v4 APIs (e.g. .meta()), but the project's
