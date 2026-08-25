@@ -34,7 +34,7 @@ export default function EventsPage() {
         setDataSource('no-session')
         return
       }
-      const result = await listEvents({ data: { creatorUserId: myUserId } })
+      const result = await listEvents({ data: { creatorUserId: myUserId, includePast: true } })
       if (result?.events) setEvents(result.events)
     } catch (err) {
       console.error('[Events] Failed to load events:', err)

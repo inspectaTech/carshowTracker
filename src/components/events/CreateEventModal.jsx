@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ImagePlus, DollarSign } from 'lucide-react'
@@ -17,6 +17,7 @@ const DEFAULT_VALUES = {
   date: null,
   startTime: null,
   endTime: null,
+  timezone: '',
   location: '',
   lat: null,
   lng: null,
@@ -28,6 +29,26 @@ const DEFAULT_VALUES = {
   links: [],
 }
 
+// Common IANA timezones for the optional override. Defaults to auto (derived
+// from the event's location); users rarely need to change this.
+const TIMEZONES = [
+  'America/Los_Angeles',
+  'America/Denver',
+  'America/Chicago',
+  'America/New_York',
+  'America/Phoenix',
+  'America/Anchorage',
+  'Pacific/Honolulu',
+  'Europe/London',
+  'Europe/Paris',
+  'Europe/Berlin',
+  'Europe/Madrid',
+  'Europe/Rome',
+  'Europe/Amsterdam',
+  'Australia/Sydney',
+  'Asia/Tokyo',
+]
+
 const SKIP_CLOSE_KEY = 'cst_skip_close_confirm'
 
 function getSkipCloseConfirm() {
@@ -36,7 +57,7 @@ function getSkipCloseConfirm() {
 }
 
 export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated, editingEvent }) {
-  const { control, handleSubmit, formState: { isDirty, errors }, reset, setValue, watch } = useForm({
+  const { control, handleSubmit, formState: { isDirty, errors }, reset, setValue, watch, getValues } = useForm({
     defaultValues: DEFAULT_VALUES,
     // After a failed submit, re-validate fields live (onChange) so errors clear
     // as the user fixes each one — prevents "stuck" warnings and a permanently
@@ -55,7 +76,27 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
   const enterSubmitRef = useRef(false)
 
   const costType = watch('costType')
+  const startTimeVal = watch('startTime')
+  const endTimeVal = watch('endTime')
   const isEdit = !!editingEvent
+
+  // Detect an overnight event: end time-of-day is earlier than start time-of-day,
+  // which means the end rolls to the next day (e.g. 10 PM -> 2 AM).
+  const isOvernight = useMemo(() => {
+    const toMin = (t) => {
+      const m = String(t || '').trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?$/i)
+      if (!m) return null
+      let h = parseInt(m[1], 10)
+      const min = parseInt(m[2] || '0', 10)
+      const ap = (m[3] || '').toUpperCase()
+      if (ap === 'PM' && h < 12) h += 12
+      if (ap === 'AM' && h === 12) h = 0
+      return h * 60 + min
+    }
+    const s = toMin(startTimeVal)
+    const e = toMin(endTimeVal)
+    return s != null && e != null && e <= s
+  }, [startTimeVal, endTimeVal])
 
   // Reset form when modal opens — prefill when editing an event
   useEffect(() => {
@@ -66,6 +107,7 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
           date: editingEvent.date || null,
           startTime: editingEvent.startTime || null,
           endTime: editingEvent.endTime || null,
+          timezone: editingEvent.timezone || '',
           location: editingEvent.location || '',
           lat: editingEvent.lat ?? null,
           lng: editingEvent.lng ?? null,
@@ -295,7 +337,32 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
                     <Controller
                       name="endTime"
                       control={control}
-                      rules={{ required: 'End time is required' }}
+                      rules={{
+                        required: 'End time is required',
+                        validate: (value) => {
+                          const start = getValues('startTime')
+                          if (!value || !start) return true
+                          // Compare as minutes-since-midnight so "12:00 AM" (0)
+                          // is correctly seen as before "8:00 PM" (20:00).
+                          const toMin = (t) => {
+                            const m = String(t).trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?$/i)
+                            if (!m) return null
+                            let h = parseInt(m[1], 10)
+                            const min = parseInt(m[2] || '0', 10)
+                            const ap = (m[3] || '').toUpperCase()
+                            if (ap === 'PM' && h < 12) h += 12
+                            if (ap === 'AM' && h === 12) h = 0
+                            return h * 60 + min
+                          }
+                          const s = toMin(start)
+                          const e = toMin(value)
+                          if (s == null || e == null) return true
+                          // An end time earlier than start is a valid OVERNIGHT
+                          // event (e.g. 10 PM -> 2 AM rolls to the next day).
+                          // Only an end exactly equal to start is a real error.
+                          return e !== s || 'End time can\'t be the same as the start time'
+                        },
+                      }}
                       render={({ field, fieldState }) => (
                         <FlatpickrInput
                           label="End Time"
@@ -306,11 +373,40 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
                           dateFormat="h:i K"
                           placeholder="10:00 PM"
                           error={!!fieldState.error}
-                          helperText={fieldState.error?.message}
+                          helperText={
+                            fieldState.error?.message ||
+                            (isOvernight && !fieldState.error
+                              ? 'Ends on the next day (runs past midnight)'
+                              : undefined)
+                          }
                         />
                       )}
                     />
                   </div>
+                </div>
+
+                {/* Timezone — optional override; defaults to auto (derived from location) */}
+                <div data-part="field" className="space-y-1.5">
+                  <label className="text-white text-[14px]">Event Timezone</label>
+                  <Controller
+                    name="timezone"
+                    control={control}
+                    render={({ field }) => (
+                      <select
+                        {...field}
+                        data-part="timezone-select"
+                        className="w-full px-3.5 py-2.5 bg-[#0a0d12] border border-[#333333] rounded-lg text-white text-[14px] focus:outline-none focus:border-[#e10908]"
+                      >
+                        <option value="">Auto (from location)</option>
+                        {TIMEZONES.map((tz) => (
+                          <option key={tz} value={tz}>{tz.replace(/_/g, ' ')}</option>
+                        ))}
+                      </select>
+                    )}
+                  />
+                  <p className="text-[#555555] text-[12px]">
+                    Usually auto-detected from the event location. Only change this for edge cases.
+                  </p>
                 </div>
 
                 {/* Location Picker */}
