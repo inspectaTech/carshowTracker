@@ -28,6 +28,7 @@ export default function ExplorePage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [nearModalOpen, setNearModalOpen] = useState(false)
   const [nearModalInitial, setNearModalInitial] = useState(null)
+  const [nearModalIntent, setNearModalIntent] = useState('near') // 'home' | 'near'
   const [toasts, setToasts] = useState([])
   const pendingRevertRef = useRef(null)
 
@@ -148,6 +149,9 @@ export default function ExplorePage() {
         setVicinityLabel(homeLocation.address || 'Home')
         setVicinityStatus('ready')
       } else {
+        // Home chosen but not set — show the "No home set yet" state in the
+        // dropdown (the user can click "Set home location" to open the modal
+        // with intent 'home').
         setVicinityPoint(null)
         setVicinityLabel(null)
         setVicinityStatus('missing-home')
@@ -170,11 +174,28 @@ export default function ExplorePage() {
 
   const handleRadiusChange = (r) => setRadius(r)
 
+  // Close the dropdown. If the user is on "Home" but no home is set (they just
+  // peeked at the option), revert to "Everywhere" — a Home selection with no
+  // home is meaningless and shouldn't persist as the active filter.
+  const closeMenu = () => {
+    setMenuOpen(false)
+    if (locationMode === 'home' && vicinityStatus === 'missing-home') {
+      setLocationMode('everywhere')
+      setVicinityPoint(null)
+      setVicinityLabel(null)
+      setVicinityStatus('idle')
+    }
+  }
+
   // Open the near-location modal, pre-filled with an optional starting point
   // (the current pick, or the saved Home when editing it). `revertTo` is the
   // filter state to restore if the user cancels without applying.
-  const openNearModal = (initial = null, revertTo = null) => {
+  // `intent` controls the modal's buttons: 'home' = set/update home (single red
+  // "Set as Home" submit); 'near' = explore from a point (Set as Home + Use
+  // this location).
+  const openNearModal = (initial = null, revertTo = null, intent = 'near') => {
     pendingRevertRef.current = revertTo
+    setNearModalIntent(intent)
     const hasPoint = initial && typeof initial.lat === 'number'
     setNearModalInitial(
       hasPoint
@@ -185,13 +206,31 @@ export default function ExplorePage() {
     setMenuOpen(false)
   }
 
-  // Cancelling the modal (without "Use this location") restores the last known
-  // good filter — whatever was active before "Near a location" was chosen
+  // Cancelling the modal (without "Use this location" / "Set as Home") restores
+  // the last known good filter — whatever was active before the modal opened
   // (everywhere, home, or a previous current-vicinity point).
+  // For intent 'home' (set/update home), cancelling just closes the modal and
+  // returns to the Home mode state (missing-home if still unset, or the current
+  // home if one exists) — it does NOT revert to a stale filter.
   const handleCancelNearModal = () => {
     setNearModalOpen(false)
     const prev = pendingRevertRef.current
     pendingRevertRef.current = null
+    if (nearModalIntent === 'home') {
+      // Return to the Home mode state based on the current home.
+      if (homeLocation && homeLocation.lat != null && homeLocation.lng != null) {
+        setLocationMode('home')
+        setVicinityPoint({ lat: homeLocation.lat, lng: homeLocation.lng })
+        setVicinityLabel(homeLocation.address || 'Home')
+        setVicinityStatus('ready')
+      } else {
+        setLocationMode('home')
+        setVicinityPoint(null)
+        setVicinityLabel(null)
+        setVicinityStatus('missing-home')
+      }
+      return
+    }
     if (prev) {
       setLocationMode(prev.mode)
       setVicinityPoint(prev.point)
@@ -214,9 +253,12 @@ export default function ExplorePage() {
     pushToast('success', `Showing events near “${loc.address || 'this location'}”`)
   }
 
-  // Save a picked point as the user's Home. Stays in the modal (the indicator
-  // below the picker updates) — the user presses "Use this location" to apply
-  // it as a filter and exit.
+  // Save a picked point as the user's Home.
+  // - intent 'home': the user came here to set/update home → save, close the
+  //   modal, and switch the filter to Home (using the new home).
+  // - intent 'near': the user is exploring from a point and optionally saving
+  //   it as home → save, keep the modal open so they can then "Use this
+  //   location" (or cancel).
   const setHomeFromLoc = async (loc) => {
     const home = { address: loc.address || 'Home', lat: loc.lat, lng: loc.lng }
     try {
@@ -224,6 +266,16 @@ export default function ExplorePage() {
       if (res?.success) {
         setProfile((p) => ({ ...(p || {}), homeLocation: home }))
         pushToast('success', `Home set to “${home.address}”`)
+        if (nearModalIntent === 'home') {
+          // Close + switch to Home mode using the new home.
+          pendingRevertRef.current = null
+          setNearModalOpen(false)
+          setMenuOpen(false)
+          setLocationMode('home')
+          setVicinityPoint({ lat: home.lat, lng: home.lng })
+          setVicinityLabel(home.address || 'Home')
+          setVicinityStatus('ready')
+        }
       } else {
         pushToast(
           'error',
@@ -278,14 +330,19 @@ export default function ExplorePage() {
 
   const hasAny = (showEvents && filteredEvents.length > 0) || (showUsers && filteredUsers.length > 0)
 
+  // Chip label. If the active point equals the saved Home (whether reached via
+  // the Home mode or by applying a near point that matches home), show "Home" so
+  // there's no confusion that we're exploring from home.
   const chipLabel =
     locationMode === 'everywhere'
       ? 'Everywhere'
       : locationMode === 'current'
         ? 'Current Vicinity'
-        : locationMode === 'home'
-          ? vicinityLabel || 'Home'
-          : vicinityLabel || 'Near a location…'
+        : isCurrentHome
+          ? 'Home'
+          : locationMode === 'home'
+            ? vicinityLabel || 'Home'
+            : vicinityLabel || 'Near a location…'
 
   return (
     <div data-component="explore-page" className="min-h-screen bg-[#04080b] flex flex-col lg:flex-row">
@@ -310,7 +367,7 @@ export default function ExplorePage() {
           <div data-part="vicinity" className="relative">
             <button
               data-part="location-chip"
-              onClick={() => setMenuOpen((o) => !o)}
+              onClick={() => (menuOpen ? closeMenu() : setMenuOpen(true))}
               className="flex items-center gap-2 px-4 py-2 bg-[#04080b] border border-[#333333] rounded-full text-white text-[13px] sm:text-[14px] hover:border-[#555555] transition-colors"
             >
               <MapPin className="h-4 w-4 text-[#e10908]" />
@@ -319,10 +376,11 @@ export default function ExplorePage() {
             </button>
             {menuOpen && (
               <>
-                <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
+                <div className="fixed inset-0 z-40" onClick={closeMenu} />
                 <VicinityMenu
                   mode={locationMode}
                   radius={radius}
+                  homeLocation={homeLocation}
                   vicinityStatus={vicinityStatus}
                   vicinityLabel={vicinityLabel}
                   savedHome={isCurrentHome}
@@ -337,8 +395,8 @@ export default function ExplorePage() {
                       })
                     }
                   }}
-                  onOpenNearModal={() => openNearModal(vicinityPoint)}
-                  onEditHome={() => openNearModal(homeLocation)}
+                  onOpenNearModal={(intent = 'near') => openNearModal(vicinityPoint, null, intent)}
+                  onEditHome={() => openNearModal(homeLocation, null, 'home')}
                   onClearHome={clearHome}
                 />
               </>
@@ -422,6 +480,7 @@ export default function ExplorePage() {
         onClose={handleCancelNearModal}
         initialValue={nearModalInitial}
         homeLocation={homeLocation}
+        intent={nearModalIntent}
         onApply={applyNear}
         onSetHome={setHomeFromLoc}
         onClearHome={clearHome}

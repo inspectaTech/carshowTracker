@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react'
 import Sidebar from '#/components/dashboard/Sidebar'
-import { loadDashboardData } from '#/server/session'
+import { loadDashboardData, updateHomeLocation } from '#/server/session'
 import { Settings as SettingsIcon, User, Bell, Lock, MapPin, Palette, Link as LinkIcon, Sliders } from 'lucide-react'
 import { getToolbarLayout, setToolbarLayout as saveToolbarLayout } from '#/lib/toolbar-layout'
+import HomeLocationControl from '#/components/explore/HomeLocationControl'
+import NearLocationModal from '#/components/explore/NearLocationModal'
+import ToastStack from '#/components/ui/ToastStack'
 
 const SETTINGS_NAV = [
   { id: 'profile', label: 'Profile', icon: User },
@@ -33,6 +36,53 @@ export default function SettingsPage() {
     followers: false,
     updates: true,
   })
+  const [homeModalOpen, setHomeModalOpen] = useState(false)
+  const [homeModalInitial, setHomeModalInitial] = useState(null)
+  const [toasts, setToasts] = useState([])
+
+  const homeLocation = profile?.homeLocation || null
+
+  const pushToast = (type, message) => {
+    const id = Date.now() + Math.random()
+    setToasts((t) => [...t.slice(-2), { id, type, message }])
+    setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 3500)
+  }
+  const dismissToast = (id) => setToasts((t) => t.filter((x) => x.id !== id))
+
+  const openHomeModal = (initial = null) => {
+    setHomeModalInitial(initial)
+    setHomeModalOpen(true)
+  }
+
+  const setHomeFromLoc = async (loc) => {
+    const home = { address: loc.address || 'Home', lat: loc.lat, lng: loc.lng }
+    try {
+      const res = await updateHomeLocation({ data: { homeLocation: home } })
+      if (res?.success) {
+        setProfile((p) => ({ ...(p || {}), homeLocation: home }))
+        pushToast('success', `Home set to “${home.address}”`)
+        setHomeModalOpen(false)
+      } else {
+        pushToast('error', res?.error === 'Not authenticated' ? "Couldn't set home — please sign in." : `Couldn't set home: ${res?.error || 'unknown error'}`)
+      }
+    } catch (err) {
+      pushToast('error', "Couldn't set home — network error.")
+    }
+  }
+
+  const clearHome = async () => {
+    try {
+      const res = await updateHomeLocation({ data: { homeLocation: null } })
+      if (res?.success) {
+        setProfile((p) => ({ ...(p || {}), homeLocation: null }))
+        pushToast('success', 'Home removed')
+      } else {
+        pushToast('error', res?.error === 'Not authenticated' ? "Couldn't clear home — please sign in." : `Couldn't clear home: ${res?.error || 'unknown error'}`)
+      }
+    } catch (err) {
+      pushToast('error', "Couldn't clear home — network error.")
+    }
+  }
 
   useEffect(() => {
     async function loadData() {
@@ -200,16 +250,12 @@ export default function SettingsPage() {
                     <h2 className="text-white text-[22px] font-medium mb-6">Home Location</h2>
                     <div className="bg-[#0a0d12] rounded-xl p-6">
                       <p className="text-[#888888] text-[15px] mb-4">Your current home location is used to find events near you.</p>
-                      <div className="flex items-center gap-3">
-                        <MapPin className="h-5 w-5 text-[#e10908]" />
-                        <span className="text-white text-[16px]">{profile?.location || 'Los Angeles, CA'}</span>
-                      </div>
-                      <button
-                        data-part="update-location-btn"
-                        className="mt-4 px-4 py-2 bg-[#e10908] text-white text-[14px] rounded-lg hover:bg-[#c00807] transition-colors"
-                      >
-                        Update Location
-                      </button>
+                      <HomeLocationControl
+                        homeLocation={homeLocation}
+                        onSetHome={() => openHomeModal(null)}
+                        onEditHome={() => openHomeModal(homeLocation)}
+                        onClearHome={clearHome}
+                      />
                     </div>
                   </>
                 )}
@@ -300,6 +346,19 @@ export default function SettingsPage() {
           </div>
         </div>
       </main>
+
+      <NearLocationModal
+        isOpen={homeModalOpen}
+        onClose={() => setHomeModalOpen(false)}
+        initialValue={homeModalInitial}
+        homeLocation={homeLocation}
+        intent="home"
+        onApply={setHomeFromLoc}
+        onSetHome={setHomeFromLoc}
+        onClearHome={clearHome}
+      />
+
+      <ToastStack toasts={toasts} onDismiss={dismissToast} />
     </div>
   )
 }

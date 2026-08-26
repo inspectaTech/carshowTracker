@@ -12,6 +12,7 @@ export default function NearLocationModal({
   onClose,
   initialValue,
   homeLocation,
+  intent = 'near', // 'home' (set-home flow) | 'near' (explore flow)
   onApply,
   onSetHome,
   onClearHome,
@@ -128,7 +129,12 @@ export default function NearLocationModal({
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Footer — buttons adapt to intent.
+            intent='home': a single red "Set as Home" submit (the user is here to
+              set/update their home, not to explore from a point).
+            intent='near': "Set as Home" (secondary) + "Use this location" (red
+              submit) — the user is exploring from a point and may optionally
+              save it as home. */}
         <div className="px-5 py-4 border-t border-[#1a1d22] flex items-center justify-end gap-2.5 shrink-0">
           <button
             type="button"
@@ -137,22 +143,35 @@ export default function NearLocationModal({
           >
             Cancel
           </button>
-          <button
-            type="button"
-            onClick={() => hasSelection && onSetHome(selected)}
-            disabled={!hasSelection}
-            className="flex items-center gap-2 px-4 h-9 rounded-lg text-[13px] bg-[#1a1d22] text-white hover:bg-[#2a2d32] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            <HomeIcon size={14} /> Set as Home
-          </button>
-          <button
-            type="button"
-            onClick={() => hasSelection && onApply(selected)}
-            disabled={!hasSelection}
-            className="flex items-center gap-2 px-4 h-9 rounded-lg text-[13px] bg-[#e10908] text-white hover:bg-[#c90808] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            Use this location
-          </button>
+          {intent === 'home' ? (
+            <button
+              type="button"
+              onClick={() => hasSelection && onSetHome(selected)}
+              disabled={!hasSelection}
+              className="flex items-center gap-2 px-4 h-9 rounded-lg text-[13px] bg-[#e10908] text-white hover:bg-[#c90808] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <HomeIcon size={14} /> Set as Home
+            </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => hasSelection && onSetHome(selected)}
+                disabled={!hasSelection}
+                className="flex items-center gap-2 px-4 h-9 rounded-lg text-[13px] bg-[#1a1d22] text-white hover:bg-[#2a2d32] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <HomeIcon size={14} /> Set as Home
+              </button>
+              <button
+                type="button"
+                onClick={() => hasSelection && onApply(selected)}
+                disabled={!hasSelection}
+                className="flex items-center gap-2 px-4 h-9 rounded-lg text-[13px] bg-[#e10908] text-white hover:bg-[#c90808] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Use this location
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

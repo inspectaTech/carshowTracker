@@ -1,4 +1,5 @@
 import { Globe, Navigation, Home as HomeIcon, MapPin, Loader2, Pencil, X, Search } from 'lucide-react'
+import HomeLocationControl from './HomeLocationControl'
 
 const MODES = [
   { id: 'everywhere', label: 'Everywhere', icon: Globe },
@@ -16,13 +17,14 @@ const RADII = [10, 25, 50, 100]
 export default function VicinityMenu({
   mode,
   radius,
+  homeLocation,
   vicinityStatus,
   vicinityLabel,
   savedHome,
   onModeChange,
   onRadiusChange,
   onSetAsHome,
-  onOpenNearModal,
+  onOpenNearModal, // (intent) => void — 'home' or 'near'
   onEditHome,
   onClearHome,
 }) {
@@ -86,39 +88,17 @@ export default function VicinityMenu({
               <Loader2 size={14} className="animate-spin" /> Detecting location…
             </p>
           )}
-          {mode === 'home' && vicinityStatus === 'missing-home' && (
+          {mode === 'home' && (
             <div className="mt-3">
-              <p className="text-[#e10908] text-[13px]">No home set yet.</p>
-              <button
-                type="button"
-                onClick={() => onOpenNearModal()}
-                className="mt-2 w-full flex items-center justify-center gap-2 h-9 rounded-lg text-[13px] bg-[#1a1d22] text-white hover:bg-[#2a2d32] transition-colors"
-              >
-                <HomeIcon size={14} /> Set home location
-              </button>
-            </div>
-          )}
-          {mode === 'home' && vicinityStatus === 'ready' && (
-            <div className="mt-3 flex items-center gap-2">
-              <p className="flex-1 text-[#888888] text-[13px] truncate" title={vicinityLabel}>
-                📍 {vicinityLabel || 'Home'}
-              </p>
-              <button
-                type="button"
-                onClick={() => onEditHome()}
-                title="Edit home location"
-                className="w-8 h-8 flex items-center justify-center text-[#888888] hover:text-white hover:bg-[#1a1d22] rounded-md transition-colors shrink-0"
-              >
-                <Pencil size={14} />
-              </button>
-              <button
-                type="button"
-                onClick={onClearHome}
-                title="Remove home location"
-                className="w-8 h-8 flex items-center justify-center text-[#888888] hover:text-[#e10908] hover:bg-[#1a1d22] rounded-md transition-colors shrink-0"
-              >
-                <X size={16} />
-              </button>
+              {vicinityStatus === 'missing-home' && (
+                <p className="text-[#e10908] text-[13px] mb-2">No home set yet.</p>
+              )}
+              <HomeLocationControl
+                homeLocation={homeLocation}
+                onSetHome={() => onOpenNearModal('home')}
+                onEditHome={onEditHome}
+                onClearHome={onClearHome}
+              />
             </div>
           )}
           {mode === 'current' && vicinityStatus === 'ready' && (
@@ -153,7 +133,7 @@ export default function VicinityMenu({
                   </button>
                   <button
                     type="button"
-                    onClick={() => onOpenNearModal()}
+                    onClick={() => onOpenNearModal('near')}
                     title="Change location"
                     className="w-8 h-8 flex items-center justify-center text-[#888888] hover:text-white hover:bg-[#1a1d22] rounded-md transition-colors shrink-0"
                   >
@@ -163,7 +143,7 @@ export default function VicinityMenu({
               ) : (
                 <button
                   type="button"
-                  onClick={() => onOpenNearModal()}
+                  onClick={() => onOpenNearModal('near')}
                   className="w-full flex items-center justify-center gap-2 h-10 rounded-lg text-[13px] text-[#AAAAAA] bg-[#1a1d22] hover:bg-[#2a2d32] hover:text-white transition-colors"
                 >
                   <Search size={14} />
