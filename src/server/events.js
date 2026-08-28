@@ -208,6 +208,9 @@ function toClientEvent(doc) {
     creatorUserId: doc.creatorUserId || null,
     attending: doc.attending ?? 0,
     links: Array.isArray(doc.links) ? doc.links : [],
+    deleted: !!doc.deleted,
+    deletedAt: toISODateOrNull(doc.deletedAt),
+    expiresAt: toISODateOrNull(doc.expiresAt),
     createdAt: doc.createdAt,
     updatedAt: doc.updatedAt,
   }
@@ -296,6 +299,174 @@ export const createEvent = createServerFn({ method: 'POST' })
       return { success: false, error: err.message }
     }
   })
+
+// Abuse guard: cap how many events a single user can create within a window.
+// Prevents a malicious user / spam accounts from flooding the DB (DDOS-style)
+// by spamming the create/duplicate buttons. Returns true if allowed.
+async function withinCreateLimit(db, userId, { max = 20, windowMs = 60 * 60 * 1000 } = {}) {
+  if (!userId) return false // must be authenticated
+  const since = new Date(Date.now() - windowMs)
+  const count = await db
+    .collection('events')
+    .countDocuments({ creatorUserId: userId, createdAt: { $gte: since } })
+  return count < max
+}
+
+// Duplicates an existing event (creator only) — Eventbrite-style "duplicate +
+// modify". Copies ALL document fields (location, links, cost, category,
+// description, timezone, geo, date/time) EXCEPT the unique properties: a new
+// slugId, fresh createdAt/updatedAt, and the title gets " - copy" appended so
+// the user can tell the duplicate apart. Rate-limited to prevent spam.
+export const duplicateEvent = createServerFn({ method: 'POST' })
+  .handler(async ({ data }) => {
+    try {
+      const { connectToDatabase } = await import('../lib/db')
+      const { db } = await connectToDatabase()
+      const events = db.collection('events')
+
+      const sourceSlugId = (data?.slugId || '').trim()
+      if (!sourceSlugId) return { success: false, error: 'Missing event id' }
+
+      const source = await events.findOne({ slugId: sourceSlugId })
+      if (!source) return { success: false, error: 'Event not found' }
+
+      // Only the creator may duplicate (unless it has no creator, e.g. seeded).
+      let sessionUserId = source.creatorUserId || null
+      try {
+        const sessionResult = await getSessionUser({ data: {} })
+        if (sessionResult?.userId) sessionUserId = sessionResult.userId
+      } catch (e) {
+        console.warn('[duplicateEvent] Could not resolve session user:', e.message)
+      }
+      if (source.creatorUserId && sessionUserId && source.creatorUserId !== sessionUserId) {
+        return { success: false, error: 'You can only duplicate events you created' }
+      }
+      if (!sessionUserId) return { success: false, error: 'Not authenticated' }
+
+      // Rate limit: cap creations per user per hour.
+      if (!(await withinCreateLimit(db, sessionUserId))) {
+        return { success: false, error: 'Too many events created recently — please try again later.' }
+      }
+
+      const now = new Date()
+      const baseTitle = (source.title || '').trim() || 'Event'
+      const title = `${baseTitle} - copy`
+      const slug = slugify(title) || 'event'
+      const slugId = `${slug}-${genShortId()}`
+
+      const doc = {
+        ...source,
+        _id: undefined, // let Mongo assign a new _id
+        slugId,
+        title,
+        attending: 0,
+        createdAt: now,
+        updatedAt: now,
+      }
+      await events.insertOne(doc)
+      console.log('[duplicateEvent] Duplicated', sourceSlugId, '->', slugId)
+      return { success: true, event: toClientEvent(doc) }
+    } catch (err) {
+      console.error('[duplicateEvent] Failed:', err.message)
+      return { success: false, error: err.message }
+    }
+  })
+
+// Soft-delete an event (creator only): flags it `deleted: true` with a
+// `deletedAt` and an `expiresAt` (deletedAt + TRASH_DAYS). It disappears from
+// normal lists but stays in the Trash until auto-purged.
+const TRASH_DAYS = 14
+export const softDeleteEvent = createServerFn({ method: 'POST' })
+  .handler(async ({ data }) => {
+    try {
+      const { connectToDatabase } = await import('../lib/db')
+      const { db } = await connectToDatabase()
+      const events = db.collection('events')
+
+      const slugId = (data?.slugId || '').trim()
+      if (!slugId) return { success: false, error: 'Missing event id' }
+
+      const existing = await events.findOne({ slugId })
+      if (!existing) return { success: false, error: 'Event not found' }
+
+      let sessionUserId = existing.creatorUserId || null
+      try {
+        const sessionResult = await getSessionUser({ data: {} })
+        if (sessionResult?.userId) sessionUserId = sessionResult.userId
+      } catch (e) {
+        console.warn('[softDeleteEvent] Could not resolve session user:', e.message)
+      }
+      if (existing.creatorUserId && sessionUserId && existing.creatorUserId !== sessionUserId) {
+        return { success: false, error: 'You can only delete events you created' }
+      }
+      if (!sessionUserId) return { success: false, error: 'Not authenticated' }
+
+      const now = new Date()
+      const expiresAt = new Date(now.getTime() + TRASH_DAYS * 24 * 60 * 60 * 1000)
+      await events.updateOne(
+        { _id: existing._id },
+        { $set: { deleted: true, deletedAt: now, expiresAt, updatedAt: now } }
+      )
+      console.log('[softDeleteEvent] Trashed', slugId)
+      return { success: true }
+    } catch (err) {
+      console.error('[softDeleteEvent] Failed:', err.message)
+      return { success: false, error: err.message }
+    }
+  })
+
+// Restore a trashed event (creator only): clears the deleted flags + expiry so
+// it returns to the regular display.
+export const restoreEvent = createServerFn({ method: 'POST' })
+  .handler(async ({ data }) => {
+    try {
+      const { connectToDatabase } = await import('../lib/db')
+      const { db } = await connectToDatabase()
+      const events = db.collection('events')
+
+      const slugId = (data?.slugId || '').trim()
+      if (!slugId) return { success: false, error: 'Missing event id' }
+
+      const existing = await events.findOne({ slugId })
+      if (!existing) return { success: false, error: 'Event not found' }
+
+      let sessionUserId = existing.creatorUserId || null
+      try {
+        const sessionResult = await getSessionUser({ data: {} })
+        if (sessionResult?.userId) sessionUserId = sessionResult.userId
+      } catch (e) {
+        console.warn('[restoreEvent] Could not resolve session user:', e.message)
+      }
+      if (existing.creatorUserId && sessionUserId && existing.creatorUserId !== sessionUserId) {
+        return { success: false, error: 'You can only restore events you created' }
+      }
+      if (!sessionUserId) return { success: false, error: 'Not authenticated' }
+
+      await events.updateOne(
+        { _id: existing._id },
+        { $unset: { deleted: '', deletedAt: '', expiresAt: '' }, $set: { updatedAt: new Date() } }
+      )
+      const restored = await events.findOne({ _id: existing._id })
+      console.log('[restoreEvent] Restored', slugId)
+      return { success: true, event: toClientEvent(restored) }
+    } catch (err) {
+      console.error('[restoreEvent] Failed:', err.message)
+      return { success: false, error: err.message }
+    }
+  })
+
+// Permanently delete events past their trash expiry (auto-purge). Called on
+// list operations so the DB doesn't accumulate trashed events forever.
+async function purgeExpiredTrash(db) {
+  try {
+    const res = await db
+      .collection('events')
+      .deleteMany({ deleted: true, expiresAt: { $lte: new Date() } })
+    if (res.deletedCount > 0) console.log('[purge] Removed', res.deletedCount, 'expired trashed events')
+  } catch (err) {
+    console.warn('[purge] Failed:', err.message)
+  }
+}
 
 // Update an existing event (creator only). The slugId is preserved so the
 // shareable URL stays stable; editable fields are overwritten from the form.
@@ -406,7 +577,16 @@ export const listEvents = createServerFn({ method: 'GET' })
     try {
       const { connectToDatabase } = await import('../lib/db')
       const { db } = await connectToDatabase()
+      // Auto-purge trashed events past their expiry.
+      await purgeExpiredTrash(db)
       const query = data?.creatorUserId ? { creatorUserId: data.creatorUserId } : {}
+      // By default hide soft-deleted (trashed) events. Pass { trash: true } to
+      // list ONLY trashed events (for the Trash view).
+      if (data?.trash) {
+        query.deleted = true
+      } else {
+        query.deleted = { $ne: true }
+      }
       if (!data?.includePast) {
         // Hide events that have ended. Events without an endsAt (legacy) are
         // kept — they have no end time to expire against.
@@ -455,6 +635,8 @@ export const listEventsNearby = createServerFn({ method: 'GET' })
               $or: [{ endsAt: { $gte: new Date() } }, { endsAt: { $exists: false } }],
             },
           },
+          // Hide soft-deleted (trashed) events.
+          { $match: { deleted: { $ne: true } } },
         ])
         .toArray()
 

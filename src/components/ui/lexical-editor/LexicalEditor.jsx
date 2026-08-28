@@ -48,7 +48,7 @@ export default function LexicalEditor({ initialHtml, onChange, minHeight = 160 }
   }), [onError])
 
   return (
-    <div data-component="lexical-editor" className="relative bg-[#04080b] border border-[#333333] rounded-lg focus-within:border-[#e10908] transition-colors overflow-hidden select-text" style={{ minHeight }}>
+    <div data-component="LexicalEditor" className="relative bg-[#04080b] border border-[#333333] rounded-lg focus-within:border-[#e10908] transition-colors overflow-hidden select-text" style={{ minHeight }}>
       <LexicalComposer initialConfig={initialConfig}>
         <ListPlugin />
         <LinkPlugin />

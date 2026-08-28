@@ -22,7 +22,7 @@ export function dms(coord, type) {
  *   - lat, lng: numeric coordinates (decimal degrees)
  *   - title: optional section heading (default "Selected Location")
  */
-export default function LocationSummary({ address, lat, lng, title = 'Selected Location' }) {
+export default function LocationSummary({ address, lat, lng, title = 'Selected Location', compact = false }) {
   const [copied, setCopied] = useState(false)
 
   const hasCoords =
@@ -47,7 +47,7 @@ export default function LocationSummary({ address, lat, lng, title = 'Selected L
     'inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-md bg-[#1a1d22] border border-[#333333] text-[#cccccc] hover:text-white hover:bg-[#2a2d32] transition-colors'
 
   return (
-    <div data-component="location-summary" className="border border-[#333333] rounded-lg p-3 bg-[#0a0d12]">
+    <div data-component="LocationSummary" className="border border-[#333333] rounded-lg p-3 bg-[#0a0d12]">
       <h3 className="text-xs font-semibold text-[#888888] uppercase tracking-wider mb-2">{title}</h3>
       <div className="space-y-1.5 text-sm">
         <div>
@@ -76,7 +76,8 @@ export default function LocationSummary({ address, lat, lng, title = 'Selected L
           </>
         )}
 
-        {/* Open in maps apps + Copy + Share */}
+        {/* Open in maps apps + Copy + Share — hidden in compact (form) contexts */}
+        {!compact && (
         <div className="pt-2 border-t border-[#333333] mt-2">
           <span className="text-[#888888] text-[11px]">Open in:</span>
           <div className="flex flex-wrap gap-1.5 mt-1.5">
@@ -117,6 +118,7 @@ export default function LocationSummary({ address, lat, lng, title = 'Selected L
             </button>
           </div>
         </div>
+        )}
       </div>
     </div>
   )

@@ -1,9 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
-import { X, Camera } from 'lucide-react'
+import { X, Camera, MapPin } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
-import { updateProfile, checkHandleAvailable } from '#/server/session'
+import { updateProfile, updateHomeLocation, checkHandleAvailable } from '#/server/session'
+import LocationForm from '#/components/ui/location-picker/LocationForm'
+import LocationPicker from '#/components/ui/location-picker/LocationPicker'
+import HomeLocationControl from '#/components/explore/HomeLocationControl'
 
 const HANDLE_REGEX = /^[a-zA-Z0-9_]{2,30}$/
 
@@ -20,12 +23,31 @@ const EMPTY_STATE = {
   driveStyle: '',
 }
 
+// Shorten a full address to "City, State" (+ zip if present) — used to populate
+// the public city/state from a home location.
+function shortenToCityState(address, zip) {
+  if (!address) return ''
+  const parts = address.split(',').map((p) => p.trim()).filter(Boolean)
+  let city = ''
+  let state = ''
+  if (parts.length >= 2) {
+    city = parts[parts.length - 2]
+    state = parts[parts.length - 1].replace(/[\d-]+/g, '').trim()
+  }
+  if (city && state) return zip ? `${city}, ${state} ${zip}` : `${city}, ${state}`
+  return address
+}
+
 export default function EditProfileModal({ isOpen, onClose, profile, onUploadPhoto, onSaved }) {
+  const initialHomeLocation = profile?.homeLocation || null
+  // If the city/state field is empty but a home is set, populate it from the
+  // home (shortened to city/state) so the field is never blank on edit.
+  const initialLocation = profile?.location || (initialHomeLocation ? shortenToCityState(initialHomeLocation.address, initialHomeLocation.zip) : '')
   const [form, setForm] = useState({
     handle: (profile?.handle || '').replace(/^@/, ''),
     displayName: profile?.username || EMPTY_STATE.displayName,
     bio: profile?.bio || EMPTY_STATE.bio,
-    location: profile?.location || EMPTY_STATE.location,
+    location: initialLocation,
     socialLinks: Array.isArray(profile?.socialLinks) ? profile.socialLinks.join(', ') : '',
     aboutMe: profile?.aboutMe || EMPTY_STATE.aboutMe,
     favoriteBrand: profile?.favoriteBrand || EMPTY_STATE.favoriteBrand,
@@ -37,6 +59,107 @@ export default function EditProfileModal({ isOpen, onClose, profile, onUploadPho
   const [error, setError] = useState('')
   const [handleStatus, setHandleStatus] = useState({ state: 'idle', msg: '' })
   const debounceRef = useRef(null)
+  const [homeLocation, setHomeLocation] = useState(initialHomeLocation)
+  const [showHomeEditor, setShowHomeEditor] = useState(false)
+  // Which picker is active: 'home' (Set Home Location) or 'city' (Set City/State).
+  const [locationMode, setLocationMode] = useState('home')
+  // Structured city/state location (address, city, state, lat, lng, zip) — the
+  // public-facing location with coords for admin/ad purposes (NOT a tracked home).
+  const [locationData, setLocationData] = useState(
+    profile?.locationData ||
+      (initialHomeLocation
+        ? {
+            address: initialHomeLocation.address || '',
+            city: '',
+            state: '',
+            lat: initialHomeLocation.lat ?? null,
+            lng: initialHomeLocation.lng ?? null,
+            zip: initialHomeLocation.zip || '',
+          }
+        : null)
+  )
+  // Zip code captured from the picker (emitted separately from the location).
+  const [zipCode, setZipCode] = useState(profile?.locationData?.zip || initialHomeLocation?.zip || '')
+
+  // Save a picked point as the user's Home (inline editor submit). Also fills
+  // the public city/state (location + locationData) from the home's coords, so
+  // the city requirement is met automatically. Preserves the zip code.
+  const handleSetHomeFromPicker = async (loc) => {
+    const zip = loc.zip || zipCode || ''
+    const home = { address: loc.address || 'Home', lat: loc.lat, lng: loc.lng, zip }
+    try {
+      const res = await updateHomeLocation({ data: { homeLocation: home } })
+      if (res?.success) {
+        setHomeLocation(home)
+        setZipCode(zip)
+        setShowHomeEditor(false)
+        // Fill city/state from the home location (overwrites any prior city).
+        const cityState = deriveCityState(loc)
+        setForm((prev) => ({ ...prev, location: cityState.label }))
+        setLocationData(cityState.data)
+      } else {
+        setError(res?.error === 'Not authenticated' ? "Couldn't set home — please sign in." : `Couldn't set home: ${res?.error || 'unknown error'}`)
+      }
+    } catch (err) {
+      setError("Couldn't set home — network error.")
+    }
+  }
+
+  // Set the public city/state from a picked location (coords within the city).
+  // Does NOT touch the home location — it's an independent data point.
+  const handleSetCityState = (loc) => {
+    if (loc.zip) setZipCode(loc.zip)
+    const cityState = deriveCityState(loc)
+    setForm((prev) => ({ ...prev, location: cityState.label }))
+    setLocationData(cityState.data)
+  }
+
+  // Derive a display label + structured data from a picked location. The label
+  // shows ONLY "City, State" (+ zip) — never the street address. Keeps the full
+  // address + lat/lng/zip in the structured data for admin/ad purposes.
+  const deriveCityState = (loc) => {
+    const addr = loc.address || ''
+    const parts = addr.split(',').map((p) => p.trim()).filter(Boolean)
+    let city = ''
+    let state = ''
+    if (parts.length >= 2) {
+      city = parts[parts.length - 2]
+      state = parts[parts.length - 1].replace(/[\d-]+/g, '').trim()
+    }
+    // Prefer the zip attached to the picked location (available immediately),
+    // falling back to the zipCode state (which may lag one render behind).
+    const zip = loc.zip || zipCode || ''
+    // Display: "City, State" (+ zip if present). Fall back to the address if
+    // no city/state could be parsed.
+    let label = addr
+    if (city && state) {
+      label = zip ? `${city}, ${state} ${zip}` : `${city}, ${state}`
+    }
+    return {
+      label,
+      data: {
+        address: addr,
+        city,
+        state,
+        lat: typeof loc.lat === 'number' ? loc.lat : null,
+        lng: typeof loc.lng === 'number' ? loc.lng : null,
+        zip,
+      },
+    }
+  }
+
+  const handleClearHome = async () => {
+    try {
+      const res = await updateHomeLocation({ data: { homeLocation: null } })
+      if (res?.success) {
+        setHomeLocation(null)
+      } else {
+        setError(res?.error === 'Not authenticated' ? "Couldn't clear home — please sign in." : `Couldn't clear home: ${res?.error || 'unknown error'}`)
+      }
+    } catch (err) {
+      setError("Couldn't clear home — network error.")
+    }
+  }
 
   // Debounced live availability check for the @handle field.
   useEffect(() => {
@@ -85,7 +208,15 @@ export default function EditProfileModal({ isOpen, onClose, profile, onUploadPho
     setSaving(true)
     setError('')
     try {
-      const result = await updateProfile({ data: { ...form } })
+      // Require a city if there's no actual home location set — the profile's
+      // location string acts as the fallback "home city" for proximity.
+      const hasHome = homeLocation && typeof homeLocation.lat === 'number'
+      const city = (form.location || '').trim()
+      if (!hasHome && !city) {
+        setError('Please set a Home Location or a City/State.')
+        return
+      }
+      const result = await updateProfile({ data: { ...form, locationData } })
       if (!result?.success) {
         setError(result?.error || 'Could not save profile')
         return
@@ -211,14 +342,108 @@ export default function EditProfileModal({ isOpen, onClose, profile, onUploadPho
                 />
 
                 {/* Location */}
-                <TextField
-                  label="Location"
-                  value={form.location}
-                  onChange={(e) => handleChange('location', e.target.value)}
-                  inputProps={{ 'data-part': 'input-location' }}
-                  fullWidth
-                  size="small"
-                />
+                {/* Location — two-button toggle: Set Home Location | Set City/State */}
+                <div data-part="profile-location" className="bg-[#04080b] rounded-xl p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <MapPin className="h-4 w-4 text-[#e10908]" />
+                    <span className="text-white text-[14px] font-medium">Location</span>
+                  </div>
+
+                  {/* Toggle buttons */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <button
+                      type="button"
+                      data-part="toggle-home"
+                      onClick={() => setLocationMode('home')}
+                      className={`flex-1 h-9 rounded-lg text-[13px] transition-colors ${
+                        locationMode === 'home'
+                          ? 'bg-[#e10908] text-white'
+                          : 'bg-[#1a1d22] text-white hover:bg-[#2a2d32]'
+                      }`}
+                    >
+                      Set Home Location
+                    </button>
+                    <button
+                      type="button"
+                      data-part="toggle-city"
+                      onClick={() => setLocationMode('city')}
+                      className={`flex-1 h-9 rounded-lg text-[13px] transition-colors ${
+                        locationMode === 'city'
+                          ? 'bg-[#e10908] text-white'
+                          : 'bg-[#1a1d22] text-white hover:bg-[#2a2d32]'
+                      }`}
+                    >
+                      Set City/State
+                    </button>
+                  </div>
+
+                  {/* Hidden location field — always populated with the current
+                      city/state label so the form data stays in sync even when
+                      the picker isn't visible. */}
+                  <input
+                    type="text"
+                    data-part="input-location"
+                    value={form.location}
+                    onChange={(e) => handleChange('location', e.target.value)}
+                    className="hidden"
+                    aria-hidden="true"
+                    tabIndex={-1}
+                  />
+
+                  {/* Home picker — only mounted when active. Only ONE Leaflet map
+                      exists at a time (mounting two maps, one hidden via CSS,
+                      causes broken/black tiles because Leaflet measures a
+                      display:none container at 0×0). The hidden location input
+                      above keeps the form data in sync regardless. */}
+                  {locationMode === 'home' && (
+                    <div data-part="profile-home">
+                      {showHomeEditor ? (
+                        <div data-part="profile-home-editor">
+                          <LocationForm
+                            overlay={false}
+                            compact
+                            intent="home"
+                            homeLocation={homeLocation}
+                            initialValue={homeLocation}
+                            onCancel={() => setShowHomeEditor(false)}
+                            onSubmit={handleSetHomeFromPicker}
+                            onZipCode={(zip) => setZipCode(zip || '')}
+                          />
+                        </div>
+                      ) : (
+                        <HomeLocationControl
+                          homeLocation={homeLocation}
+                          onSetHome={() => setShowHomeEditor(true)}
+                          onEditHome={() => setShowHomeEditor(true)}
+                          onClearHome={handleClearHome}
+                        />
+                      )}
+                    </div>
+                  )}
+
+                  {/* City/State picker — only mounted when active (see above). */}
+                  {locationMode === 'city' && (
+                    <div data-part="profile-city">
+                      <LocationPicker
+                        compact
+                        cityStateOnly
+                        onLocationSelect={handleSetCityState}
+                        onZipCode={(zip) => setZipCode(zip || '')}
+                        onClear={() => {
+                          setForm((prev) => ({ ...prev, location: '' }))
+                          setLocationData(null)
+                          setZipCode('')
+                        }}
+                        initialValue={locationData ? { address: locationData.address, lat: locationData.lat, lng: locationData.lng } : null}
+                      />
+                      {form.location && (
+                        <p className="mt-2 text-[13px] text-[#888888]">
+                          City/State: <span className="text-white">{form.location}</span>
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
 
                 {/* Social Links */}
                 <TextField

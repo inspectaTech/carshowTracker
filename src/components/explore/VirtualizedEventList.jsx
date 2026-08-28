@@ -23,6 +23,9 @@ export default function VirtualizedEventList({
   gap = ROW_GAP,
   editable = false,
   onEdit,
+  onDuplicate,
+  onDelete,
+  onRestore,
   onNavigate,
 }) {
   const rows = []
@@ -37,7 +40,15 @@ export default function VirtualizedEventList({
     const row = r[index]
     const node =
       row.kind === 'event' ? (
-        <EventCard event={row.item} editable={editable} onEdit={onEdit} onNavigate={onNavigate} />
+        <EventCard
+          event={row.item}
+          editable={editable}
+          onEdit={onEdit}
+          onDuplicate={onDuplicate}
+          onDelete={onDelete}
+          onRestore={onRestore}
+          onNavigate={onNavigate}
+        />
       ) : (
         <UserCard user={row.item} />
       )

@@ -88,7 +88,7 @@ export default function LinksSection({ mode = 'display', value = [], onChange })
     const otherLinks = present.filter((l) => !detectNetwork(l))
 
     return (
-      <div data-component="links-section" className="space-y-4">
+      <div data-component="LinksSection" className="space-y-4">
         {socialLinks.length > 0 && (
           <div data-part="social-icons" className="flex items-center justify-center gap-3 flex-wrap">
             {socialLinks.map((link, i) => (
@@ -134,7 +134,7 @@ export default function LinksSection({ mode = 'display', value = [], onChange })
 
   // ---------- Edit mode ----------
   return (
-    <div data-component="links-section" className="space-y-2">
+    <div data-component="LinksSection" className="space-y-2">
       {links.length === 0 ? (
         <button
           type="button"

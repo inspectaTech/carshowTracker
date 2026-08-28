@@ -50,7 +50,7 @@ export default function HighwayPage() {
   })
 
   return (
-    <div data-component="highway-page" className="min-h-screen bg-[#04080b] flex flex-col lg:flex-row">
+    <div data-component="HighwayPage" className="min-h-screen bg-[#04080b] flex flex-col lg:flex-row">
       <Sidebar profile={profile} activeNav="my-highway" />
 
       <main data-part="main-content" className="flex-1 flex flex-col min-h-screen lg:min-h-0 overflow-y-auto">

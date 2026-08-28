@@ -3,11 +3,11 @@ import { useNavigate } from '@tanstack/react-router'
 import { Calendar, Plus } from 'lucide-react'
 import Sidebar from '#/components/dashboard/Sidebar'
 import { loadDashboardData } from '#/server/session'
-import { listEvents, getSessionUser } from '#/server/events'
+import { listEvents, getSessionUser, duplicateEvent, softDeleteEvent, restoreEvent } from '#/server/events'
 import CreateEventModal from './CreateEventModal'
 import VirtualizedEventList from '#/components/explore/VirtualizedEventList'
 
-const TABS = ['Upcoming', 'Past', 'Created']
+const TABS = ['Upcoming', 'Past', 'Created', 'Trash']
 
 function eventDate(ev) {
   return ev.date ? new Date(ev.date) : null
@@ -34,12 +34,14 @@ export default function EventsPage() {
         setDataSource('no-session')
         return
       }
-      const result = await listEvents({ data: { creatorUserId: myUserId, includePast: true } })
+      const result = await listEvents({
+        data: { creatorUserId: myUserId, includePast: true, trash: activeTab === 'Trash' },
+      })
       if (result?.events) setEvents(result.events)
     } catch (err) {
       console.error('[Events] Failed to load events:', err)
     }
-  }, [])
+  }, [activeTab])
 
   useEffect(() => {
     async function loadData() {
@@ -80,13 +82,60 @@ export default function EventsPage() {
     setShowCreateModal(true)
   }, [])
 
+  // Duplicate an event (Eventbrite-style): server copies it with a new slugId +
+  // " - copy" title, then the new card appears and opens in edit mode so the
+  // user can update the date/time for the new occurrence.
+  const handleDuplicate = useCallback(async (event) => {
+    try {
+      const res = await duplicateEvent({ data: { slugId: event.slugId } })
+      if (res?.success) {
+        setEvents((prev) => [res.event, ...prev])
+        setEditingEvent(res.event)
+        setShowCreateModal(true)
+      } else {
+        console.error('[Events] Duplicate failed:', res?.error)
+      }
+    } catch (err) {
+      console.error('[Events] Duplicate failed:', err)
+    }
+  }, [])
+
   const closeModal = useCallback(() => {
     setShowCreateModal(false)
     setEditingEvent(null)
   }, [])
 
+  // Soft-delete (move to trash) an event.
+  const handleDelete = useCallback(async (event) => {
+    try {
+      const res = await softDeleteEvent({ data: { slugId: event.slugId } })
+      if (res?.success) {
+        setEvents((prev) => prev.filter((e) => e.slugId !== event.slugId))
+      } else {
+        console.error('[Events] Delete failed:', res?.error)
+      }
+    } catch (err) {
+      console.error('[Events] Delete failed:', err)
+    }
+  }, [])
+
+  // Restore a trashed event back to the regular display.
+  const handleRestore = useCallback(async (event) => {
+    try {
+      const res = await restoreEvent({ data: { slugId: event.slugId } })
+      if (res?.success) {
+        setEvents((prev) => prev.filter((e) => e.slugId !== event.slugId))
+      } else {
+        console.error('[Events] Restore failed:', res?.error)
+      }
+    } catch (err) {
+      console.error('[Events] Restore failed:', err)
+    }
+  }, [])
+
   const now = new Date()
   const filtered = events.filter((ev) => {
+    if (activeTab === 'Trash') return true // Trash shows all trashed events
     const d = eventDate(ev)
     if (activeTab === 'Upcoming') return d && d >= now
     if (activeTab === 'Past') return d && d < now
@@ -94,7 +143,7 @@ export default function EventsPage() {
   })
 
   return (
-    <div data-component="events-page" className="min-h-screen bg-[#04080b] flex flex-col lg:flex-row">
+    <div data-component="EventsPage" className="min-h-screen bg-[#04080b] flex flex-col lg:flex-row">
       {/* DEBUG — hidden unless ?debug=true or localStorage.setItem('cst_debug','true') */}
       {typeof window !== 'undefined' && window.__DEBUG_MODE && (
         <div id="debug-bar" suppressHydrationWarning style={{position:'fixed',top:0,left:0,right:0,zIndex:99999,background:'#e10908',color:'white',padding:'4px 8px',fontSize:'11px',fontFamily:'monospace'}}>{debug}</div>
@@ -174,6 +223,9 @@ export default function EventsPage() {
                 events={filtered}
                 editable
                 onEdit={openEdit}
+                onDuplicate={handleDuplicate}
+                onDelete={handleDelete}
+                onRestore={handleRestore}
                 onNavigate={(event) => navigate({ to: `/event/${event.slugId}` })}
               />
             </div>

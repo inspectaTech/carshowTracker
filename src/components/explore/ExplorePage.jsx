@@ -232,6 +232,26 @@ export default function ExplorePage() {
       return
     }
     if (prev) {
+      // When the previous mode was "home", always derive the state from the
+      // CURRENT home (the modal may have set or cleared it while open) so the
+      // menu text agrees with reality — never a stale missing-home/ready.
+      if (prev.mode === 'home') {
+        const hasHome = homeLocation && homeLocation.lat != null && homeLocation.lng != null
+        setLocationMode('home')
+        if (hasHome) {
+          setVicinityPoint({ lat: homeLocation.lat, lng: homeLocation.lng })
+          setVicinityLabel(homeLocation.address || 'Home')
+          setVicinityStatus('ready')
+        } else {
+          // Home was cleared inside the modal — there's no valid "home" filter,
+          // so fall back to the meaningful default, everywhere.
+          setLocationMode('everywhere')
+          setVicinityPoint(null)
+          setVicinityLabel(null)
+          setVicinityStatus('idle')
+        }
+        return
+      }
       setLocationMode(prev.mode)
       setVicinityPoint(prev.point)
       setVicinityLabel(prev.label)
@@ -245,9 +265,19 @@ export default function ExplorePage() {
   // applied — closing otherwise leaves the previous filter untouched.
   const applyNear = (loc) => {
     pendingRevertRef.current = null
-    setVicinityPoint({ lat: loc.lat, lng: loc.lng, label: loc.address || 'Near a location' })
+    const point = { lat: loc.lat, lng: loc.lng, label: loc.address || 'Near a location' }
+    setVicinityPoint(point)
     setVicinityLabel(loc.address || 'Near a location')
     setVicinityStatus('ready')
+    // If the applied point matches the saved Home, switch the mode to 'home'
+    // so the menu highlight agrees with the chip ("Home") rather than showing
+    // "Near a location".
+    const matchesHome =
+      homeLocation &&
+      typeof homeLocation.lat === 'number' &&
+      homeLocation.lat === loc.lat &&
+      homeLocation.lng === loc.lng
+    setLocationMode(matchesHome ? 'home' : 'near')
     setNearModalOpen(false)
     setMenuOpen(false)
     pushToast('success', `Showing events near “${loc.address || 'this location'}”`)
@@ -345,7 +375,7 @@ export default function ExplorePage() {
             : vicinityLabel || 'Near a location…'
 
   return (
-    <div data-component="explore-page" className="min-h-screen bg-[#04080b] flex flex-col lg:flex-row">
+    <div data-component="ExplorePage" className="min-h-screen bg-[#04080b] flex flex-col lg:flex-row">
       <Sidebar profile={profile} activeNav="explore" />
 
       <main

@@ -75,6 +75,7 @@ async function getDashboardDataFromDB(userId) {
       bio: profileDoc.bio,
       avatarUrl: profileDoc.avatarUrl,
       location: profileDoc.location,
+      locationData: profileDoc.locationData || null,
       joinedAt: profileDoc.joinedAt,
       socialLinks: profileDoc.socialLinks,
       aboutMe: profileDoc.aboutMe,

@@ -73,7 +73,7 @@ export default function EventDetailPage() {
   const timeLabel = [event.startTime, event.endTime].filter(Boolean).join(' – ')
 
   return (
-    <div data-component="event-detail-page" className="min-h-screen bg-[#04080b] pb-16">
+    <div data-component="EventDetailPage" className="min-h-screen bg-[#04080b] pb-16">
       {/* Hero image */}
       <div data-part="hero" className="w-full h-[260px] sm:h-[320px] bg-[#0a0d12] relative">
         {event.photoUrl ? (

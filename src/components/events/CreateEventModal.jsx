@@ -217,7 +217,7 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
       {isOpen && (
         <motion.div
           key="create-event-modal"
-          data-component="create-event-modal"
+          data-component="CreateEventModal"
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

@@ -86,7 +86,7 @@ export default function LoginForm() {
 
   return (
     <div
-      data-component="login-page"
+      data-component="LoginForm"
       className="min-h-screen bg-[#04080b] flex items-center justify-center p-4 sm:p-6"
     >
       <div className="w-full max-w-[480px]">

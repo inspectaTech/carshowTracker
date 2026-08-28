@@ -23,7 +23,7 @@ export default function EventLocation({ event }) {
   const hasCoords = Number.isFinite(lat) && Number.isFinite(lng) && (lat !== 0 || lng !== 0)
 
   return (
-    <div data-component="event-location" className="space-y-4">
+    <div data-component="EventLocation" className="space-y-4">
       <EventMap lat={event?.lat} lng={event?.lng} label={event?.location} height={220} />
 
       {hasCoords ? (

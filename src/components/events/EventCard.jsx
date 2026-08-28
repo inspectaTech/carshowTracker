@@ -1,4 +1,4 @@
-import { MapPin, Clock, Users, Pencil, ChevronRight } from 'lucide-react'
+import { MapPin, Clock, Users, Pencil, Copy, Trash2, RotateCcw, ChevronRight } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 
 const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
@@ -47,7 +47,7 @@ function shortLocation(location) {
  *   - editable: when true, replaces the chevron with an edit button (creator edit flow)
  *   - onEdit: called with the event when the edit button is clicked
  */
-export default function EventCard({ event, onNavigate, editable, onEdit }) {
+export default function EventCard({ event, onNavigate, editable, onEdit, onDuplicate, onDelete, onRestore }) {
   const navigate = useNavigate()
 
   const d = eventDate(event)
@@ -93,20 +93,63 @@ export default function EventCard({ event, onNavigate, editable, onEdit }) {
         </div>
       </div>
 
-      {/* Edit button (creator) or chevron */}
+      {/* Edit + Duplicate + Delete/Restore buttons (creator) or chevron */}
       {editable ? (
-        <button
-          type="button"
-          data-part="edit-btn"
-          title="Edit event"
-          onClick={(e) => {
-            e.stopPropagation()
-            if (onEdit) onEdit(event)
-          }}
-          className="w-10 h-10 shrink-0 flex items-center justify-center rounded-lg bg-[#1a1d22] hover:bg-[#e10908] text-[#e6e6e6] transition-colors"
-        >
-          <Pencil size={17} />
-        </button>
+        <div className="flex items-center gap-2 shrink-0">
+          {event.deleted ? (
+            <button
+              type="button"
+              data-part="restore-btn"
+              title="Restore event"
+              onClick={(e) => {
+                e.stopPropagation()
+                if (onRestore) onRestore(event)
+              }}
+              className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#1a2a1d] hover:bg-[#2a3d2d] text-[#7ad48a] transition-colors"
+            >
+              <RotateCcw size={16} />
+            </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                data-part="duplicate-btn"
+                title="Duplicate event"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  if (onDuplicate) onDuplicate(event)
+                }}
+                className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#1a1d22] hover:bg-[#2a2d32] text-[#e6e6e6] transition-colors"
+              >
+                <Copy size={16} />
+              </button>
+              <button
+                type="button"
+                data-part="delete-btn"
+                title="Move to trash"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  if (onDelete) onDelete(event)
+                }}
+                className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#1a1d22] hover:bg-[#e10908] text-[#e6e6e6] transition-colors"
+              >
+                <Trash2 size={16} />
+              </button>
+              <button
+                type="button"
+                data-part="edit-btn"
+                title="Edit event"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  if (onEdit) onEdit(event)
+                }}
+                className="w-10 h-10 flex items-center justify-center rounded-lg bg-[#1a1d22] hover:bg-[#e10908] text-[#e6e6e6] transition-colors"
+              >
+                <Pencil size={17} />
+              </button>
+            </>
+          )}
+        </div>
       ) : (
         <ChevronRight className="h-5 w-5 text-[#555555] group-hover:text-white transition-colors shrink-0" />
       )}

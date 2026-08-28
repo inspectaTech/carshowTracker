@@ -32,7 +32,22 @@ function formatCleanAddress(addr) {
   return parts.join(', ')
 }
 
-export default function LocationPicker({ onLocationSelect, onClear, onZipCode, onQueryChange, initialValue = null, reloadToken = 0, error = false, errorText = '' }) {
+/**
+ * Build a "City, State" string from Nominatim's structured address object —
+ * NO street address. Used for the city/state picker mode where we only want
+ * the city + state (optionally with zip), never the house number / road.
+ */
+function formatCityState(addr) {
+  const city = addr.city || addr.town || addr.village
+  const state = addr.state
+  const zip = addr.postcode
+  if (city && state) return zip ? `${city}, ${state} ${zip}` : `${city}, ${state}`
+  if (city) return zip ? `${city} ${zip}` : city
+  if (state) return zip ? `${state} ${zip}` : state
+  return ''
+}
+
+export default function LocationPicker({ onLocationSelect, onClear, onZipCode, onQueryChange, initialValue = null, reloadToken = 0, compact = false, cityStateOnly = false, error = false, errorText = '' }) {
   // --- State ---
   const [query, setQuery] = useState('')
   const [suggestions, setSuggestions] = useState([])
@@ -123,9 +138,15 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode, o
   useEffect(() => { onZipCodeRef.current = onZipCode }, [onZipCode])
 
   // --- Notify parent of location change (stable identity) ---
+  // The zip is attached directly onto the loc object (loc.zip) so consumers
+  // don't have to rely on the separate onZipCode callback firing first — the
+  // two callbacks fire in sequence (onLocationSelect then onZipCode), so a
+  // consumer reading zip from state inside onLocationSelect would get a stale
+  // value. Attaching it to loc makes it available immediately.
   const notifyLocation = useCallback((loc, addrObj) => {
-    setSelectedLocation(loc)
-    if (onLocationSelectRef.current) onLocationSelectRef.current(loc)
+    const withZip = addrObj?.postcode ? { ...loc, zip: addrObj.postcode } : loc
+    setSelectedLocation(withZip)
+    if (onLocationSelectRef.current) onLocationSelectRef.current(withZip)
     if (addrObj?.postcode && onZipCodeRef.current) onZipCodeRef.current(addrObj.postcode)
   }, [])
 
@@ -170,7 +191,11 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode, o
             { headers: { 'User-Agent': 'CarshowTracker/1.0' } }
           )
           const data = await res.json()
-          const address = data.address ? formatCleanAddress(data.address) : data.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`
+          const address = data.address
+            ? cityStateOnly
+              ? formatCityState(data.address) || formatCleanAddress(data.address)
+              : formatCleanAddress(data.address)
+            : data.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`
           notifyLocation({ address, lat, lng }, data.address)
           justSelected.current = true
           setQuery(address)
@@ -340,7 +365,11 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode, o
         { headers: { 'User-Agent': 'CarshowTracker/1.0' } }
       )
       const data = await res.json()
-      const address = data.address ? formatCleanAddress(data.address) : data.display_name || s.display_name
+      const address = data.address
+        ? cityStateOnly
+          ? formatCityState(data.address) || formatCleanAddress(data.address)
+          : formatCleanAddress(data.address)
+        : data.display_name || s.display_name
       notifyLocation({ address, lat, lng }, data.address)
       justSelected.current = true
       setQuery(address)
@@ -483,6 +512,7 @@ export default function LocationPicker({ onLocationSelect, onClear, onZipCode, o
           lat={selectedLocation.lat}
           lng={selectedLocation.lng}
           title="Selected Location"
+          compact={compact}
         />
       ) : (
         <div className="border border-dashed border-[#333333] rounded-lg p-4 text-center text-sm text-[#555555]">

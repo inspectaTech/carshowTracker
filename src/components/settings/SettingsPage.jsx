@@ -116,7 +116,7 @@ export default function SettingsPage() {
   )
 
   return (
-    <div data-component="settings-page" className="min-h-screen bg-[#04080b] flex flex-col lg:flex-row">
+    <div data-component="SettingsPage" className="min-h-screen bg-[#04080b] flex flex-col lg:flex-row">
       <Sidebar profile={profile} activeNav="settings" />
 
       <main
@@ -188,15 +188,14 @@ export default function SettingsPage() {
                       <div className="flex items-center gap-3">
                         <MapPin className="h-5 w-5 text-[#888888] shrink-0" />
                         <span className="text-white text-[15px] flex-1">Home Location</span>
-                        <span className="text-white text-[14px] bg-[#04080b] rounded-lg px-3 py-2">
-                          {profile?.location || 'Los Angeles, CA'}
-                        </span>
-                        <button
-                          data-part="change-location-btn"
-                          className="text-[#888888] text-[13px] bg-[#04080b] border border-[#333333] rounded-lg px-3 py-2 hover:text-white transition-colors"
-                        >
-                          Change
-                        </button>
+                      </div>
+                      <div className="mt-3">
+                        <HomeLocationControl
+                          homeLocation={homeLocation}
+                          onSetHome={() => openHomeModal(null)}
+                          onEditHome={() => openHomeModal(homeLocation)}
+                          onClearHome={clearHome}
+                        />
                       </div>
                     </div>
                   </>

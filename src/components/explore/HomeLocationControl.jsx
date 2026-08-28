@@ -18,7 +18,7 @@ export default function HomeLocationControl({ homeLocation, onSetHome, onEditHom
   const hasHome = homeLocation && typeof homeLocation.lat === 'number'
 
   return (
-    <div data-component="home-location-control" className="flex items-center gap-2">
+    <div data-component="HomeLocationControl" className="flex items-center gap-2">
       <HomeIcon className="h-4 w-4 text-[#e10908] shrink-0" />
       {hasHome ? (
         <>

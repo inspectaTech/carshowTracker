@@ -120,6 +120,11 @@ export const updateProfile = createServerFn({ method: 'POST' })
         driveStyle: update.driveStyle ?? '',
         updatedAt: new Date(),
       }
+      // Structured city/state location (address, city, state, lat, lng, zip) —
+      // carries coordinates for admin/ad purposes without being a tracked home.
+      if (update.locationData !== undefined) {
+        setFields.locationData = update.locationData
+      }
       if (newHandle) setFields.handle = newHandle
 
       // NOTE: a path can't appear in BOTH $set and $setOnInsert (MongoDB throws

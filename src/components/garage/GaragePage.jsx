@@ -86,7 +86,7 @@ export default function GaragePage() {
   )
 
   return (
-    <div data-component="garage-page" className="min-h-screen bg-[#04080b] flex flex-col lg:flex-row">
+    <div data-component="GaragePage" className="min-h-screen bg-[#04080b] flex flex-col lg:flex-row">
       <Sidebar profile={profile} activeNav="garage" />
 
       <main

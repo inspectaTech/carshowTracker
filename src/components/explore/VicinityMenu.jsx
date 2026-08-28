@@ -32,7 +32,7 @@ export default function VicinityMenu({
 
   return (
     <div
-      data-component="vicinity-menu"
+      data-component="VicinityMenu"
       className="absolute right-0 top-full mt-2 w-80 bg-[#0a0d12] border border-[#333333] rounded-xl shadow-2xl z-50 overflow-hidden"
     >
       <div className="px-4 py-3 border-b border-[#1a1d22]">
