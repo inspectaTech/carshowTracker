@@ -614,7 +614,7 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
         <AnimatePresence>
           <motion.div
             key="confirm-close-modal"
-            data-component="confirm-close-modal"
+            data-component="CreateEventModal"
             className="fixed inset-0 z-[60] flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -669,7 +669,7 @@ export default function CreateEventModal({ isOpen, onClose, onCreated, onUpdated
         <AnimatePresence>
           <motion.div
             key="confirm-create-modal"
-            data-component="confirm-create-modal"
+            data-component="CreateEventModal"
             className="fixed inset-0 z-[60] flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
