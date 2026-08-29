@@ -112,7 +112,9 @@ export const updateProfile = createServerFn({ method: 'POST' })
         username: update.username ?? update.displayName,
         bio: update.bio ?? '',
         location: update.location ?? '',
-        socialLinks: (update.socialLinks ?? '').split(',').map((s) => s.trim()).filter(Boolean),
+        socialLinks: Array.isArray(update.socialLinks)
+          ? update.socialLinks.map((s) => String(s).trim()).filter(Boolean)
+          : String(update.socialLinks ?? '').split(',').map((s) => s.trim()).filter(Boolean),
         aboutMe: update.aboutMe ?? '',
         favoriteBrand: update.favoriteBrand ?? '',
         dreamCar: update.dreamCar ?? '',

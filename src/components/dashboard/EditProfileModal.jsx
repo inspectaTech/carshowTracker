@@ -7,6 +7,7 @@ import { updateProfile, updateHomeLocation, checkHandleAvailable } from '#/serve
 import LocationForm from '#/components/ui/location-picker/LocationForm'
 import LocationPicker from '#/components/ui/location-picker/LocationPicker'
 import HomeLocationControl from '#/components/explore/HomeLocationControl'
+import LinksSection from '#/components/links/LinksSection'
 
 const HANDLE_REGEX = /^[a-zA-Z0-9_]{2,30}$/
 
@@ -48,7 +49,7 @@ export default function EditProfileModal({ isOpen, onClose, profile, onUploadPho
     displayName: profile?.username || EMPTY_STATE.displayName,
     bio: profile?.bio || EMPTY_STATE.bio,
     location: initialLocation,
-    socialLinks: Array.isArray(profile?.socialLinks) ? profile.socialLinks.join(', ') : '',
+    socialLinks: Array.isArray(profile?.socialLinks) ? profile.socialLinks : [],
     aboutMe: profile?.aboutMe || EMPTY_STATE.aboutMe,
     favoriteBrand: profile?.favoriteBrand || EMPTY_STATE.favoriteBrand,
     dreamCar: profile?.dreamCar || EMPTY_STATE.dreamCar,
@@ -446,15 +447,15 @@ export default function EditProfileModal({ isOpen, onClose, profile, onUploadPho
                 </div>
 
                 {/* Social Links */}
-                <TextField
-                  label="Social Links"
-                  value={form.socialLinks}
-                  onChange={(e) => handleChange('socialLinks', e.target.value)}
-                  inputProps={{ 'data-part': 'input-social' }}
-                  placeholder="Instagram, YouTube, TikTok URLs"
-                  fullWidth
-                  size="small"
-                />
+                <div data-part="social-links-section">
+                  <h3 className="text-white text-[18px] font-medium mb-1">Social Links</h3>
+                  <p className="text-[#888888] text-[13px] mb-4">Add your social profiles and other links.</p>
+                  <LinksSection
+                    mode="edit"
+                    value={form.socialLinks}
+                    onChange={(links) => handleChange('socialLinks', links)}
+                  />
+                </div>
 
                 {/* Divider */}
                 <div className="w-full h-px bg-[#333333]" />

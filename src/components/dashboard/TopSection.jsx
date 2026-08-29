@@ -1,20 +1,15 @@
-import { MapPin, Calendar as CalendarIcon, Instagram, Youtube, Music2 } from 'lucide-react'
+import { MapPin, Calendar as CalendarIcon } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import UserImage from '../ui/UserImage'
 import StatsRow from './StatsRow'
 import Header from '../Header'
 import NotificationOptIn from './NotificationOptIn'
+import LinksSection from '../links/LinksSection'
 import { requestNotificationPermission } from '../../lib/pwa'
 
 export function ProfileCard({ profile }) {
   if (!profile) return null
-
-  const socialIcons = {
-    Instagram: Instagram,
-    YouTube: Youtube,
-    TikTok: Music2,
-  }
 
   return (
     <div className="bg-[#04080bbf] rounded-xl w-full lg:w-[570px] h-full flex flex-col lg:flex-row items-center gap-5 px-6 py-5"  data-component="ProfileCard">
@@ -59,18 +54,19 @@ export function ProfileCard({ profile }) {
           </div>
         </div>
 
-        {/* Social links */}
-        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-[#888888] text-xs lg:text-[14px] mt-1">
-          {profile.socialLinks?.map((name) => {
-            const Icon = socialIcons[name] || Instagram
-            return (
-              <span key={name} className="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors">
-                <Icon size={16} strokeWidth={1.5} />
-                {name}
-              </span>
-            )
-          })}
-        </div>
+        {/* Social links — icon+name row + collapsible "Other links" (100px scroll) */}
+        {Array.isArray(profile.socialLinks) && profile.socialLinks.length > 0 && (
+          <div className="mt-1">
+            <LinksSection
+              mode="display"
+              value={profile.socialLinks}
+              socialStyle="icon-name"
+              listTitle="Other links"
+              collapsible
+              listHeight={100}
+            />
+          </div>
+        )}
       </div>
     </div>
   )
